@@ -3,1107 +3,920 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#17191d">
-<title>도트 서랍</title>
-<!-- 도트 한글 폰트(갈무리, 무료). 불러오지 못하면 대체 한글 폰트가 쓰입니다 -->
+<title>도트 게임기</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
 <style>
-:root{
-  --bg:#1b1e24; --bg2:#282d36; --line:#454d59;
-  --blue:#91b5d5; --butter:#d7bb77; --rose:#d39ba9; --mint:#a4bda7;
-  --ink:#eee9dd; --dim:#a3a9b3;
-  --font-pixel:'Galmuri11','Galmuri9','DotGothic16','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
-  --font-body:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
-  --h:clamp(500px,76vh,780px);
-}
+:root{--px:'Galmuri11','Galmuri9','DotGothic16','Malgun Gothic','Apple SD Gothic Neo',sans-serif;--bd2:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#0b0d11}
-body{color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.75;overflow-x:hidden;
-  background:radial-gradient(ellipse at 50% 28%,#272d36 0,#14171d 43%,#090b0f 84%)}
-button,.eyebrow,.head h2,.selected-label,.case-top,.case-name,.plat-num,.plat em,.story-item .num,.story-paper .tag,.story-paper-bottom,.album-tab,.shot-num,.foot{font-family:var(--font-pixel)}
-button,a{font:inherit;color:inherit}button{cursor:pointer}
+html,body{margin:0}
+body{min-height:100svh;display:grid;place-items:center;padding:14px;font-family:var(--bd2);color:#394150;background:#1b2130}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
 svg{display:block;width:100%;height:auto;image-rendering:pixelated}
-:focus-visible{outline:2px dashed var(--blue);outline-offset:4px}
-.px{--c:var(--blue);background:var(--bg2);margin:4px;
-  box-shadow:4px 0 0 0 var(--c),-4px 0 0 0 var(--c),0 4px 0 0 var(--c),0 -4px 0 0 var(--c)}
+:focus-visible{outline:2px dashed #394150;outline-offset:3px}
 
-.grain{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.05;animation:jit .2s steps(2) infinite;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.trail{position:fixed;z-index:90;width:6px;height:6px;pointer-events:none;animation:dust .5s steps(5) forwards}
-.toast{position:fixed;left:50%;bottom:26px;z-index:120;transform:translateX(-50%);background:var(--bg2);color:var(--ink);padding:8px 14px;--c:var(--blue);font-size:13px;
-  box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c);opacity:0;pointer-events:none}
-.toast.on{animation:toast 1.8s steps(6) forwards}
+/* ── 게임기 본체: 가운데 화면 ── */
+.console{position:relative;display:flex;align-items:stretch;gap:0;width:min(1120px,100%)}
+.bezel{position:relative;flex:1;min-width:0;background:#2a3142;padding:clamp(8px,1.3vw,14px);padding-bottom:clamp(34px,3.8vw,40px);border-radius:22px;box-shadow:inset 0 0 0 3px #1a2030}
+/* 밝은/어두운 화면 스위치: 한쪽 모서리에 나란히 배치해 본체 곡면과 함께 움직여요 */
+.tgbar{position:absolute;right:clamp(9px,1.3vw,15px);bottom:clamp(5px,.8vw,7px);height:26px;display:flex;align-items:center;gap:7px;width:max-content;pointer-events:none}
+.tgbar button{position:relative;top:auto;left:auto;right:auto;flex:0 0 auto;width:26px;height:26px;display:grid;place-items:center;color:#8fa0b8;opacity:.75;background:#1f2638;box-shadow:2px 0 0 #0f1422,-2px 0 0 #0f1422,0 2px 0 #0f1422,0 -2px 0 #0f1422;pointer-events:auto}
+.tgbar button svg{width:14px}
+.tgbar button.on{background:#c9d4e2;color:#1a2030;opacity:1}
+.bezel.night-mode .tgbar button{background:#202838;color:#AFC1D8;box-shadow:2px 0 0 #121A27,-2px 0 0 #121A27,0 2px 0 #121A27,0 -2px 0 #121A27}
+.bezel.night-mode .tgbar button.on{background:#9BC4E8;color:#202838;opacity:1}
 
-/* ───── 모니터 본체 ───── */
-.monitor{position:relative;width:min(1180px,97vw);margin:3vh auto;border-radius:34px;
-  padding:clamp(10px,1.7vw,24px) clamp(10px,1.7vw,24px) clamp(52px,7vw,86px);
-  background:linear-gradient(145deg,#454d59 0%,#20242b 22%,#343b46 54%,#111319 90%);
-  box-shadow:0 44px 130px #000,inset 0 2px 2px rgba(255,255,255,.18),inset 0 -6px 14px #000,inset 0 0 0 1px rgba(255,255,255,.05)}
-.monitor::before{content:"";position:absolute;inset:6px;border-radius:28px;pointer-events:none;z-index:30;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),inset 0 0 26px rgba(0,0,0,.85)}
-.chin{position:absolute;left:0;right:0;bottom:0;height:clamp(52px,7vw,86px);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 clamp(20px,4.5vw,56px)}
-.tray{width:24%;height:12px;border-radius:2px;position:relative;background:#050608;box-shadow:inset 0 2px 3px #000,0 1px 0 rgba(255,255,255,.12)}
-.tray::after{content:"";position:absolute;right:7%;top:4px;width:16%;height:2px;background:#24282f}
-.vents{width:16%;height:18px;background:repeating-linear-gradient(90deg,#050608 0 3px,transparent 3px 8px);box-shadow:0 1px 0 rgba(255,255,255,.07)}
-.stk{display:flex;gap:8px;width:clamp(44px,7vw,70px)}
-.knobs{display:flex;align-items:center;gap:clamp(8px,1.6vw,16px)}
-.knob{position:relative;width:clamp(18px,2.4vw,28px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#697686,#272d36 72%);box-shadow:0 3px 5px #000,inset 0 1px 1px rgba(255,255,255,.25)}
-.knob::after{content:"";position:absolute;left:50%;top:12%;width:2px;height:34%;margin-left:-1px;background:#07080a;transform:rotate(var(--r,20deg));transform-origin:50% 130%}
-.led{width:8px;height:8px;background:var(--blue);box-shadow:0 0 10px var(--blue);animation:pulse 2.8s steps(4) infinite}
+/* ── 화면 ── */
+.screen{--bg:#dde4ea;--ink:#2f3a4a;--dim:#66737f;--panel:#eef1f3;--bd:#2f3a4a;--shade:#cdd6dd;--dot:#a9b6c3;--b1:#b4c6dc;--b2:#c1d0e2;--b3:#cedae7;--b4:#dbe3ed;--b5:#e8edf2;position:relative;height:clamp(500px,78vh,700px);display:flex;flex-direction:column;overflow:hidden;background:var(--bg);color:var(--ink)}
+.screen.night{--bg:#202838;--ink:#F0EEE8;--dim:#B2BDCD;--panel:#2B3547;--bd:#141C2A;--shade:#3A465B;--dot:#68788E;--b1:#202B3D;--b2:#253147;--b3:#2C384C;--b4:#324057;--b5:#252F42}
+.screen::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;background:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.035) 3px 4px)}
+.frame{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;background:var(--bg);border-radius:14px}
+.frame.hm{background:var(--b5)}
+.scene{flex:1;min-height:0;overflow-y:auto;padding:clamp(14px,3vw,28px);display:flex;flex-direction:column;scrollbar-width:thin}
+.hint{flex:none;display:flex;align-items:center;justify-content:center;min-height:34px;padding:7px 14px;border-top:3px solid var(--bd);background:var(--panel);font-family:var(--px);font-size:11px;color:var(--dim);text-align:center}
+.win{background:var(--panel);box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd),inset 0 0 0 3px var(--shade);padding:16px 18px}
 
-/* ───── CRT 화면 ───── */
-.crt{position:relative;min-height:var(--h);overflow:hidden;isolation:isolate;background:var(--bg);
-  border:2px solid rgba(165,196,225,.22);border-radius:9% / 11%;
-  box-shadow:inset 0 0 52px 14px #000,inset 0 0 0 1px rgba(213,233,251,.08),0 0 26px rgba(0,0,0,.7);
-  transform:perspective(1050px) rotateX(1.2deg) scale(.99);transform-origin:center 54%}
-.crt::before{content:"";position:absolute;inset:0;z-index:25;pointer-events:none;border-radius:inherit;
-  background:radial-gradient(ellipse at 50% 48%,transparent 42%,rgba(0,0,0,.06) 54%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.68) 94%,rgba(0,0,0,.92) 118%),
-  linear-gradient(90deg,rgba(0,0,0,.5),transparent 22%,transparent 78%,rgba(0,0,0,.5));
-  box-shadow:inset 0 0 90px 14px rgba(0,0,0,.65),inset 0 0 3px 1px rgba(216,235,250,.2)}
-.crt::after{display:none!important}
-.scan,.noise,.band{position:absolute;inset:0;pointer-events:none}
-.scan{z-index:22;opacity:.34;background:repeating-linear-gradient(to bottom,rgba(0,0,0,.28) 0 1px,rgba(220,238,255,.05) 2px,transparent 4px);mix-blend-mode:screen}
-.noise{z-index:23;opacity:.08;animation:jit .2s steps(2) infinite;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.83' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E")}
-.band{z-index:40;opacity:0;background:linear-gradient(transparent 43%,rgba(177,210,239,.45) 50%,transparent 57%)}
-.content{position:relative;z-index:2;min-height:var(--h);display:flex;flex-direction:column;filter:url(#warp);
-  padding:clamp(26px,6%,54px) clamp(26px,7%,80px)}
-
-/* 평평해진 상태(내부 화면) */
-body.flat .crt{border-radius:8px;transform:none;box-shadow:inset 0 0 24px rgba(0,0,0,.45)}
-body.flat .crt::before{background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.22) 100%);box-shadow:inset 0 0 22px rgba(0,0,0,.25)}
-body.flat .crt::after{opacity:.12}
-body.flat .scan{opacity:.08}body.flat .noise{opacity:.025}
-body.flat .content{filter:none;padding:clamp(18px,3vw,40px) clamp(18px,4vw,56px) 24px}
-body.tr .band{animation:band .7s steps(10) both}
-body.tr .crt{animation:pull .7s steps(10) both}
-
-.view{display:none;flex:1;flex-direction:column;animation:pop .4s steps(4)}
-.view.on{display:flex}
-
-/* ───── 메인(글자 없음, 꾸밈 요소만) ───── */
-.stage{position:relative;flex:1;min-height:300px}
-.track{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-.deco i{position:absolute;width:12px;animation:blink 2.4s steps(2) infinite;opacity:.85}
-.corner{position:absolute;width:26px;height:26px;border:0 solid var(--blue);opacity:.45;z-index:3}
-.corner.a{left:3%;top:3%;border-width:4px 0 0 4px}.corner.b{right:3%;top:3%;border-width:4px 4px 0 0}
-.corner.c{left:3%;bottom:3%;border-width:0 0 4px 4px}.corner.d{right:3%;bottom:3%;border-width:0 4px 4px 0}
-.cd{position:absolute;left:0;top:0;width:clamp(88px,19vw,184px);background:none;border:0;padding:0;will-change:transform;touch-action:manipulation}
-.cd .disc{position:absolute;left:50%;top:-22%;width:74%;margin-left:-37%;z-index:0;transition:top .3s steps(4)}
-.cd.on .disc{top:-48%}
-.cd.on .disc svg{animation:spin 2.4s steps(12) infinite}
-.cd .face{position:relative;z-index:1;aspect-ratio:1/1;padding:clamp(8px,1.3vw,14px) clamp(8px,1.2vw,13px);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#262b33;border:0}
-.cd .face::before{content:"";position:absolute;right:8px;top:8px;width:7px;height:7px;background:var(--c);box-shadow:-4px 4px 0 rgba(255,255,255,.18)}
-.cd .face::after{content:"";position:absolute;left:12px;right:8px;top:25px;height:2px;background:var(--c);opacity:.32}
-.cd .spine{position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--c)}
-.cd .case-top{display:flex;align-items:center;justify-content:flex-start;gap:6px;margin-left:4px;color:var(--c);font-size:clamp(8px,.9vw,10px);line-height:1.3;opacity:.95}
-.cd .case-top i{display:inline-block;width:5px;height:5px;background:var(--c);box-shadow:3px 3px 0 rgba(255,255,255,.18)}
-.cd .art{display:block;width:42%;max-width:76px;margin:12px auto 2px;opacity:.9}
-.cd .case-name{display:block;position:relative;z-index:1;margin:2px 0 1px;text-align:center;color:var(--ink);font-size:clamp(9px,1.1vw,12px);line-height:1.35;overflow-wrap:anywhere}
-.cd .case-sticker{position:absolute;right:10px;bottom:12px;width:17px;height:17px;display:block;transform:rotate(7deg);opacity:.9}
-.cd .case-sticker svg{width:100%;height:100%}
-.cd .dots{display:flex;gap:5px;justify-content:center;margin-top:3px}
-.cd .dots i{width:5px;height:5px;background:var(--c);opacity:.9}
-.cd.on .face{box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c),0 0 25px color-mix(in srgb,var(--c) 35%,transparent)}
-.selected-label{position:relative;z-index:4;min-height:46px;display:flex;justify-content:center;align-items:center;gap:10px;padding:7px 12px;margin:1px auto 0;max-width:min(420px,100%);color:var(--ink);text-align:left}
-.selected-label::before,.selected-label::after{content:"";width:18px;height:4px;background:var(--c,var(--blue));opacity:.8;box-shadow:0 5px 0 color-mix(in srgb,var(--c,var(--blue)) 45%,transparent)}
-.selected-label .label-pixel{width:10px;height:10px;background:var(--c,var(--blue));box-shadow:4px 4px 0 rgba(255,255,255,.12);flex:none}
-.selected-label .label-copy{display:flex;align-items:baseline;justify-content:center;gap:10px;flex-wrap:wrap}
-.selected-label strong{font-family:var(--font-pixel);font-weight:400;font-size:clamp(14px,1.6vw,17px);color:var(--c,var(--blue));line-height:1.5}
-.selected-label small{font-family:var(--font-body);font-size:11px;color:var(--dim);line-height:1.5}
-
-.ctrl{position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:10px}
-.mid{display:flex;align-items:center;gap:clamp(12px,3vw,26px)}
-.ib{background:none;border:0;padding:8px;width:34px;opacity:.75;transition:transform .15s steps(2)}
-.ib:hover{opacity:1;transform:scale(1.15)}
-.run{width:58px;padding:13px 14px 13px 17px;border:0;--c:var(--blue);background:var(--c);margin:4px;
-  box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c),6px 10px 0 #05060a;transition:transform .15s steps(2)}
-.run:hover{transform:translate(-2px,-2px)}
-.run:active{transform:translate(4px,6px);box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c)}
-.pager{display:flex;gap:7px;position:absolute;left:50%;bottom:-18px;transform:translateX(-50%)}
-.pager i{width:7px;height:7px;background:#343943}.pager i.on{background:var(--c,var(--blue))}
-.sideL{display:flex;align-items:center;gap:8px;width:90px}
-.sideL b{width:9px;height:16px;background:var(--blue);animation:blink 1s steps(2) infinite}
-.sideL i{width:5px;height:5px;background:#343943}
-.sideR{display:flex;align-items:flex-end;gap:3px;height:18px;width:90px;justify-content:flex-end}
-.sideR i{width:5px;background:var(--blue);animation:eq .7s steps(4) infinite alternate}
-.sideR i:nth-child(2){animation-delay:-.3s}.sideR i:nth-child(3){animation-delay:-.1s}.sideR i:nth-child(4){animation-delay:-.5s}
-
-/* ───── 내부 화면: 정돈된 빈티지 디지털 아카이브 ───── */
-.head{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:14px;padding:2px 0 18px;border-bottom:1px solid var(--line)}
-.head .ic{width:34px;flex:none;opacity:.9}
-.head-copy{min-width:0}
-.head .eyebrow{display:block;margin-bottom:3px;color:var(--dim);font-size:10px;letter-spacing:.11em;line-height:1.4}
-.head h2{margin:0;font-size:clamp(22px,3vw,32px);line-height:1.2;letter-spacing:-.04em;text-shadow:2px 2px 0 #0b0c0f;overflow-wrap:anywhere}
-.head p{margin:5px 0 0;color:var(--dim);font-size:12px;line-height:1.55}
-.back{background:transparent;border:1px solid #4a515b;padding:9px 12px;color:var(--ink);white-space:nowrap;transition:background .18s,border-color .18s,color .18s;min-height:42px}
-.back:hover{background:var(--blue);border-color:var(--blue);color:var(--bg)}
-.body{flex:1;min-width:0;padding:clamp(16px,2.6vw,28px) 0 0}
-.foot{margin-top:24px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#747c86;font-size:11px;letter-spacing:.02em}
-.inner-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:22px;padding:clamp(18px,3vw,30px);margin:0 0 24px;border:1px solid var(--line);background:linear-gradient(115deg,rgba(113,135,155,.09),transparent 58%),#1b1e23;overflow:hidden}
-.inner-hero::after{content:"";position:absolute;right:-38px;top:-64px;width:190px;height:190px;border:1px solid rgba(113,135,155,.15);border-radius:50%;box-shadow:0 0 0 18px rgba(113,135,155,.025),0 0 0 38px rgba(113,135,155,.02);pointer-events:none}
-.hero-copy{position:relative;z-index:1;min-width:0}
-.eyebrow{display:block;color:var(--blue);font-size:10px;letter-spacing:.14em;line-height:1.5;text-transform:uppercase}
-.inner-hero h3{font-size:clamp(18px,2.5vw,25px);font-weight:400;line-height:1.35;margin:7px 0 6px;letter-spacing:-.025em;overflow-wrap:anywhere}
-.inner-hero p{color:var(--dim);font-size:12px;line-height:1.7;max-width:560px;margin:0}
-.hero-mark{position:relative;z-index:1;min-width:78px;text-align:right;border-left:1px solid var(--line);padding-left:18px}
-.hero-mark strong{display:block;font-size:clamp(27px,4vw,42px);font-weight:400;color:var(--c,var(--blue));line-height:1}
-.hero-mark span{display:block;margin-top:8px;color:var(--dim);font-size:9px;letter-spacing:.12em}
-.section-line{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 12px;color:var(--dim);font-size:10px;letter-spacing:.12em}
-.section-line strong{font-weight:400;color:var(--ink)}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.plat{position:relative;display:grid;grid-template-columns:30px 46px minmax(0,1fr) auto;gap:12px;align-items:center;min-width:0;min-height:104px;padding:16px 18px;text-decoration:none;background:linear-gradient(145deg,#22262d,#1a1d22);border:1px solid #343a43;transition:transform .2s,border-color .2s,background .2s}
-.plat:hover{transform:translateY(-3px);background:#242932;border-color:var(--c)}
-.plat:focus-visible{outline:2px dashed var(--c);outline-offset:3px}
-.plat-num{align-self:start;padding-top:4px;color:#747d88;font-size:10px;letter-spacing:.08em}
-.plat .ic{width:38px;flex:none;padding:7px;background:rgba(255,255,255,.025);border:1px solid #343a43}
-.plat .copy{min-width:0}
-.plat strong{display:block;font-weight:400;font-size:15px;line-height:1.45;color:var(--c);overflow-wrap:anywhere}
-.plat .copy span{display:block;color:var(--dim);font-size:11px;line-height:1.55;margin-top:4px;overflow-wrap:anywhere}
-.plat em{display:block;font-style:normal;color:#8e96a0;font-size:10px;letter-spacing:.05em;white-space:nowrap;align-self:end}
-.plat em::after{content:' ↗';color:var(--c)}
-
-/* story section: index tabs above a single spacious reading panel */
-.story-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
-.story-item{position:relative;display:grid;grid-template-columns:30px minmax(0,1fr);align-items:start;gap:10px;text-align:left;min-width:0;padding:14px 13px;background:#1b1e23;color:var(--dim);border:1px solid var(--line);transition:border-color .18s,background .18s,color .18s;min-height:82px}
-.story-item:hover{border-color:#697b8d;color:var(--ink)}
-.story-item.on{border-color:var(--c);background:linear-gradient(135deg,color-mix(in srgb,var(--c) 10%,#1b1e23),#1b1e23);color:var(--ink)}
-.story-item .num{color:var(--c);font-size:11px;line-height:1.6}
-.story-item strong{display:block;font-size:12px;font-weight:400;color:var(--ink);line-height:1.5;overflow-wrap:anywhere}
-.story-item small{display:block;color:var(--dim);font-size:10px;line-height:1.5;margin-top:4px;overflow-wrap:anywhere}
-.story-paper{position:relative;min-width:0;padding:clamp(20px,4vw,42px);border:1px solid var(--line);background:linear-gradient(90deg,rgba(113,135,155,.045) 1px,transparent 1px),linear-gradient(#1c1f24,#191c21);background-size:34px 100%,auto;animation:pop .25s steps(4)}
-.story-paper::before{content:"";position:absolute;top:0;bottom:0;left:0;width:3px;background:var(--c,var(--blue));opacity:.7}
-.story-paper-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--line)}
-.story-paper .tag{color:var(--c);font-size:11px;letter-spacing:.08em}
-.story-paper .date{color:var(--dim);font-size:11px}
-.story-paper h3{max-width:780px;margin:22px 0 20px;font-size:clamp(23px,4vw,38px);line-height:1.35;letter-spacing:-.04em;font-weight:400;overflow-wrap:anywhere}
-.story-copy{max-width:720px;color:#c3c4c1;font-size:13px;line-height:2;word-break:keep-all}
-.story-copy p{margin:0 0 18px}
-.story-paper-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:26px;padding-top:12px;border-top:1px dashed #3a414a;color:#727b87;font-size:10px;letter-spacing:.08em}
-
-/* image archive: folder tabs and a calm, consistent tile grid */
-.album-tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 3px 14px;margin-bottom:18px;border-bottom:1px solid var(--line);scrollbar-width:thin;scrollbar-color:#4a5360 transparent}
-.album-tab{flex:none;min-height:42px;padding:9px 13px;color:var(--dim);background:#1b1e23;border:1px solid #343a43;font-size:11px;white-space:nowrap;transition:color .18s,border-color .18s,background .18s}
-.album-tab:hover{color:var(--ink);border-color:#677b8e}
-.album-tab.on{color:var(--bg);background:var(--blue);border-color:var(--blue)}
-.album-tab small{display:inline-block;margin-left:8px;opacity:.7;font-size:10px}
-.masonry{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
-.shot{display:block;position:relative;width:100%;min-width:0;margin:0;padding:0;overflow:hidden;text-align:left;background:#1d2025;border:1px solid #343a43;transition:transform .2s,border-color .2s,background .2s}
-.shot:hover{transform:translateY(-3px);border-color:var(--c);background:#23272e}
-.shot-visual{display:block;position:relative;background:#171a1f;overflow:hidden}
-.shot img{display:block;width:100%;height:auto;aspect-ratio:var(--ratio,4/3);object-fit:cover;transition:transform .35s;filter:saturate(.78)}
-.shot:hover img{transform:scale(1.025)}
-.shot .ph{display:grid;place-items:center;align-content:center;gap:10px;width:100%;aspect-ratio:var(--ratio,4/3);color:var(--dim);font-size:10px;letter-spacing:.08em;text-align:center;padding:12px;background:linear-gradient(135deg,rgba(113,135,155,.08),transparent 60%),repeating-linear-gradient(135deg,#1c2026 0 12px,#1a1d22 12px 24px)}
-.shot .ph svg{width:34px;color:var(--c);opacity:.8}
-.shot .ph-label{display:block;line-height:1.6}
-.shot-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;background:#20242a;border-top:1px solid #343a43}
-.shot .cap{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#c5c5c0}
-.shot-num{flex:none;color:#79828d;font-size:9px;letter-spacing:.06em}
-#lb{position:fixed;inset:0;z-index:100;background:rgba(10,11,14,.94);display:none;place-items:center;padding:24px}
-#lb.on{display:grid}#lb img{max-width:min(100%,1100px);max-height:82vh;display:block;border:1px solid #4a515b}#lb p{text-align:center;color:var(--dim);font-size:12px;margin:12px 0 0}
-@keyframes blink{50%{opacity:0}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes jit{0%{transform:translate(0,0)}25%{transform:translate(1%,-1%)}50%{transform:translate(-1%,1%)}75%{transform:translate(1%,1%)}}
-@keyframes sweep{0%,70%,100%{transform:translateX(-70%);opacity:0}78%{opacity:1}91%{transform:translateX(70%);opacity:.4}}
-@keyframes pulse{50%{opacity:.35}}
-@keyframes eq{from{height:4px}to{height:18px}}
-@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@keyframes dust{from{opacity:1;transform:translate(0,0)}to{opacity:0;transform:translate(var(--dx),var(--dy))}}
-@keyframes toast{0%{opacity:0}10%,80%{opacity:1}100%{opacity:0}}
-@keyframes band{0%{opacity:0;transform:scaleY(1)}26%{opacity:.95;transform:scaleY(.7)}65%{opacity:.3;transform:scaleY(1.15)}100%{opacity:0}}
-@keyframes pull{0%{filter:brightness(1)}30%{transform:perspective(1300px) scale(.96,.82);filter:brightness(1.4)}62%{transform:perspective(1300px) scale(1.012,.99);filter:brightness(.9)}100%{filter:brightness(1)}}
-@media(max-width:900px){
-  :root{--h:clamp(480px,74svh,700px)}
-  .monitor{width:98vw;margin:2vh auto;border-radius:26px;padding:12px 12px 64px}
-  .chin{height:64px;padding:0 28px}
-  .crt{border-radius:7% / 8%}
-  .content{padding:clamp(20px,4vw,34px)}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .plat{grid-template-columns:23px 38px minmax(0,1fr);gap:10px;padding:13px}
-  .plat em{grid-column:3;justify-self:start;margin-top:2px}
-  .masonry{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:600px){
-  :root{--h:clamp(470px,calc(100svh - 82px),680px)}
-  body{font-size:13px}
-  .monitor{width:100%;min-height:100svh;margin:0;border-radius:0;padding:7px 7px 50px;box-shadow:none}
-  .monitor::before{inset:3px;border-radius:0}
-  .chin{height:50px;padding:0 16px;gap:8px}
-  .tray,.vents{display:none}
-  .stk{width:42px}
-  .knob{width:19px}
-  .crt{min-height:var(--h);border-radius:6% / 4%;transform:none}
-  .content{min-height:var(--h);padding:20px 14px}
-  body.flat .content{padding:17px 12px 20px}
-  .stage{min-height:clamp(300px,43vh,420px)}
-  .cd{width:clamp(84px,25vw,128px)}
-  .cd .face{padding:10px 9px 9px 14px}
-  .cd .spine{width:5px}
-  .cd .dots{gap:4px}
-  .cd .dots i{width:5px;height:5px}
-  .ctrl{gap:6px;padding-top:12px}
-  .mid{gap:clamp(7px,2.5vw,14px)}
-  .ib{width:30px;padding:5px}
-  .run{width:48px;padding:10px 11px 10px 14px}
-  .sideL,.sideR{width:28px;gap:4px}
-  .sideL i:nth-of-type(n+2),.sideR i:nth-child(n+4){display:none}
-  .head{grid-template-columns:30px minmax(0,1fr);gap:10px;padding-bottom:14px}
-  .head .ic{width:28px}
-  .head h2{font-size:clamp(21px,7vw,29px)}
-  .head p{font-size:11px}
-  .back{grid-column:1/-1;justify-self:start;margin:3px 0 0;padding:8px 11px;font-size:11px}
-  .body{padding-top:15px}
-  .inner-hero{grid-template-columns:minmax(0,1fr) 58px;gap:10px;padding:16px 13px;margin-bottom:18px}
-  .inner-hero h3{font-size:19px}
-  .inner-hero p{font-size:11px}
-  .hero-mark{min-width:0;padding-left:10px}
-  .hero-mark strong{font-size:27px}
-  .hero-mark span{font-size:8px;letter-spacing:.04em}
-  .section-line{font-size:9px}
-  .grid{grid-template-columns:1fr;gap:9px}
-  .plat{min-height:86px;grid-template-columns:22px 36px minmax(0,1fr);padding:11px 12px;gap:9px}
-  .plat .ic{width:34px;padding:6px}
-  .plat strong{font-size:13px}
-  .plat .copy span{font-size:10px}
-  .plat em{font-size:9px}
-  .story-tabs{grid-template-columns:1fr;gap:7px;margin-bottom:12px}
-  .story-item{grid-template-columns:28px minmax(0,1fr);min-height:0;padding:10px 12px}
-  .story-item small{margin-top:2px}
-  .story-paper{padding:20px 16px}
-  .story-paper h3{font-size:25px;margin:19px 0 17px}
-  .story-copy{font-size:12px;line-height:1.9;word-break:normal}
-  .story-paper-bottom{font-size:9px}
-  .album-tabs{gap:6px;margin-bottom:14px}
-  .album-tab{padding:8px 10px;font-size:10px}
-  .masonry{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  .shot-meta{padding:7px 7px;align-items:flex-start;flex-direction:column;gap:3px}
-  .shot .cap{font-size:10px;width:100%}
-  .shot-num{font-size:8px}
-  .foot{font-size:10px;gap:6px}
-}
-@media(max-width:360px){
-  .masonry{grid-template-columns:1fr}
-  .hero-mark{display:none}
-  .inner-hero{grid-template-columns:1fr}
-  .sideL,.sideR{display:none}
-}
-@media(pointer:coarse){.trail{display:none}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-
-/* ───── 더 단순하고 조금 엉뚱한 내부 화면 ───── */
-.head{display:flex;align-items:center;gap:12px;padding:0 0 14px;border-bottom:2px dashed var(--line)}
-.head .ic{width:34px;opacity:1;image-rendering:pixelated}
-.head h2{margin:0;font-size:clamp(22px,3vw,31px);line-height:1.25;letter-spacing:0;text-shadow:2px 2px 0 #101218}
-.head .eyebrow{font-size:10px;letter-spacing:0;line-height:1.4;color:var(--dim)}
-.head p{margin:5px 0 0;color:#b4b9c1;font-size:12px;line-height:1.6}
-.back{margin-left:auto;background:var(--bg2);border:0;padding:9px 12px;color:var(--ink);white-space:nowrap;min-height:40px;box-shadow:3px 0 0 var(--line),-3px 0 0 var(--line),0 3px 0 var(--line),0 -3px 0 var(--line);transition:transform .12s steps(2),background .12s steps(2);font-size:11px}
-.back:hover{background:var(--c,var(--blue));color:#20232a;transform:translate(-2px,-2px)}
-.back:active{transform:translate(2px,2px)}
-.body{padding:16px 0 0}
-.inner-note{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 2px 17px;padding:0 0 12px;border-bottom:1px dotted var(--line);color:#c3c6ca;font-size:12px}
-.inner-note .note-pixel{display:inline-block;width:8px;height:8px;background:var(--c,var(--blue));box-shadow:4px 4px 0 color-mix(in srgb,var(--c,var(--blue)) 35%,transparent);margin-right:3px}
-.inner-note strong{margin-left:auto;font-family:var(--font-pixel);font-weight:400;color:var(--c,var(--blue));font-size:11px}
-.section-line{display:none}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.plat{position:relative;display:grid;grid-template-columns:24px 36px minmax(0,1fr) auto;gap:10px;align-items:center;min-width:0;min-height:76px;padding:12px 13px;text-decoration:none;background:#242932;border:0;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217;transition:transform .12s steps(2),background .12s steps(2),box-shadow .12s steps(2)}
-.plat:hover{transform:translate(-2px,-2px);background:#303641;box-shadow:3px 0 0 var(--c),-3px 0 0 var(--c),0 3px 0 var(--c),0 -3px 0 var(--c)}
-.plat-num{align-self:center;padding:0;color:#8993a1;font-size:10px}
-.plat .ic{width:34px;flex:none;padding:4px;background:transparent;border:0}
-.plat strong{display:block;font-family:var(--font-pixel);font-weight:400;font-size:13px;line-height:1.5;color:var(--c);overflow-wrap:anywhere}
-.plat .copy span{display:block;color:#b3b7be;font-size:11px;line-height:1.5;margin-top:3px;overflow-wrap:anywhere}
-.plat em{display:block;font-style:normal;color:var(--dim);font-size:10px;white-space:nowrap;align-self:center;letter-spacing:0}
-.plat em::after{content:' ▶';color:var(--c)}
-.story-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 17px}
-.story-item{position:relative;display:flex;align-items:center;gap:8px;text-align:left;min-width:0;min-height:0;padding:9px 11px;background:#252a32;color:var(--dim);border:0;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217;transition:transform .12s steps(2),background .12s steps(2),color .12s steps(2)}
-.story-item:hover{transform:translateY(-2px);color:var(--ink)}
-.story-item.on{background:var(--c);color:#20232a;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217}
-.story-item .num{color:var(--c);font-size:10px;line-height:1.5}
-.story-item.on .num,.story-item.on strong,.story-item.on small{color:#20232a}
-.story-item strong{display:block;font-family:var(--font-pixel);font-size:11px;font-weight:400;color:var(--ink);line-height:1.5;overflow-wrap:anywhere}
-.story-item small{display:block;color:#a7adb7;font-family:var(--font-body);font-size:10px;line-height:1.45;margin-top:2px;overflow-wrap:anywhere}
-.story-paper{position:relative;min-width:0;padding:20px 6px 18px 17px;border:0;border-top:2px dashed var(--line);border-bottom:2px dashed var(--line);background:transparent;animation:pop .25s steps(4)}
-.story-paper::before{content:"";position:absolute;top:20px;bottom:20px;left:0;width:5px;background:var(--c,var(--blue));box-shadow:4px 4px 0 color-mix(in srgb,var(--c,var(--blue)) 28%,transparent);opacity:1}
-.story-paper-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px dotted var(--line)}
-.story-paper .tag{color:var(--c);font-size:11px;letter-spacing:0}
-.story-paper .date{color:#a0a6af;font-family:var(--font-body);font-size:10px}
-.story-paper h3{max-width:780px;margin:17px 0 14px;font-family:var(--font-pixel);font-size:clamp(19px,3vw,27px);line-height:1.5;letter-spacing:0;font-weight:400;color:var(--ink);overflow-wrap:anywhere}
-.story-copy{max-width:720px;color:#d0d0cb;font-family:var(--font-body);font-size:13px;line-height:1.95;word-break:keep-all}
-.story-copy p{margin:0 0 14px}
-.story-paper-bottom{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:9px;border-top:1px dotted var(--line);color:#9098a4;font-size:10px;letter-spacing:0}
-.album-tabs{display:flex;gap:8px;overflow-x:auto;padding:3px 4px 12px;margin-bottom:15px;border-bottom:1px dotted var(--line);scrollbar-width:thin;scrollbar-color:#5a6574 transparent}
-.album-tab{flex:none;min-height:37px;padding:8px 12px;color:#b6bbc3;background:#252a32;border:0;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217;font-size:10px;white-space:nowrap;transition:transform .12s steps(2),color .12s steps(2),background .12s steps(2)}
-.album-tab:hover{transform:translateY(-2px);color:var(--ink)}
-.album-tab.on{color:#20232a;background:var(--c);box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217}
-.album-tab small{display:inline-block;margin-left:6px;opacity:.8;font-size:9px}
-.masonry{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
-.shot{display:block;position:relative;width:100%;min-width:0;margin:0;padding:0;overflow:hidden;text-align:left;background:transparent;border:0;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217;transition:transform .12s steps(2),box-shadow .12s steps(2)}
-.shot:hover{transform:translate(-2px,-2px);box-shadow:3px 0 0 var(--c),-3px 0 0 var(--c),0 3px 0 var(--c),0 -3px 0 var(--c)}
-.shot-visual{display:block;position:relative;background:#252a32;overflow:hidden}
-.shot img{display:block;width:100%;height:auto;aspect-ratio:var(--ratio,4/3);object-fit:cover;transition:transform .25s steps(4);filter:saturate(.9)}
-.shot:hover img{transform:scale(1.035)}
-.shot .ph{display:grid;place-items:center;align-content:center;gap:8px;width:100%;aspect-ratio:var(--ratio,4/3);color:#c1c4c8;font-family:var(--font-pixel);font-size:10px;letter-spacing:0;text-align:center;padding:12px;background:#252a32;border:2px dashed color-mix(in srgb,var(--c) 62%,#252a32)}
-.shot .ph svg{width:32px;color:var(--c);opacity:1}
-.shot .ph-label{display:block;line-height:1.6}
-.shot-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 1px 2px;background:transparent;border-top:0}
-.shot .cap{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-body);font-size:11px;color:#dedbd2}
-.shot-num{flex:none;color:#9da5af;font-size:9px;letter-spacing:0}
-.foot{margin-top:18px;padding-top:10px;border-top:2px dotted var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#969da7;font-size:10px;letter-spacing:0}
-/* 모니터와 시디 케이스를 조금 장난감처럼 */
-.monitor{border-radius:42px;background:linear-gradient(145deg,#505968 0%,#282d35 25%,#39414d 58%,#171a20 91%);box-shadow:0 40px 110px #000,inset 0 3px 2px rgba(255,255,255,.22),inset 0 -7px 15px #000,inset 0 0 0 2px rgba(255,255,255,.035)}
-.monitor::before{inset:7px;border-radius:35px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.035),inset 0 0 26px rgba(0,0,0,.68)}
-.chin-name{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:4px 11px;color:#b8c1ce;background:#282d35;border:0;box-shadow:3px 0 0 #171a20,-3px 0 0 #171a20,0 3px 0 #171a20,0 -3px 0 #171a20;font-family:var(--font-pixel);font-size:11px;letter-spacing:.05em;white-space:nowrap}
-.chin-name i{display:inline-block;width:6px;height:6px;margin-left:4px;background:var(--butter);box-shadow:0 0 6px color-mix(in srgb,var(--butter) 70%,transparent);animation:blink 1.5s steps(2) infinite}
-.tray{height:15px;background:#0a0c10;box-shadow:inset 0 3px 4px #000,0 1px 0 rgba(255,255,255,.18)}
-.vents{height:20px;opacity:.9}
-.knob{box-shadow:0 4px 0 #101217,0 5px 0 #050609,inset 0 2px 2px rgba(255,255,255,.3);border:2px solid #252a32}
-.cd .face{box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217}
-.cd.on .face{transform:translateY(-2px);background:#2d333d;box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c),0 0 18px color-mix(in srgb,var(--c) 30%,transparent)}
-@media(max-width:900px){
-  .chin-name{font-size:10px}
-  .plat{grid-template-columns:20px 32px minmax(0,1fr);gap:8px}
-  .plat em{grid-column:3}
-}
-@media(max-width:600px){
-  .monitor{border-radius:0;background:linear-gradient(145deg,#414956 0%,#232831 48%,#171a20 92%)}
-  .monitor::before{border-radius:0}
-  .chin-name{padding:3px 8px;font-size:9px}
-  .head{gap:9px}
-  .head .ic{width:28px}
-  .back{grid-column:auto;margin:0 0 0 auto;justify-self:auto;padding:7px 9px;font-size:10px;min-height:36px}
-  .body{padding-top:13px}
-  .inner-note{font-size:11px;margin-bottom:14px}
-  .grid{grid-template-columns:1fr;gap:9px}
-  .plat{min-height:67px;padding:10px 11px;grid-template-columns:18px 31px minmax(0,1fr) auto;gap:7px}
-  .plat em{grid-column:auto;align-self:center;font-size:9px}
-  .plat strong{font-size:12px}
-  .plat .copy span{font-size:10px}
-  .story-tabs{gap:7px}
-  .story-item{flex:1 1 42%;padding:8px 9px}
-  .story-paper{padding:16px 4px 15px 13px}
-  .story-paper h3{font-size:21px;margin:14px 0 12px}
-  .story-copy{font-size:12px;line-height:1.9}
-  .album-tabs{gap:7px;margin-bottom:12px}
-  .masonry{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
-  .shot .cap{font-size:10px}
-}
-@media(max-width:360px){
-  .head{display:grid;grid-template-columns:27px minmax(0,1fr);}
-  .head .back{grid-column:1/-1;justify-self:start;margin:2px 0 0}
-  .plat{grid-template-columns:18px 29px minmax(0,1fr)}
-  .plat em{grid-column:3}
-  .selected-label small{display:none}
-}
-
-
-
-/* ───── 이번 조정: 가장자리만 남긴 프레임 · 단순한 시디 · 느린 픽셀 조작 ───── */
-:root{--h:clamp(500px,calc(100svh - 24px),980px)}
-.monitor{
-  width:100%;min-height:100svh;margin:0;padding:clamp(6px,.9vw,12px);
-  border-radius:0;overflow:hidden;
-  background:linear-gradient(135deg,#303743 0%,#171a20 24%,#252b35 66%,#101217 100%);
-  box-shadow:inset 0 0 0 clamp(4px,.75vw,9px) #272e38,inset 0 0 0 clamp(7px,1.2vw,14px) #0a0c10;
-}
-.monitor::before{inset:0;border-radius:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),inset 0 0 0 4px rgba(5,7,10,.7)}
-.chin{display:none}
-.crt{min-height:var(--h);border-radius:9% / 11%;border-width:2px;}
-.content{min-height:var(--h);padding:clamp(20px,4.8vw,50px) clamp(18px,6vw,70px)}
-body.flat .content{padding:clamp(18px,3vw,40px) clamp(16px,4vw,54px) 24px}
-
-/* 선택한 이름 외에는 케이스 표면에 장식을 넣지 않아요. */
-.cd{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
-.stage{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+/* 홈: 게임 고르기 */
+.scene.home{position:relative;overflow:hidden}
+.deco{position:absolute;inset:0;overflow:hidden;pointer-events:none;background-color:var(--b5);
+  /* 배경 격자는 원래처럼 일정하게 이동하되, 선과 배경의 대비를 낮춰 장식 뒤로 물립니다. */
+  background-image:
+    linear-gradient(90deg,color-mix(in srgb,var(--dot) 24%,transparent) 0 1px,transparent 1px 100%),
+    linear-gradient(0deg,color-mix(in srgb,var(--dot) 24%,transparent) 0 1px,transparent 1px 100%);
+  background-size:48px 48px,48px 48px;
+  background-position:0 0,0 0;
+  animation:gm 12s steps(8) infinite}
+@keyframes gm{to{background-position:48px 48px,48px 48px}}
+/* 상단의 긴 삼색 띠 대신, 리듬 표시처럼 짧게 어긋난 세 개의 막대 */
+.deco::after{content:"";position:absolute;top:24px;right:clamp(18px,4vw,44px);width:34px;height:4px;background:var(--g1);box-shadow:-11px 8px 0 var(--g2),-22px 16px 0 var(--g3);opacity:.22;transform:rotate(-12deg);animation:accentBeat 7.2s steps(1,end) infinite}
+@keyframes accentBeat{0%,83%,100%{opacity:.16;transform:translateY(0) rotate(-12deg)}86%{opacity:.28;transform:translateY(-3px) rotate(-12deg)}89%{opacity:.16;transform:translateY(0) rotate(-12deg)}}
+.deco .sh{position:absolute;bottom:-80px;color:var(--c);opacity:.43;animation-name:float;animation-timing-function:steps(30);animation-iteration-count:infinite}
+.deco .sh svg{width:100%;height:auto;overflow:visible}
+.screen.night .deco .sh{opacity:.58}
+.deco .sh .form{opacity:0;animation-duration:var(--swap-duration,9s);animation-delay:var(--swap-delay,0s);animation-timing-function:steps(1,end);animation-iteration-count:infinite}
+.deco .sh .form-a{animation-name:formA}
+.deco .sh .form-b{animation-name:formB}
+.deco .sh .form-c{animation-name:formC}
+@keyframes formA{0%,32%{opacity:1}33%,100%{opacity:0}}
+@keyframes formB{0%,32%{opacity:0}33%,65%{opacity:1}66%,100%{opacity:0}}
+@keyframes formC{0%,65%{opacity:0}66%,100%{opacity:1}}
+@keyframes float{0%{transform:translate(0,0)}25%{transform:translate(14px,-225px)}50%{transform:translate(-10px,-450px)}75%{transform:translate(12px,-675px)}100%{transform:translate(0,-900px)}}
+.stage{position:relative;flex:1;min-height:270px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .stage.dragging{cursor:grabbing}
-.stage.dragging .cd{cursor:grabbing;transition:none}
-.cd .face{
-  display:grid;place-items:center;aspect-ratio:1/1;min-height:0;
-  padding:10px;background:#262c35;border:0;overflow:hidden;
-  box-shadow:3px 0 0 #0d1015,-3px 0 0 #0d1015,0 3px 0 #0d1015,0 -3px 0 #0d1015;
-  transition:transform .13s steps(2),background .13s steps(2),box-shadow .13s steps(2);
-}
-.cd .face::before,.cd .face::after{content:none}
-.cd .case-name{
-  display:block;position:relative;z-index:1;width:100%;margin:0;text-align:center;
-  color:var(--ink);font-family:var(--font-pixel);font-size:clamp(12px,1.3vw,15px);
-  line-height:1.55;overflow-wrap:anywhere;word-break:keep-all;
-}
-.cd.on .face{background:#303744;box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c),0 0 20px color-mix(in srgb,var(--c) 30%,transparent)}
-.cd.is-grabbed .face,.stage.dragging .cd.is-grabbed .face{transform:translateY(4px) scale(.975);filter:brightness(1.12)}
-.selected-label{min-height:42px;padding:5px 10px}
-.selected-label .label-copy{gap:0}
-.selected-label strong{font-size:clamp(15px,1.6vw,18px);line-height:1.5}
-.selected-label small{display:none}
+.track{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 
-/* 작은 칸에서도 도트 글자가 뭉개지지 않도록 최소 크기를 올려요. */
-.head .eyebrow,.eyebrow{font-size:11px;letter-spacing:0}
-.plat-num,.plat em,.story-item .num,.story-paper .tag,.story-paper-bottom,.album-tab,.shot-num{font-size:11px}
-.plat .copy span,.story-item small,.shot .cap,.head p,.inner-note,.story-copy{font-size:max(12px, .86em)}
-.foot{font-size:11px}
-
-/* 도트 블라인드 전환: 짧고 깨끗하게 닫혔다가 열리며 잔상이 남지 않아요. */
-#wipe{position:fixed;inset:0;z-index:110;display:flex;pointer-events:none;overflow:hidden}
-#wipe i{display:block;flex:1;min-width:0;background:#1b1e24;border:0;box-shadow:none!important;transform:scaleY(0);transform-origin:top;will-change:transform}
-#wipe.in i{animation:wipeIn .28s steps(4) forwards}
-#wipe.out i{transform:scaleY(1);transform-origin:bottom;animation:wipeOut .28s steps(4) forwards}
-@keyframes wipeIn{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-@keyframes wipeOut{from{transform:scaleY(1)}to{transform:scaleY(0)}}
-@media(max-width:900px){
-  .monitor{width:100%;margin:0;padding:8px;border-radius:0}
-  .monitor::before{inset:0;border-radius:0}
-  .crt{border-radius:7% / 8%}
-  .content{padding:24px 18px}
-  .cd{width:clamp(88px,20vw,150px)}
-}
-@media(max-width:600px){
-  :root{--h:clamp(450px,calc(100svh - 16px),780px)}
-  .monitor{width:100%;min-height:100svh;margin:0;padding:6px;border-radius:0}
-  .crt{min-height:var(--h);border-radius:6% / 5%;transform:none}
-  .content{min-height:var(--h);padding:22px 14px}
-  body.flat .content{padding:17px 12px 20px}
-  .stage{min-height:clamp(300px,43vh,420px)}
-  .cd{width:clamp(84px,25vw,128px)}
-  .cd .face{padding:8px}
-  .cd .case-name{font-size:12px;line-height:1.5}
-  .selected-label strong{font-size:15px}
-  .head .eyebrow,.eyebrow{font-size:11px}
-  .plat-num,.plat em,.story-item .num,.album-tab,.shot-num,.foot{font-size:11px}
-}
-@media(prefers-reduced-motion:reduce){#wipe.in i,#wipe.out i{animation-duration:.01ms!important;animation-delay:0ms!important}}
-
-
-/* 부가 표기도 너무 작아지지 않도록 마지막으로 하한선을 맞춰요. */
-.hero-mark span,.section-line,.album-tab small,.story-paper .date,.shot .ph,.back{font-size:11px}
-@media(max-width:600px){.hero-mark span,.section-line,.album-tab small,.story-paper .date,.shot .ph,.back{font-size:11px}}
-
-
-
-/* ───── 최종 다듬기: 내용은 복구하고, 과한 상자·반짝임은 덜어내요 ───── */
-.grain{opacity:.025!important;animation:none!important}
-.noise{opacity:.025!important;animation:none!important}
-.crt::after{display:none!important}
-.scan{opacity:.23!important;mix-blend-mode:normal}
-.deco i{animation:none!important;opacity:.48!important}
-.corner{display:none!important}
-.band{display:none!important}
-#wipe i{box-shadow:none!important;border:0!important}
-#wipe.in i{animation:wipeIn .28s steps(4) forwards}
-#wipe.out i{animation:wipeOut .28s steps(4) forwards}
-
-/* 내부 화면이 비지 않도록 최소 높이를 확보하되, 내용이 늘면 함께 늘어나요. */
-body.flat .crt{height:auto;min-height:var(--h);overflow:visible}
-body.flat .content{height:auto;min-height:var(--h);filter:none}
-body.flat #v-inner{min-height:var(--h);flex:1}
-body.flat .body{display:block;min-height:clamp(300px,48vh,600px);flex:1}
-body.flat .head{flex-shrink:0}
-
-/* 내부의 숫자표와 설명 박스를 제거해 화면을 가볍게 */
-.inner-note,.inner-hero,.section-line,.plat-num,.story-item .num,.story-paper-bottom,.shot-num,.hero-mark{display:none!important}
-.plat{grid-template-columns:38px minmax(0,1fr) auto;min-height:72px;padding:12px 14px;background:#242932;border:0;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217}
-.plat:hover{background:#2b313b;box-shadow:3px 0 0 var(--c),-3px 0 0 var(--c),0 3px 0 var(--c),0 -3px 0 var(--c)}
-.plat .ic{width:32px;padding:2px}
-.plat strong{font-size:clamp(12px,1.1vw,14px)}
-.plat .copy span{font-size:12px;line-height:1.6}
-.plat em{font-size:12px}
-
-/* 사담: 왼쪽은 제목 목록, 오른쪽은 실제 게시글 */
-.story-layout{display:grid;grid-template-columns:minmax(155px, .32fr) minmax(0,1fr);gap:clamp(18px,3vw,34px);align-items:start;min-height:300px}
-.story-list{display:flex;flex-direction:column;gap:6px;min-width:0}
-.story-item{display:block;width:100%;min-width:0;min-height:0;text-align:left;padding:11px 12px;background:#252a32;color:#b8bec7;border:0;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217;transition:transform .12s steps(2),background .12s steps(2),color .12s steps(2)}
-.story-item:hover{transform:translate(2px,-1px);color:var(--ink)}
-.story-item.on{background:var(--c);color:#22262d;box-shadow:3px 0 0 #101217,-3px 0 0 #101217,0 3px 0 #101217,0 -3px 0 #101217}
-.story-item strong{display:block;color:inherit;font-family:var(--font-pixel);font-weight:400;font-size:clamp(12px,1vw,14px);line-height:1.55;overflow-wrap:anywhere}
-.story-item small{display:block;margin-top:3px;color:inherit;opacity:.72;font-size:11px;line-height:1.5}
-.story-paper{min-width:0;min-height:300px;padding:5px 4px 18px 0;border:0;background:transparent;animation:pop .24s steps(3)}
-.story-paper::before{display:none}
-.story-post-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 0 12px;border-bottom:1px dashed #444c57}
-.story-post-tools .date{font-size:11px;color:#9ca5b0}
-.story-paper h3{margin:22px 0 18px;font-size:clamp(21px,2.6vw,29px);line-height:1.5;color:var(--ink);font-weight:400}
-.story-copy{max-width:760px;color:#d0d2d5;font-family:var(--font-body);font-size:14px;line-height:2;word-break:normal}
-.story-copy p{margin:0 0 17px}
-/* 이미지: 가로·세로 칸을 분리하고, 각 방향 안에서는 틀 규격을 통일해요. */
-.album-tabs{border:0;margin-bottom:25px;padding:2px 4px 7px}
-.album-tab{font-size:12px;min-height:39px;cursor:var(--pixel-pointer,pointer)}
-.album-tab small{display:none!important}
-.gallery-group{margin:0 0 28px}
-.gallery-heading{display:flex;align-items:center;gap:10px;margin:0 2px 13px;padding-bottom:8px;border-bottom:1px dashed #454d59;color:#d8dce2;font-family:var(--font-pixel);font-size:14px;font-weight:400}
-.gallery-heading span{font-family:var(--font-body);font-size:12px;color:#929ba7}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
-.gallery-grid.portrait{grid-template-columns:repeat(4,minmax(0,1fr))}
-.shot{min-width:0;width:100%;padding:0;border:0;background:transparent;box-shadow:none;transition:transform .12s steps(2)}
-.shot:hover{transform:translateY(-2px);box-shadow:none}
-.shot-visual{display:block;position:relative;aspect-ratio:var(--ratio,4 / 3);background:#242932;overflow:hidden;outline:1px solid #404853;outline-offset:-1px}
-.shot img{display:block;width:100%;height:100%;aspect-ratio:auto;object-fit:contain;filter:none;transition:transform .2s steps(3)}
-.shot:hover img{transform:scale(1.02)}
-.shot .ph{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;aspect-ratio:auto;padding:10px;background:#242932;border:0;color:#b8bec7;font-family:var(--font-pixel);font-size:12px;letter-spacing:0}
-.shot .ph-icon{display:block;width:28px;flex:none}
-.shot .ph-label{line-height:1.6}
-.shot-meta{display:block;padding:7px 1px 0;background:transparent}
-.shot .cap{font-size:12px;white-space:normal;line-height:1.5;color:#c9cbd0}
-
-/* 모든 누를 수 있는 요소는 픽셀 손 모양 커서로 표시해요. */
-button,a,.plat,.story-item,.album-tab,.shot,.back,.run,.ib{cursor:var(--pixel-pointer,pointer)}
-.cd{cursor:grab!important}
-.stage{cursor:grab}
-.stage.dragging,.stage.dragging .cd{cursor:grabbing!important}
-.cd.is-grabbed .face{transform:translateY(3px) scale(.98);filter:brightness(1.04)}
-
-@media(max-width:700px){
-  body.flat .content{min-height:var(--h)}
-  body.flat .body{min-height:300px}
-  .story-layout{grid-template-columns:1fr;gap:16px}
-  .story-list{display:flex;flex-direction:row;overflow-x:auto;padding:2px 4px 10px;gap:8px;scrollbar-width:thin}
-  .story-item{flex:0 0 min(48%,190px);width:auto;padding:9px 11px}
-  .story-paper{min-height:240px}
-  .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .gallery-grid.portrait{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .plat{grid-template-columns:32px minmax(0,1fr) auto;gap:9px}
-}
-@media(max-width:390px){
-  .gallery-grid,.gallery-grid.portrait{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  .story-item{flex-basis:72%}
-  }
-
-
-/* 밝은 화면은 메인 토글로 언제든 선택 가능. 프레임은 기기처럼 어둡게 남겨요. */
-body.light-mode{--bg:#e4e8ed;--bg2:#d3dce6;--line:#9ba9b8;--ink:#26313d;--dim:#596878;background:radial-gradient(ellipse at 50% 28%,#e3e8ee 0,#cbd5e0 48%,#aebbc9 100%);color:var(--ink)}
-body.light-mode .crt{background:#e4e8ed;border-color:rgba(93,123,151,.42);box-shadow:inset 0 0 35px 8px rgba(34,47,61,.18),inset 0 0 0 1px rgba(255,255,255,.65),0 0 26px rgba(0,0,0,.38)}
-body.light-mode .crt::before{background:radial-gradient(ellipse at 50% 48%,transparent 42%,rgba(60,78,97,.025) 54%,rgba(60,78,97,.10) 76%,rgba(60,78,97,.25) 100%);box-shadow:inset 0 0 60px 8px rgba(51,67,83,.22)}
-body.light-mode .scan{opacity:.12!important;background:repeating-linear-gradient(to bottom,rgba(45,62,79,.12) 0 1px,rgba(255,255,255,.08) 2px,transparent 4px)}
-body.light-mode .noise{opacity:.012!important}
-body.light-mode .selected-label{color:#26313d}
-body.light-mode .cd .face{background:#d3dce6;box-shadow:3px 0 0 #9ba9b8,-3px 0 0 #9ba9b8,0 3px 0 #9ba9b8,0 -3px 0 #9ba9b8}
-body.light-mode .cd.on .face{background:#edf1f5;box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c)}
-body.light-mode .plat,body.light-mode .story-item,body.light-mode .album-tab,body.light-mode .shot .ph,body.light-mode .shot-visual{background:#d6dfe8;color:#2c3743}
-body.light-mode .plat .copy span,body.light-mode .story-item small,body.light-mode .story-copy,body.light-mode .shot .cap{color:#424e5c}
-body.light-mode .back{background:#d3dce6;color:#26313d}
-
-
-/* ── 상단 고정 테마 스위치 + 기존 느낌의 은은한 광택 케이스 ── */
-.theme-dock{
-  position:fixed;top:clamp(42px,calc(3vh + 20px),64px);
-  right:max(16px,calc((100vw - 1180px)/2 + 38px));z-index:115;
-  display:flex;align-items:center;gap:3px;padding:4px;
-  background:rgba(20,23,29,.9);border:1px solid rgba(195,207,218,.24);
-  box-shadow:2px 0 0 rgba(8,10,13,.72),-2px 0 0 rgba(8,10,13,.72),0 2px 0 rgba(8,10,13,.72),0 -2px 0 rgba(8,10,13,.72);
-  backdrop-filter:blur(4px)
-}
-.theme-icon{width:31px;height:31px;display:grid;place-items:center;border:0;background:transparent;
-  font-family:var(--font-body);font-size:20px;line-height:1;padding:0;cursor:pointer;
-  transition:background .12s steps(2),color .12s steps(2),transform .12s steps(2)}
-.theme-icon:hover{transform:translateY(-1px)}
-.theme-icon.sun-icon{color:#c9b16d}
-.theme-icon.moon-icon{color:#9bbbd8}
-.theme-icon.on{background:#343b46;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
-.theme-icon.sun-icon.on{color:#ecd28a}
-.theme-icon.moon-icon.on{color:#c2ddf4}
-/* 케이스 장식은 덜어내고, 기존 사각 케이스에 빛이 스친 듯한 광택만 남깁니다. */
-.cd .face{
-  position:relative;display:block;aspect-ratio:1/1;min-height:0;padding:0;overflow:hidden;border:0;
-  background:linear-gradient(132deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.035) 18%,transparent 36%,rgba(255,255,255,.055) 51%,transparent 68%),#262b33;
-  box-shadow:inset 0 0 0 1px rgba(222,232,239,.12),3px 0 0 #0c0f14,-3px 0 0 #0c0f14,0 3px 0 #0c0f14,0 -3px 0 #0c0f14;
-  transition:background .13s steps(2),box-shadow .13s steps(2)
-}
-.cd .face::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border:0;
-  background:linear-gradient(112deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.025) 24%,transparent 43%,transparent 66%,rgba(255,255,255,.055) 77%,transparent 90%)}
-.cd .face::after{content:"";position:absolute;left:10px;right:10px;top:10px;z-index:4;height:1px;pointer-events:none;
-  background:rgba(236,241,244,.26)}
-.cd .disc,.cd.on .disc{position:absolute;left:8%;top:5%;width:84%;height:auto;margin:0;z-index:1;display:block;transform-origin:50% 50%;transition:none}
-.cd .disc svg{width:100%;height:auto;display:block;overflow:visible}
+/* ── 투명 앨범 케이스 (가로로 살짝 긴 1:1 느낌) + 오른쪽 끝 연결부에서 CD가 나와요 ── */
+.cd{position:absolute;left:0;top:0;width:clamp(104px,22vw,186px);will-change:transform;touch-action:none;cursor:pointer}
+.cs{position:relative;display:block;aspect-ratio:9/8;--edge:color-mix(in srgb,var(--ink) 60%,transparent)}
+.disc{position:absolute;right:-15%;top:9%;width:74%;z-index:1;transition:transform .3s steps(4)}
+.cd.on .disc{transform:translateX(26%)}
 .cd.on .disc svg{animation:spin 4.2s steps(24) infinite;transform-origin:50% 50%}
-.cd .case-name{
-  position:absolute;left:3%;bottom:5%;z-index:5;width:94%;min-height:24px;margin:0;padding:4px 2px 3px;
-  display:flex;align-items:center;justify-content:center;text-align:center;overflow-wrap:anywhere;word-break:keep-all;
-  background:rgba(25,29,36,.9);border-top:2px solid var(--c);color:#f0ede5;
-  font-family:var(--font-pixel);font-size:clamp(11px,1.25vw,14px);line-height:1.35
+@keyframes spin{to{transform:rotate(360deg)}}
+.cf{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 30%,transparent),color-mix(in srgb,var(--c) 10%,transparent) 60%,color-mix(in srgb,var(--c) 22%,transparent));box-shadow:3px 0 0 var(--edge),-3px 0 0 var(--edge),0 3px 0 var(--edge),0 -3px 0 var(--edge),inset 3px 3px 0 rgba(255,255,255,.45),inset -3px -3px 0 rgba(0,0,0,.14)}
+.cf::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 22%,rgba(255,255,255,.34) 22% 29%,transparent 29% 36%,rgba(255,255,255,.2) 36% 39%,transparent 39%)}
+.c-bk{position:absolute;left:6%;top:9%;width:70%;bottom:9%;background:var(--tint);box-shadow:0 0 0 3px #f7f2e6}
+.c-lab{position:absolute;left:7%;top:8%;width:86%;aspect-ratio:20/16;overflow:hidden;background:var(--tint);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 55%,#2a3142)}
+.c-lab svg{width:100%;height:100%}
+.c-dots{position:absolute;left:7%;bottom:9%;display:flex;gap:5px}
+.c-dots i{width:7px;height:7px}
+.c-hg{position:absolute;right:0;top:0;bottom:0;width:13%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12%;background:color-mix(in srgb,var(--c) 60%,#2a3142);box-shadow:inset 3px 0 0 rgba(0,0,0,.28),inset 6px 0 0 rgba(255,255,255,.14)}
+.c-hg i{width:34%;aspect-ratio:1;background:#f7f2e6;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.cd.on .cf{box-shadow:4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c),inset 3px 3px 0 rgba(255,255,255,.5),0 0 16px color-mix(in srgb,var(--c) 40%,transparent)}
+.cn{display:block;width:max-content;max-width:100%;margin:14px auto 0;padding:3px 9px;background:var(--panel);color:var(--ink);font-family:var(--px);font-size:clamp(11px,1.25vw,14px);line-height:1.4;word-break:keep-all;box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd)}
+.cd.on .cn{box-shadow:3px 0 0 var(--c),-3px 0 0 var(--c),0 3px 0 var(--c),0 -3px 0 var(--c)}
+.bk{margin-left:auto;padding:6px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
+.bk:hover{background:var(--c)}
+.gh .bk~.bk{margin-left:0}
+/* 설명 바: 화면 전체와 같이 곡면 왜곡을 받아요 */
+.sayw{flex:none;padding:0 clamp(14px,3vw,28px) 18px}
+.say{margin:0 auto;width:min(520px,100%);text-align:center;font-size:13px;line-height:1.7}
+.say em{display:block;margin-top:4px;font-family:var(--px);font-style:normal;font-size:11px;color:var(--dim);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+
+/* 게임마다 다른 배경 */
+.g-plat{background:conic-gradient(color-mix(in srgb,var(--c) 22%,var(--bg)) 25%,color-mix(in srgb,var(--c) 10%,var(--bg)) 0 50%,color-mix(in srgb,var(--c) 22%,var(--bg)) 0 75%,color-mix(in srgb,var(--c) 10%,var(--bg)) 0) 0 0/48px 48px;animation:slide 6s steps(24) infinite}
+@keyframes slide{to{background-position:0 0,48px 48px}}
+.screen.night .g-plat{background:conic-gradient(color-mix(in srgb,var(--c) 14%,var(--bg)) 25%,color-mix(in srgb,var(--c) 7%,var(--bg)) 0 50%,color-mix(in srgb,var(--c) 14%,var(--bg)) 0 75%,color-mix(in srgb,var(--c) 7%,var(--bg)) 0) 0 0/48px 48px;animation:slide 6s steps(24) infinite}
+.g-story{background:#f5ebd3}
+.screen.night .g-story{background:#2E2E3D}
+.g-cut{background:linear-gradient(transparent 0 8px,var(--bg) 8px 20px,transparent 20px) 6px 0/10px 28px repeat-y,linear-gradient(transparent 0 8px,var(--bg) 8px 20px,transparent 20px) calc(100% - 6px) 0/10px 28px repeat-y,linear-gradient(90deg,#2a3142 0 22px,transparent 22px calc(100% - 22px),#2a3142 0),color-mix(in srgb,var(--c) 14%,var(--bg));animation:film 3.5s steps(7) infinite}
+.screen.night .g-cut{background:linear-gradient(transparent 0 8px,var(--bg) 8px 20px,transparent 20px) 6px 0/10px 28px repeat-y,linear-gradient(transparent 0 8px,var(--bg) 8px 20px,transparent 20px) calc(100% - 6px) 0/10px 28px repeat-y,linear-gradient(90deg,#141C2A 0 22px,transparent 22px calc(100% - 22px),#141C2A 0),color-mix(in srgb,var(--c) 12%,var(--bg));animation:film 3.5s steps(7) infinite}
+@keyframes film{to{background-position:6px 28px,calc(100% - 6px) 28px,0 0}}
+.scene.g-cut{padding-left:46px;padding-right:46px}
+.gh{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-family:var(--px);font-size:clamp(17px,2.4vw,22px);color:var(--c)}
+.gh svg{width:28px;flex:none}
+
+/* 사용 플랫폼: RPG 메뉴 */
+.rpg{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;align-items:start}
+.menu{display:flex;flex-direction:column;gap:4px}
+.mi{display:flex;align-items:center;gap:8px;text-align:left;padding:8px 10px;font-family:var(--px);font-size:13px;color:var(--ink)}
+.mi i{width:12px;font-style:normal;color:var(--c);visibility:hidden}
+.mi.on{background:color-mix(in srgb,var(--c) 30%,transparent)}
+.mi.on i{visibility:visible;animation:blink .8s steps(2) infinite}
+.info h3{margin:0 0 8px;font-family:var(--px);font-weight:400;font-size:17px;color:var(--c)}
+.info p{margin:0 0 14px;font-size:13px;line-height:1.8}
+.go{display:inline-block;padding:6px 12px;background:var(--c);color:#2a3142;font-family:var(--px);font-size:12px}
+.info .pt{margin:0 0 8px;font-family:var(--px);font-weight:400;font-size:12px;color:var(--dim)}
+.pfs{display:flex;flex-wrap:wrap;gap:8px}
+.pf{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--c);color:#2a3142;font-family:var(--px);font-size:12px}
+.pf em{font-style:normal}
+.pf:hover{filter:brightness(1.06)}
+.info .no{margin:0;font-size:12px;color:var(--dim)}
+
+/* 사담: 대화창 */
+.vn{display:grid;grid-template-columns:minmax(150px,.4fr) 1fr;gap:20px;align-items:start}
+.slots{display:flex;flex-direction:column;gap:6px;min-width:0}
+.st-crumb{padding:0 0 9px;margin-bottom:3px;border-bottom:2px dashed var(--shade);font-family:var(--px);font-size:10px;line-height:1.7;color:var(--dim);overflow-wrap:anywhere}
+.st-crumb span{color:var(--c);padding:0 3px}
+.sl{text-align:left;padding:9px 10px;font-family:var(--px);font-size:12px;line-height:1.5;color:var(--ink);background:var(--shade);overflow-wrap:anywhere}
+.sl small{display:block;margin-top:3px;font-family:var(--bd2);font-size:11px;color:var(--dim)}
+.sl.on{background:var(--c);color:#202838}.sl.on small{color:#344253}
+.stg h3{margin:0 0 5px;font-family:var(--px);font-weight:400;font-size:clamp(18px,2.4vw,24px);overflow-wrap:anywhere}
+.stg .dt{font-size:11px;color:var(--dim);margin-bottom:14px;line-height:1.7}
+.stg .st-copy{margin:0 0 14px;font-size:13px;line-height:1.9}
+.stg .st-pills{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.stg .st-pill{padding:5px 8px;background:var(--shade);font-family:var(--px);font-size:10px;color:var(--ink)}
+.stg .st-action{display:inline-block;padding:7px 11px;background:var(--c);color:#202838;font-family:var(--px);font-size:11px}
+.stg .st-below{margin-top:14px;display:flex;justify-content:flex-end}
+.dlg{position:relative;padding:16px 18px}
+.nm{position:static;display:table;max-width:100%;margin:0 0 8px;padding:3px 10px;background:var(--c);color:#202838;font-family:var(--px);font-size:12px;line-height:1.5;box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd)}
+.st-category{font-family:var(--px);font-size:10px;color:var(--dim);margin:0 0 14px}
+.dlg p{margin:0 0 14px;font-size:14px;line-height:2}.dlg p:last-child{margin-bottom:0}
+.nx{position:absolute;right:14px;bottom:8px;font-style:normal;font-family:var(--px);color:var(--c);animation:blink .8s steps(2) infinite}
+
+/* 사담 글쓰기/편집 도구 */
+.st-tools{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 9px}
+.st-tool{padding:6px 8px;background:var(--panel);color:var(--ink);font-family:var(--px);font-size:10px;line-height:1.4;box-shadow:2px 0 0 var(--bd),-2px 0 0 var(--bd),0 2px 0 var(--bd),0 -2px 0 var(--bd)}
+.st-tool.primary{background:var(--c);color:#202838}
+.st-editor{display:flex;flex-direction:column;gap:10px}
+.st-editor h3{margin:0;font-family:var(--px);font-weight:400;font-size:18px}
+.st-editor .st-help{margin:0;color:var(--dim);font-size:11px;line-height:1.7}
+.st-field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.st-field label{font-family:var(--px);font-size:11px;color:var(--dim)}
+.st-field input,.st-field select,.st-field textarea{width:100%;min-width:0;border:2px solid var(--shade);border-radius:0;background:var(--bg);color:var(--ink);padding:9px 10px;font:13px var(--bd2);outline-offset:2px}
+.st-field select{font-family:var(--px);font-size:11px}
+.st-field textarea{min-height:190px;resize:vertical;line-height:1.8}
+.st-fields-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st-select-action{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.st-editor-actions{display:flex;flex-wrap:wrap;gap:7px;padding-top:4px}
+.st-editor-actions .st-action{border:0;cursor:pointer}
+.st-editor-actions .st-cancel{padding:7px 11px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
+.st-edit-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px;margin-top:14px}
+.st-edit-actions button{padding:6px 9px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:10px}
+.st-edit-actions .danger{background:#D9A1A8;color:#34232A}
+.st-empty{padding:14px;background:var(--shade);font-size:12px;color:var(--dim);line-height:1.7}
+@media(max-width:820px){.st-fields-2{grid-template-columns:1fr}.st-tools{margin-bottom:5px}}
+
+/* 이미지: 앨범 */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tb{padding:8px 12px;font-family:var(--px);font-size:12px;background:var(--shade);color:var(--ink)}
+.tb.on{background:var(--c);color:#2a3142}
+.gg{width:100%;max-width:100%;min-width:0;margin:0 0 20px}
+.gg h4{margin:0 0 10px;font-family:var(--px);font-weight:400;font-size:13px;color:var(--dim)}
+.grid{display:grid;width:100%;max-width:100%;min-width:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid.portrait{grid-template-columns:repeat(4,minmax(0,1fr))}
+.shot{display:block;width:100%;max-width:100%;min-width:0;text-align:left;--c:#f0a3b6;transition:transform .12s steps(2)}
+.shot:hover{transform:translateY(-3px)}
+.sv{display:block;aspect-ratio:var(--ratio);background:var(--panel);overflow:hidden;box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd)}
+.sv img{width:100%;height:100%;object-fit:contain;display:block}
+.ph{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;font-family:var(--px);font-size:12px;color:var(--dim);border:2px dashed var(--c)}
+.ph svg{width:24px}
+.sc{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;padding:8px 1px 0;font-size:12px;line-height:1.5;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.emp{display:flex;flex-direction:column;align-items:center;gap:8px;padding:30px 0 10px;text-align:center}
+.emp-st{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-bottom:14px}
+.pk{display:flex;flex-direction:column;align-items:center;--k:#f0a3b6}
+.pk .pl{width:clamp(76px,14vw,116px);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px;background:color-mix(in srgb,var(--k) 22%,var(--panel));box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd);animation:bob 1.2s steps(2) infinite}
+.pk:nth-child(2) .pl{animation-delay:.3s}.pk:nth-child(3) .pl{animation-delay:.6s}.pk:nth-child(4) .pl{animation-delay:.9s}
+.pk .pl svg{width:42%;flex:none}
+.pk .pl-name{display:block;max-width:100%;padding:4px 5px;background:var(--k);color:#202838;font-family:var(--px);font-size:clamp(9px,1vw,12px);line-height:1.35;overflow-wrap:anywhere;text-align:center;box-shadow:2px 0 0 var(--bd),-2px 0 0 var(--bd),0 2px 0 var(--bd),0 -2px 0 var(--bd)}
+.pk.on .pl{box-shadow:3px 0 0 var(--k),-3px 0 0 var(--k),0 3px 0 var(--k),0 -3px 0 var(--k)}
+.pk.on .pl-name,.pk:hover .pl-name{filter:brightness(1.06)}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.emp b{font-family:var(--px);font-weight:400;font-size:15px;color:var(--ink)}
+.emp em{font-style:normal;font-size:12px;color:var(--dim)}
+
+/* 로딩/전환 화면 */
+.boot{position:absolute;inset:0;z-index:20;display:none;place-items:center;background:var(--c);clip-path:circle(0)}
+.boot.on{display:grid;animation:iris .35s steps(5) forwards}
+.boot.off{display:grid;clip-path:circle(150%);animation:irisOut .35s steps(5) forwards}
+@keyframes iris{to{clip-path:circle(150%)}}
+@keyframes irisOut{to{clip-path:circle(0)}}
+.bt{text-align:center;color:#2a3142;font-family:var(--px)}
+.bt svg{width:60px;margin:0 auto 12px}.bt b{display:block;font-weight:400;font-size:22px;margin-bottom:8px}
+.bt em{font-style:normal;font-size:12px}.bt u{text-decoration:none;animation:blink .9s steps(2) infinite}
+.bt u:nth-child(2){animation-delay:.2s}.bt u:nth-child(3){animation-delay:.4s}
+#lb{position:absolute;inset:0;z-index:25;background:rgba(15,20,34,.9);display:none;place-items:center;padding:20px}
+#lb.on{display:grid}#lb img{max-width:100%;max-height:78%;display:block;box-shadow:4px 0 0 #fff,-4px 0 0 #fff,0 4px 0 #fff,0 -4px 0 #fff}
+#lb p{color:#f6f1e4;font-family:var(--px);font-size:12px;text-align:center;margin:14px 0 0}
+.toast{position:absolute;left:50%;bottom:44px;z-index:28;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:7px 12px;font-family:var(--px);font-size:12px;opacity:0;pointer-events:none}
+.toast.on{animation:tst 1.8s steps(6) forwards}
+@keyframes tst{0%{opacity:0}10%,80%{opacity:1}100%{opacity:0}}
+
+@media(max-width:820px){.console{filter:none}.rpg,.vn{grid-template-columns:1fr}.slots{flex-direction:row;overflow-x:auto}.sl{flex:0 0 150px}.grid,.grid.portrait{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* ── CRT 곡면: 화면 전체에 일정하게. 곡면 정도(--cv 1→0)를 천천히 바꿔서 평면과 이어져요 ── */
+.screen{border-radius:14px}
+.screen::before{content:"";position:absolute;inset:0;z-index:29;pointer-events:none;border-radius:inherit;opacity:var(--cv,1);background:radial-gradient(ellipse at 50% 48%,transparent 55%,rgba(8,12,22,.12) 74%,rgba(8,12,22,.34) 100%);box-shadow:inset 0 0 40px 4px rgba(8,12,22,.28)}
+.bezel.warped{filter:url(#warp);transform:perspective(1050px) rotateX(calc(1.2deg * var(--cv,1))) scale(calc(1 - .01 * var(--cv,1)));transform-origin:center 54%}
+
+
+/* ── 모바일 전용 보정: 게임기 외형과 PC 디자인은 유지하고 터치·가독성만 조정 ── */
+@media (max-width:600px){
+  body{display:block;min-height:100svh;padding:12px 24px;overflow-wrap:anywhere}
+  .console{width:100%;max-width:100%;margin:0 auto}
+  .bezel{width:100%;padding:7px 7px 43px;border-radius:17px}
+  .screen{height:clamp(440px,76svh,680px);min-height:0}
+  .frame{border-radius:10px}
+  .scene{padding:12px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .scene.home{padding:10px;}
+  .stage{min-height:250px}
+  .cd{width:clamp(82px,25vw,108px)}
+  .cn{margin-top:10px;padding:3px 6px;font-size:11px;line-height:1.35}
+  .sayw{padding:0 10px 11px}
+  .say{font-size:12px;line-height:1.6}
+  .say em{font-size:10px}
+  .hint{min-height:36px;padding:7px 8px;font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+  .hint span{display:block;max-width:100%}
+  .tgbar{right:8px;bottom:5px;height:32px;gap:7px}
+  .tgbar button{position:relative;top:auto;left:auto;right:auto;width:32px;height:32px;touch-action:manipulation}
+  .tgbar button svg{width:16px}
+  .gh{gap:7px;margin-bottom:12px;font-size:17px;flex-wrap:wrap}
+  .gh svg{width:24px}
+  .gh>span{min-width:0;overflow-wrap:anywhere}
+  .bk{min-height:36px;padding:8px 10px;font-size:11px;touch-action:manipulation}
+  .gh .bk{margin-left:auto}
+  .win{padding:13px 14px}
+  .rpg,.vn{grid-template-columns:minmax(0,1fr);gap:12px}
+  .menu{gap:4px}
+  .mi{min-height:42px;padding:9px 10px;font-size:12px;touch-action:manipulation}
+  .info h3{font-size:16px}
+  .info p{font-size:13px;line-height:1.75}
+  .pfs{gap:7px}
+  .pf{min-height:40px;padding:8px 10px;font-size:11px;touch-action:manipulation}
+  .slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;overflow:visible;max-width:100%;padding:2px 0 9px;min-width:0}
+  .st-crumb{grid-column:1/-1;font-size:10px;line-height:1.6}
+  .sl{width:100%;min-width:0;min-height:48px;padding:9px 10px;font-size:11px;overflow-wrap:anywhere;touch-action:manipulation}
+  .sl small{font-size:10px}
+  .stg{min-width:0;overflow-wrap:anywhere}
+  .stg h3{font-size:clamp(17px,5vw,22px);line-height:1.5}
+  .stg .dt{font-size:10px;margin-bottom:11px}
+  .stg .st-copy{font-size:13px;line-height:1.8}
+  .stg .st-pill{font-size:10px;line-height:1.4}
+  .stg .st-action{min-height:40px;padding:9px 11px;font-size:11px;touch-action:manipulation}
+  .dlg{padding:13px 13px}
+  .nm{font-size:11px;overflow-wrap:anywhere}
+  .dlg p{font-size:13px;line-height:1.9;overflow-wrap:anywhere}
+  .st-tools{gap:6px}
+  .st-tool{min-height:38px;padding:8px 9px;font-size:10px;touch-action:manipulation}
+  .st-editor h3{font-size:17px}
+  .st-field label{font-size:11px}
+  .st-field input,.st-field select,.st-field textarea{font-size:16px;padding:10px}
+  .st-field textarea{min-height:180px}
+  .st-fields-2{grid-template-columns:minmax(0,1fr)}
+  .st-editor-actions .st-cancel,.st-edit-actions button{min-height:38px;padding:8px 10px;font-size:11px;touch-action:manipulation}
+  .scene.g-cut{padding-left:30px;padding-right:30px;min-width:0}
+  .tabs{gap:6px;margin-bottom:12px}
+  .tb{min-height:40px;padding:9px 10px;font-size:11px;touch-action:manipulation}
+  .grid,.grid.portrait{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .gg{margin-bottom:16px}
+  .gg h4{font-size:12px}
+  .sc{font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+  .ph{flex-direction:column;gap:5px;font-size:10px;text-align:center}
+  .ph svg{width:22px}
+  .emp{padding:18px 0 8px;gap:7px}
+  .emp-st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 9px;width:100%;margin-bottom:10px}
+  .pk{min-width:0;width:100%}
+  .pk .pl{width:100%;max-width:120px;margin:0 auto;padding:7px;gap:8px}
+  .pk .pl svg{width:38%}
+  .pk .pl-name{max-width:100%;padding:4px 3px;font-size:10px;line-height:1.3;overflow-wrap:anywhere}
+  .emp b{font-size:13px}
+  .emp em{font-size:11px;line-height:1.6}
+  #lb{padding:12px}
+  #lb img{max-width:calc(100vw - 48px);max-height:68%;object-fit:contain}
+  #lb p{font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+  .toast{width:max-content;max-width:calc(100% - 20px);white-space:normal;text-align:center;line-height:1.5;font-size:10px;bottom:42px}
+  .bt svg{width:48px}
+  .bt b{font-size:clamp(18px,5vw,22px)}
 }
-.cd.on .face{transform:none;background:linear-gradient(132deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.045) 18%,transparent 36%,rgba(255,255,255,.075) 51%,transparent 68%),#2c333c;
-  box-shadow:inset 0 0 0 1px rgba(230,238,243,.17),4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c),0 0 16px color-mix(in srgb,var(--c) 22%,transparent)}
-@media(max-width:600px){
-  .theme-dock{top:42px;right:12px;padding:3px;gap:1px}
-  .theme-icon{width:28px;height:28px;font-size:18px}
-  .content{padding-top:66px!important}
-  body.flat .content{padding-top:66px!important}
-  .head{padding-right:76px}
-  .cd .disc,.cd.on .disc{left:7%;top:5%;width:86%}
-  .cd .case-name{font-size:11px;min-height:22px;padding:3px 1px 2px}
+@media (max-width:400px){
+  body{padding:10px 24px}
+  .bezel{padding-left:6px;padding-right:6px;border-radius:15px}
+  .scene{padding:10px}
+  .scene.home{padding:8px}
+  .scene.g-cut{padding-left:28px;padding-right:28px}
+  .cd{width:clamp(72px,23vw,92px)}
+  .emp-st{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px}
+  .pk .pl{max-width:116px}
+  .st-crumb{font-size:9px}
+  .sl{font-size:10px;padding:8px}
 }
-/* 밝은 테마는 새하얀 흰색 대신 눈이 덜 피로한 회청색·웜그레이로 조정 */
-body.light-mode{--bg:#d0d2ce;--bg2:#c1c7c5;--line:#9fa9a7;--ink:#343b3b;--dim:#636d6b;
-  background:radial-gradient(ellipse at 50% 28%,#d7d8d2 0,#c8cecc 48%,#b6c0bf 100%);color:var(--ink)}
-body.light-mode .crt{background:#d0d2ce;border-color:rgba(84,105,110,.34);box-shadow:inset 0 0 35px 8px rgba(38,49,49,.12),inset 0 0 0 1px rgba(244,240,225,.32),0 0 26px rgba(0,0,0,.32)}
-body.light-mode .crt::before{background:radial-gradient(ellipse at 50% 48%,transparent 40%,rgba(60,70,67,.025) 58%,rgba(60,70,67,.09) 78%,rgba(35,43,42,.20) 100%);box-shadow:inset 0 0 55px 8px rgba(51,61,58,.15)}
-body.light-mode .scan{opacity:.075!important;background:repeating-linear-gradient(to bottom,rgba(45,55,55,.10) 0 1px,rgba(245,242,228,.07) 2px,transparent 4px)}
-body.light-mode .noise{opacity:.009!important}
-body.light-mode .cd .face{background:linear-gradient(132deg,rgba(250,249,239,.35) 0%,rgba(250,249,239,.06) 18%,transparent 36%,rgba(250,249,239,.14) 51%,transparent 68%),#c2cac6;box-shadow:inset 0 0 0 1px rgba(76,91,89,.18),3px 0 0 #8d9998,-3px 0 0 #8d9998,0 3px 0 #8d9998,0 -3px 0 #8d9998}
-body.light-mode .cd .face::before{background:linear-gradient(112deg,rgba(250,249,239,.25) 0%,rgba(250,249,239,.05) 24%,transparent 43%,transparent 66%,rgba(250,249,239,.14) 77%,transparent 90%)}
-body.light-mode .cd .face::after{background:rgba(80,97,94,.25)}
-body.light-mode .cd .case-name{background:rgba(218,220,212,.95);color:#38413f;border-top-color:var(--c)}
-body.light-mode .cd.on .face{background:linear-gradient(132deg,rgba(250,249,239,.4) 0%,rgba(250,249,239,.08) 18%,transparent 36%,rgba(250,249,239,.18) 51%,transparent 68%),#c9d0cb;box-shadow:inset 0 0 0 1px rgba(76,91,89,.22),4px 0 0 var(--c),-4px 0 0 var(--c),0 4px 0 var(--c),0 -4px 0 var(--c)}
-body.light-mode .theme-dock{background:rgba(205,211,207,.95);border-color:rgba(84,98,96,.32);box-shadow:3px 0 0 rgba(93,106,103,.65),-3px 0 0 rgba(93,106,103,.65),0 3px 0 rgba(93,106,103,.65),0 -3px 0 rgba(93,106,103,.65)}
-body.light-mode .theme-icon.sun-icon{color:#8b784b}
-body.light-mode .theme-icon.moon-icon{color:#768e9f}
-body.light-mode .theme-icon.on{background:#b9c2bb;box-shadow:inset 0 0 0 1px rgba(63,79,74,.10)}
-body.light-mode .theme-icon.sun-icon.on{background:#d8c995;color:#5f5030}
-body.light-mode .theme-icon.moon-icon.on{background:#adbcc5;color:#405564}
-body.light-mode .plat,body.light-mode .story-item,body.light-mode .album-tab,body.light-mode .shot .ph,body.light-mode .shot-visual{background:#c4cdca;color:#343d3b}
-body.light-mode .plat .copy span,body.light-mode .story-item small,body.light-mode .story-copy,body.light-mode .shot .cap{color:#4b5653}
-body.light-mode .album-tab{background:#c4cdca;color:#434f4c;border-color:#a5b0ac}
-body.light-mode .back{background:#c2cac6;color:#343b3b;border-color:#a4aeaa}
-body.light-mode .head h2,body.light-mode .head p,body.light-mode .foot,body.light-mode .eyebrow{color:var(--ink)}
+@media (max-height:520px) and (orientation:landscape) and (max-width:900px){
+  body{padding:8px 14px}
+  .screen{height:clamp(300px,70svh,380px)}
+  .stage{min-height:180px}
+  .sayw{padding-bottom:6px}
+  .say em{margin-top:2px}
+}
+@media (hover:none){
+  .bk:hover,.pf:hover,.shot:hover{transform:none;filter:none}
+  button{-webkit-tap-highlight-color:transparent}
+}
 
-/* ── 분위기 조정: 밝고 아늑한 쯔꾸르풍 ── */
-:root{--bg:#262e3b;--bg2:#323c4c;--line:#55627a;--blue:#8cc4f0;--butter:#f3d27a;--rose:#f0a3b6;--mint:#93d6b4;--ink:#f6f1e4;--dim:#b4bfce}
-body{background:radial-gradient(ellipse at 50% 28%,#34405a 0,#222b3b 48%,#161c28 100%)}
-.monitor{background:linear-gradient(135deg,#46526a 0%,#252c3a 30%,#38445a 70%,#1c2230 100%);box-shadow:inset 0 0 0 clamp(4px,.75vw,9px) #394660,inset 0 0 0 clamp(7px,1.2vw,14px) #141a26}
-.crt::before{background:radial-gradient(ellipse at 50% 48%,transparent 55%,rgba(8,12,22,.1) 74%,rgba(8,12,22,.32) 100%);box-shadow:inset 0 0 36px 4px rgba(8,12,22,.3)}
-.scan{opacity:.1!important}
-
-/* 토글: 위쪽 전용 띠 안으로, 도트 아이콘으로 */
-.content,body.flat .content{padding-top:clamp(64px,8vw,84px)!important}
-.head{padding-right:0!important}
-.theme-dock{top:clamp(22px,3.2vw,34px);right:clamp(30px,6.5vw,80px);padding:3px;gap:4px;background:var(--bg2);border:0;backdrop-filter:none;box-shadow:3px 0 0 #141a26,-3px 0 0 #141a26,0 3px 0 #141a26,0 -3px 0 #141a26}
-.theme-icon{width:30px;height:30px;color:var(--dim)}
-.theme-icon svg{width:18px;height:auto}
-.theme-icon.sun-icon.on{background:var(--butter);color:#22262d}
-.theme-icon.moon-icon.on{background:var(--blue);color:#22262d}
-
-/* 시디마다 다른 케이스 무늬 */
-.cd .pat{position:absolute;inset:0;z-index:0;pointer-events:none;background-color:color-mix(in srgb,var(--c) 20%,transparent)}
-.cd[data-id=plat] .pat{background-image:linear-gradient(color-mix(in srgb,var(--c) 45%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--c) 45%,transparent) 1px,transparent 1px);background-size:8px 8px}
-.cd[data-id=story] .pat{background-image:repeating-linear-gradient(transparent 0 9px,color-mix(in srgb,var(--c) 50%,transparent) 9px 10px)}
-.cd[data-id=cut] .pat{background-image:radial-gradient(color-mix(in srgb,var(--c) 60%,transparent) 1.5px,transparent 2px);background-size:8px 8px}
-
-/* 내부 화면도 시디별로 은은한 배경 무늬 */
-body[data-v=plat] .crt{background-image:linear-gradient(color-mix(in srgb,var(--blue) 9%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--blue) 9%,transparent) 1px,transparent 1px);background-size:16px 16px}
-body[data-v=story] .crt{background-image:repeating-linear-gradient(transparent 0 27px,color-mix(in srgb,var(--butter) 12%,transparent) 27px 28px)}
-body[data-v=cut] .crt{background-image:radial-gradient(color-mix(in srgb,var(--rose) 16%,transparent) 1.5px,transparent 2px);background-size:14px 14px}
 </style>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<div class="theme-dock" role="group" aria-label="화면 테마">
-  <button type="button" class="theme-icon sun-icon" id="themeLight" aria-label="밝은 화면으로 전환" aria-pressed="false" title="밝은 테마"><span aria-hidden="true">☀️</span></button>
-  <button type="button" class="theme-icon moon-icon on" id="themeDark" aria-label="어두운 화면" aria-pressed="true" title="어두운 테마"><span aria-hidden="true">🌙</span></button>
-</div>
-<div class="toast" id="toast" role="status"></div>
-<div id="wipe" aria-hidden="true"></div>
-<div id="lb"><div><img alt=""><p></p></div></div>
-
-<!-- 곡면 렌더링용 렌즈 (왜곡 지도는 스크립트가 만들어요) -->
 <svg aria-hidden="true" width="0" height="0" style="position:absolute">
-  <filter id="warp" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+  <filter id="warp" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
     <feImage id="warpImg" x="0" y="0" width="100" height="100" preserveAspectRatio="none" result="m"/>
-    <feDisplacementMap id="warpMap" in="SourceGraphic" in2="m" scale="60" xChannelSelector="R" yChannelSelector="G"/>
+    <feImage id="warpMaskImg" x="0" y="0" width="100" height="100" preserveAspectRatio="none" result="mask"/>
+    <feDisplacementMap id="warpMap" in="SourceGraphic" in2="m" scale="60" xChannelSelector="R" yChannelSelector="G" result="distorted"/>
+    <feComposite in="distorted" in2="mask" operator="in"/>
   </filter>
 </svg>
-
-<main class="monitor">
-  <section class="crt" id="crt">
-    <div class="scan" aria-hidden="true"></div>
-    <div class="noise" aria-hidden="true"></div>
-    <div class="band" aria-hidden="true"></div>
-    <div class="content" id="content">
-
-      <!-- 메인 : 글자 없이 꾸밈 요소만 -->
-      <section class="view on" id="v-home">
-        <div class="stage" id="stage">
-          <i class="corner a"></i><i class="corner b"></i><i class="corner c"></i><i class="corner d"></i>
-          <svg class="track" id="track" aria-hidden="true"></svg>
-          <div class="deco" id="deco" aria-hidden="true"></div>
-        </div>
-        <div class="selected-label" id="selectedLabel" style="--c:var(--blue)" aria-live="polite">
-          <i class="label-pixel" aria-hidden="true"></i>
-          <span class="label-copy"><strong id="selectedName">사용 플랫폼</strong></span>
-        </div>
-        
-        <div class="ctrl">
-          <div class="sideL" aria-hidden="true"><b></b><i></i><i></i><i></i></div>
-          <div class="mid">
-            <button class="ib" id="prev" aria-label="왼쪽으로"></button>
-            <button class="run" id="run" aria-label="실행하기"></button>
-            <button class="ib" id="next" aria-label="오른쪽으로"></button>
-            <div class="pager" id="pager" aria-hidden="true"></div>
-          </div>
-          <div class="sideR" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        </div>
-      </section>
-
-      <!-- 내부 -->
-      <section class="view" id="v-inner">
-        <div class="head" id="head"></div>
-        <div class="body" id="inner"></div>
-        <footer class="foot"><span id="footL"></span><span>시디함으로 돌아가기 · Esc 키</span></footer>
-      </section>
+<div class="console">
+  <div class="bezel" id="bezel">
+    <div class="screen" id="screen">
+      <div class="frame" id="frame">
+        <div class="scene" id="scene"></div>
+        <div class="sayw" id="sayw"><div class="win say" id="say"></div></div>
+        <div class="hint"><span id="hint"></span></div>
+      </div>
+      <div class="boot" id="boot"></div>
+      <div id="lb"><div><img alt=""><p></p></div></div>
+      <div class="toast" id="toast" role="status"></div>
     </div>
-  </section>
-
-</main>
+    <div class="tgbar"><button id="tLight" class="on" aria-label="밝은 화면"></button><button id="tDark" aria-label="어두운 화면"></button></div>
+  </div>
+</div>
 
 <script>
-/* ================================================================
-   ✏️ 여기만 고치면 됩니다 (내용 입력 구역)
-   ================================================================ */
-const PLATFORMS = [
-  { name:'플랫폼 하나', desc:'어떤 곳인지 한 줄 설명', url:'#' },
-  { name:'플랫폼 둘',   desc:'어떤 곳인지 한 줄 설명', url:'#' },
-  { name:'플랫폼 셋',   desc:'어떤 곳인지 한 줄 설명', url:'#' },
-  { name:'플랫폼 넷',   desc:'어떤 곳인지 한 줄 설명', url:'#' },
-  { name:'플랫폼 다섯', desc:'어떤 곳인지 한 줄 설명', url:'#' },
-  { name:'플랫폼 여섯', desc:'어떤 곳인지 한 줄 설명', url:'#' },
+/* ===== ✏️ 내용 입력 구역 ===== */
+/* 공개 중인 캐릭터: on 에 그 캐릭터가 공개된 플랫폼(p)과 주소(url)를 적어요 */
+const CHARS=[
+  {name:'캐릭터 하나',desc:'어떤 아이인지 한 줄 소개',on:[{p:'플랫폼 이름',url:'#'},{p:'다른 플랫폼',url:'#'}]},
+  {name:'캐릭터 둘',desc:'어떤 아이인지 한 줄 소개',on:[{p:'플랫폼 이름',url:'#'}]},
+  {name:'캐릭터 셋',desc:'어떤 아이인지 한 줄 소개',on:[{p:'플랫폼 이름',url:'#'},{p:'다른 플랫폼',url:'#'},{p:'또 다른 플랫폼',url:'#'}]},
 ];
-const STORIES = [
-  { who:'첫 번째 아이', title:'제목을 적어주세요', date:'2026.10.23',
-    body:['여기에 캐릭터의 가벼운 이야기를 적어요. 문단은 이렇게 나눠서 넣으면 됩니다.','두 번째 문단입니다. 길어져도 읽기 편한 폭으로 알아서 줄이 바뀝니다.'] },
-  { who:'두 번째 아이', title:'다른 아이의 이야기', date:'2026.10.22',
-    body:['이쪽은 두 번째 글이에요. 왼쪽 목록에서 누르면 오른쪽 내용이 바뀝니다.'] },
-  { who:'세 번째 아이', title:'또 다른 이야기', date:'2026.10.20', body:['목록은 몇 개든 늘려도 괜찮아요.'] },
+/* 사담 게시글은 Pages CMS가 관리하는 JSON 파일에서 불러옵니다. */
+let STORIES=[];
+let storyLoadState='idle';
+let storyLoadError='';
+let storyLoadSerial=0;
+const STORY_DATA_URL='./data/stories.json';
+/* name 은 캐릭터 이름으로 바꾸세요. 버튼을 눌러야 그 캐릭터의 그림이 나와요.
+   src 에 이미지 주소를 넣으면 그림이 나오고, 비워두면 빈 액자. w·h 는 빈 액자의 가로세로 비율 */
+const ALBUMS=[
+  {name:'캐릭터 하나',items:[
+    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
+    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
+  {name:'캐릭터 둘',items:[
+    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
+    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
+  {name:'캐릭터 셋',items:[
+    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
+    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
+  {name:'캐릭터 넷',items:[
+    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
+    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
+  {name:'캐릭터 다섯',items:[
+    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
+    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]}
 ];
-/* src 에 이미지 주소를 넣으면 그림이 나오고, 비워두면 빈 액자. w·h 는 빈 액자의 가로세로 비율 */
-const ALBUMS = [
-  { name:'첫 번째 묶음', items:[
-    { src:'', w:4, h:3, cap:'가로 그림' }, { src:'', w:3, h:4, cap:'세로 그림' },
-    { src:'', w:3, h:4, cap:'세로 그림' }, { src:'', w:4, h:3, cap:'가로 그림' },
-    { src:'', w:1, h:1, cap:'정사각' },    { src:'', w:3, h:4, cap:'세로 그림' } ] },
-  { name:'두 번째 묶음', items:[ { src:'', w:4, h:3, cap:'가로 그림' }, { src:'', w:3, h:4, cap:'세로 그림' } ] },
+/* 시디 3장 (색은 어두운/밝은 화면마다 따로 있어요) */
+const PAL={night:['#9bc4e8','#e2c984','#e3aabd'],day:['#7aa6cc','#d2b567','#d691a4']};
+let night=false; /* 밝은 화면이 기본 */
+const G=[
+  {id:'plat',name:'공개 캐릭터',c:'#8cc4f0',hint:'공개 중인 아이들이 어느 플랫폼에 있는지 보는 게임',icon:'win'},
+  {id:'story',name:'사담',c:'#f3d27a',hint:'별말 아닌 이야기를 읽는 게임',icon:'bubble'},
+  {id:'cut',name:'이미지',c:'#f0a3b6',hint:'그림과 사진을 모아 둔 앨범',icon:'photo'},
 ];
-/* 메인 시디 3장 (메인에는 글자가 안 보이고, 이름은 내부 화면 제목으로만 쓰여요) */
-const DISCS = [
-  { id:'plat',  name:'사용 플랫폼', c:'#8cc4f0', hint:'자주 가는 곳 모아 두기', icon:'win' },
-  { id:'story', name:'사담',       c:'#f3d27a', hint:'별말 아닌 이야기들', icon:'bubble' },
-  { id:'cut',   name:'이미지',     c:'#f0a3b6', hint:'그림과 사진 구경하기', icon:'photo' },
-];
-const STEP = 40; /* 시디 사이의 각도 */
 
-/* ================================================================
-   아래는 동작 코드
-   ================================================================ */
-const $ = s => document.querySelector(s), body = document.body, INK = '#eee9dd', BG = '#1b1e24';
-const COLORS = ['#8cc4f0','#f3d27a','#f0a3b6','#93d6b4'];
-
-/* 도트 그림 */
-function spr(rows,pal){
-  const h = rows.length, w = rows[0].length; let r = '';
-  rows.forEach((row,y)=>[...row].forEach((ch,x)=>{ if(pal[ch]) r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${pal[ch]}"/>`; }));
-  return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
-}
-const ICONS = {
+/* ===== 동작 코드 ===== */
+const $=s=>document.querySelector(s);
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function spr(rows,pal){const h=rows.length,w=rows[0].length;let r='';
+  rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if(pal[ch])r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${pal[ch]}"/>`}));
+  return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`}
+const IC={
   win:['kkkkkkkkkkkk','kakakk....kk','kkkkkkkkkkkk','k..........k','k.aaaa.bbb.k','k..........k','k.aaaaaaa..k','k..........k','k.bbb.aaaa.k','kkkkkkkkkkkk'],
   bubble:['.kkkkkkkkkk.','kk........kk','k.aaaaaaaa.k','k..........k','k.aaaaaa...k','kk........kk','.kkkkkkkkkk.','...kk.......','....k.......'],
   photo:['kkkkkkkkkkkk','k..........k','k.....bb...k','k.....bb...k','k..a.......k','k.aaa..aa..k','kaaaaa.aaaak','kkkkkkkkkkkk'],
-  heart:['.kk.kk.','kkkkkkk','kkkkkkk','.kkkkk.','..kkk..','...k...'],
-  star:['...k...','...k...','..kkk..','kkkkkkk','..kkk..','.kk.kk.','kk...kk'],
-  plus:['..k..','..k..','kkkkk','..k..','..k..'],
-  play:['k......','kk.....','kkk....','kkkk...','kkkkk..','kkkk...','kkk....','kk.....','k......'],
-  left:['....k','...kk','..kkk','.kkkk','kkkkk','.kkkk','..kkk','...kk','....k'],
-  right:['k....','kk...','kkk..','kkkk.','kkkkk','kkkk.','kkk..','kk...','k....'],
+  face:['..kkkkkk..','.kkkkkkkk.','kkakkkkakk','kkkkkkkkkk','kkkkkkkkkk','kkakkkkakk','.kkaaaakk.','..kkkkkk..'],
   sun:['....k....','.k..k..k.','..kkkkk..','..kkkkk..','kkkkkkkkk','..kkkkk..','..kkkkk..','.k..k..k.','....k....'],
   moon:['..kkkk..','.kkk....','kkk.....','kkk.....','kkk.....','kkk.....','.kkk....','..kkkk..'],
 };
-const icon = (n,c,a=INK,b='#fff') => spr(ICONS[n],{k:c,a:a,b:b});
-function disc(c,k){
-  let r = '';
-  const deco = {
-    plat:'<path d="M80 7v146M7 80h146" stroke="#fff" stroke-width="2" opacity=".28"/>',
-    story:'<path d="M80 34l8 17 18 2-13 12 4 18-17-10-17 10 4-18-13-12 18-2z" fill="#fff" opacity=".4"/>',
-    cut:'<path d="M80 7a73 73 0 0 1 0 146z" fill="#fff" opacity=".22"/>'
-  }[k] || '';
-  /* 오프센터 반사 조각과 홈이 있어 원판이 도는 것이 잘 보이게 */
-  for(let i=0;i<24;i++){
-    const a=(i/24)*Math.PI*2, x=80+Math.cos(a)*58, y=80+Math.sin(a)*58;
-    r += `<rect x="${(x-2.5).toFixed(1)}" y="${(y-1.5).toFixed(1)}" width="5" height="3" fill="${i%3===0?'#f0e8cf':c}" opacity="${i%3===0?'.68':'.36'}" transform="rotate(${i*15} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+const icon=(n,c,a='#fff',b='#fff')=>spr(IC[n],{k:c,a:a,b:b});
+
+/* 색 섞기 */
+function mixHex(a,b,t){
+  const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  const x=p(a),y=p(b);
+  return '#'+x.map((v,i)=>Math.round(v*(1-t)+y[i]*t).toString(16).padStart(2,'0')).join('');
+}
+/* 단순한 도트 CD (16×16 도트로만 그려요) */
+function disc(c){
+  const m=7.5,hi=mixHex(c,'#ffffff',.5),rim=mixHex(c,'#2a3142',.2);let r='';
+  for(let y=0;y<16;y++)for(let x=0;x<16;x++){
+    const d=Math.hypot(x-m,y-m);if(d>7.9||d<1.6)continue;
+    let f=c;
+    if(d<3.4)f='#f4f0e4';
+    else if(d>5.1&&d<6.1)f=hi;
+    else if(d>7)f=rim;
+    else if(x<m&&y<m&&d>6.1&&d<7)f='#ffffff';
+    r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${f}"/>`;
   }
-  return `<svg viewBox="0 0 160 160" shape-rendering="crispEdges" aria-hidden="true">
-    <circle cx="80" cy="80" r="77" fill="#8995a2" stroke="#e6e7e2" stroke-width="2"/>
-    <circle cx="80" cy="80" r="73" fill="${c}" stroke="#64717e" stroke-width="1.5"/>
-    <circle cx="80" cy="80" r="66" fill="none" stroke="#f2eee2" stroke-width="2" opacity=".46"/>
-    <circle cx="80" cy="80" r="57" fill="none" stroke="#44515d" stroke-width="2" opacity=".44"/>
-    <circle cx="80" cy="80" r="48" fill="none" stroke="#f1ead8" stroke-width="1.5" opacity=".5"/>
-    <circle cx="80" cy="80" r="39" fill="none" stroke="#56626c" stroke-width="2" opacity=".55"/>
-    <path d="M27 45 L46 26 L57 31 L36 52 Z" fill="#f3edda" opacity=".42"/>
-    ${r}
-    ${deco}
-    <circle cx="80" cy="80" r="19" fill="#d0d4d4" stroke="#697580" stroke-width="3"/>
-    <circle cx="80" cy="80" r="12" fill="#747f89" stroke="#ece9df" stroke-width="2"/>
-    <circle cx="80" cy="80" r="5" fill="#293039"/>
-  </svg>`;
+  return `<svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+/* 케이스 안 커버 그림 (20×16 도트): k 먹색 · w 흰색 · a 진한 게임색 · b 연한 게임색 · p 분홍 · y 노랑 */
+const SCENE={
+  /* 사용 플랫폼 : 겹쳐 열린 두 개의 창 */
+  plat:['',
+    '.kkkkkkkkkkkkk......',
+    '.kawawaaaaaaak......',
+    '.kbbbbbbbbbbbk......',
+    '.kbwwwwwbbbbbk......',
+    '.kbbbbbkkkkkkkkkkkk.',
+    '.kbwwbbkawawaaaaaak.',
+    '.kbbbbbkwwwwwwwwwwk.',
+    '.kbbbbbkwbbbbbbbbwk.',
+    '.kkkkkkkwwwwwwwwwwk.',
+    '.......kwwbbbbbbwwk.',
+    '.......kwwwwwwwwwwk.',
+    '.......kwwbbbbwwwwk.',
+    '.......kkkkkkkkkkkk.',
+    '',''],
+  /* 사담 : 말풍선 */
+  story:['',
+    '................y',
+    '....kkkkkkkkkk.yyy',
+    '...kwwwwwwwwwwk.y',
+    '...kwwwwwwwwwwk',
+    '...kwwawwawwawk',
+    '...kwwwwwwwwwwk',
+    '....kkwwkkkkkk',
+    '.....kwwk......pp.pp',
+    '......kk.......ppppp',
+    '................ppp',
+    '.................p',
+    '.y',
+    'aaaaaaaaaaaaaaaaaaaa',
+    'aaaaaaaaaaaaaaaaaaaa',
+    'aaaaaaaaaaaaaaaaaaaa'],
+  /* 이미지 : 달밤 풍경이 담긴 액자 */
+  cut:['','',
+    '..kkkkkkkkkkkkkkkk..',
+    '..kaaaaaaaaaaaaaak..',
+    '..kaaaaaaaaawwwaak..',
+    '..kaaayaaaaawwwaak..',
+    '..kaaaaaaaaaawwaak..',
+    '..kaaaaaaaaaaaaaak..',
+    '..kaayaaaaaaaaaaak..',
+    '..kaaaaaabbbaaaaak..',
+    '..kaabbbbbbbbbbbbk..',
+    '..kbbbbbbbbbbbbbbk..',
+    '..kkkkkbbbbbbbbkkk..',
+    '..kkkkkkkkkkkkkkkk..',
+    '',''],
+};
+function label(id,c){
+  const W=20,rows=SCENE[id].map(r=>r.padEnd(W,'.'));
+  const pal={k:'#2a3142',w:'#ffffff',a:mixHex(c,'#2a3142',.3),b:mixHex(c,'#ffffff',.3),p:'#f0a3b6',y:'#f3d27a'};
+  let r='';
+  rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if(pal[ch])r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${pal[ch]}"/>`}));
+  return `<svg viewBox="0 0 ${W} ${rows.length}" preserveAspectRatio="none" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
 }
 
-/* ── 곡면 렌즈: 왜곡 지도를 직접 만들어서 CRT처럼 가운데를 볼록하게 ── */
-const warpImg = $('#warpImg'), warpMap = $('#warpMap'), content = $('#content');
-(function(){
-  try{
-    const N = 128, cv = document.createElement('canvas'); cv.width = cv.height = N;
-    const cx = cv.getContext('2d'), im = cx.createImageData(N,N);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const u = x/(N-1)*2-1, v = y/(N-1)*2-1, r2 = u*u+v*v, i = (y*N+x)*4;
-      im.data[i]   = Math.max(0,Math.min(255,Math.round((.5+.5*u*(r2-1))*255)));
-      im.data[i+1] = Math.max(0,Math.min(255,Math.round((.5+.5*v*(r2-1))*255)));
-      im.data[i+2] = 128; im.data[i+3] = 255;
-    }
-    cx.putImageData(im,0,0);
-    warpImg.setAttribute('href',cv.toDataURL());
-  }catch(e){ content.style.filter = 'none'; }
-})();
-const K = 0.09; /* 곡면 세기 (0.08 약하게 ~ 0.2 강하게) */
-function fitWarp(){
-  const w = content.offsetWidth, h = content.offsetHeight; if(!w) return;
-  warpImg.setAttribute('width',w); warpImg.setAttribute('height',h);
-  warpMap.setAttribute('scale',(K/(1+K))*((w+h)/2));
+/* 메인 꾸밈 요소: 낮은 대비의 도형이 픽셀 단위로 떠오르며, 가끔 모양을 바꿉니다. */
+function rnd(seed){let s=seed;return()=>(s=(s*1664525+1013904223)%4294967296)/4294967296}
+function deco(){
+  const r=rnd(5),P=[...G.map(g=>g.c),night?'#A7D1C3':'#7ea58f'];
+  const shapes={
+    diamond:'<path d="M10 1 19 10 10 19 1 10Z"/><rect x="8" y="8" width="4" height="4" fill="currentColor" stroke="none" opacity=".32"/>',
+    cross:'<path d="M10 2v16M2 10h16"/><rect x="7.5" y="7.5" width="5" height="5" fill="currentColor" stroke="none" opacity=".32"/>',
+    triangle:'<path d="M10 2 18.5 17.5H1.5Z"/><rect x="8" y="12" width="4" height="3" fill="currentColor" stroke="none" opacity=".32"/>',
+    square:'<rect x="2" y="2" width="16" height="16"/><rect x="12" y="2" width="6" height="4" fill="currentColor" stroke="none" opacity=".32"/>',
+    heart:'<path d="M10 17.5 3.1 10.8C-.2 7.3 2.2 2.2 6.1 2.2 8.2 2.2 9.5 3.7 10 5 10.5 3.7 11.8 2.2 13.9 2.2 17.8 2.2 20.2 7.3 16.9 10.8Z"/>',
+    bear:'<path d="M4.8 6.5C2.4 6.8 1.4 4.8 2.3 2.9 3.2 1 5.8 1.7 7.1 4.5L8.2 5.1Q10 4.4 11.8 5.1L12.9 4.5C14.2 1.7 16.8 1 17.7 2.9 18.6 4.8 17.6 6.8 15.2 6.5Q18 9 17.6 12.7C17.2 16.2 14.2 18.3 10 18.3S2.8 16.2 2.4 12.7Q2 9 4.8 6.5Z"/><circle cx="7.1" cy="10.5" r=".65" fill="currentColor" stroke="none"/><circle cx="12.9" cy="10.5" r=".65" fill="currentColor" stroke="none"/><path d="M8.6 12.5Q10 11.2 11.4 12.5L10 14Z" fill="currentColor" stroke="none"/>',
+    rabbit:'<path d="M6.7 7Q3.2 4 4.3 1.8 5.6-.2 8.6 6L9.5 6.6Q10 6.5 10.5 6.6L11.4 6C14.4-.2 16.4-.2 17.1 1.8 17.8 4 14.3 7 13.3 7.5Q17.2 10 16.8 13.4 16.2 18 10 18 3.8 18 3.2 13.4 2.8 10 6.7 7Z"/><circle cx="7.5" cy="11.5" r=".65" fill="currentColor" stroke="none"/><circle cx="12.5" cy="11.5" r=".65" fill="currentColor" stroke="none"/><path d="M9 13.2 10 14 11 13.2"/>',
+    devil:'<path d="M5.5 7 1.7 2.1 8 4.8Q10 4 12 4.8L18.3 2.1 14.5 7Q18 10 16.7 14.2 15.4 18 10 18 4.6 18 3.3 14.2 2 10 5.5 7Z"/><path d="M5.8 10.1 9 11.1 7 12.1ZM14.2 10.1 11 11.1 13 12.1Z" fill="currentColor" stroke="none"/><path d="M7.5 14.4Q10 13.1 12.5 14.4"/>',
+    star:'<path d="M10 1.3 12.5 7.1 18.8 7.7 14.1 11.9 15.5 18.3 10 15 4.5 18.3 5.9 11.9 1.2 7.7 7.5 7.1Z"/>',
+    sparkle:'<path d="M10 1 12 8 19 10 12 12 10 19 8 12 1 10 8 8Z"/>',
+    flower:'<g><circle cx="10" cy="5" r="3.1"/><circle cx="14.8" cy="8.2" r="3.1"/><circle cx="13" cy="13.5" r="3.1"/><circle cx="7" cy="13.5" r="3.1"/><circle cx="5.2" cy="8.2" r="3.1"/><circle cx="10" cy="10" r="2"/></g>',
+    bow:'<path d="M9 9 2.1 4.3Q1.3 10.4 7.6 11.1L9 9ZM11 9 17.9 4.3Q18.7 10.4 12.4 11.1L11 9ZM9 11 4.6 17.5Q10 18.4 10 12.4L9 11ZM11 11 15.4 17.5Q10 18.4 10 12.4L11 11Z"/><circle cx="10" cy="10" r="1.8" fill="currentColor" stroke="none"/>',
+    cat:'<path d="M3 8 2.5 2.2 8 5Q10 4.2 12 5L17.5 2.2 17 8Q19 12 16 16 13.6 18.5 10 18.5T4 16Q1 12 3 8Z"/><path d="M6.8 10.3h.1M13.1 10.3h.1M8 13.5 10 14.5 12 13.5"/>',
+    ghost:'<path d="M4 16.7V9.2A6 6 0 0 1 16 9.2V16.7L12.9 14.6 10 17 7.1 14.6Z"/><circle cx="7.5" cy="9.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12.5" cy="9.5" r=".7" fill="currentColor" stroke="none"/>',
+    moon:'<path d="M14.8 2.1A8 8 0 1 0 17.9 13.8 7 7 0 0 1 14.8 2.1Z"/>',
+    planet:'<circle cx="10" cy="10" r="5.3"/><path d="M1.5 12.2Q10 4.5 18.5 8.1Q19.4 9 18.1 10.2Q10 15.5 1.8 13.2Q.8 12.8 1.5 12.2Z"/>',
+    cloud:'<path d="M5.2 15.8H15a3.6 3.6 0 0 0 .4-7.2A5.5 5.5 0 0 0 5 7.5a4.2 4.2 0 0 0 .2 8.3Z"/>',
+    music:'<path d="M12.5 13V3.2L19 1.8V12M12.5 5.8 19 4.4M12.5 13c0 2-2.1 3.5-4 3.2-1.5-.2-1.8-1.7-.5-2.6 1.2-.8 3-.7 4.5-.6ZM19 12c0 2-2.1 3.5-4 3.2-1.5-.2-1.8-1.7-.5-2.6 1.2-.8 3-.7 4.5-.6Z"/>',
+    mushroom:'<path d="M2 9Q2.5 2.5 10 2.5T18 9Q15.8 11 10 10.2 4.2 11 2 9Z"/><path d="M7.2 10.2 6.5 17.5Q10 19 13.5 17.5L12.8 10.2"/><path d="M7 6.4h.1M12.5 5.2h.1M15 8h.1"/>',
+    leaf:'<path d="M3 16.8Q3 3 17.5 2.5 17 17 3 16.8Z"/><path d="M3.5 17 13.8 6.4"/>'
+  };
+  /* 도형은 화면 전체에 고르게, 왼쪽에는 조금 더 자주 배치합니다. */
+  const lanes=[3,9,15,21,27,33,39,45,12,24,36,48,6,30,52,58,64,70,76,82,88,95];
+  const orders=[
+    ['diamond','cross','square'],['cross','triangle','sparkle'],['heart','star','flower'],['triangle','rabbit','diamond'],
+    ['square','diamond','triangle'],['bear','cat','square'],['triangle','square','cross'],['heart','bow','star'],
+    ['devil','sparkle','devil'],['square','triangle','diamond'],['planet','moon','sparkle'],['ghost','bear','cat'],
+    ['star','heart','bow'],['rabbit','cat','rabbit'],['music','sparkle','music'],['flower','mushroom','flower'],
+    ['devil','moon','diamond'],['cloud','star','cross'],['leaf','flower','leaf'],['bow','heart','sparkle'],
+    ['ghost','moon','ghost'],['mushroom','rabbit','flower']
+  ];
+  let h='';
+  for(let i=0;i<lanes.length;i++){
+    const s=Math.round((14+r()*26)/2)*2;
+    const duration=(7+r()*8).toFixed(1),swapDelay=(-r()*18).toFixed(1);
+    const forms=orders[i].map((shape,j)=>`<g class="form form-${'abc'[j]}">${shapes[shape]}</g>`).join('');
+    const x=Math.max(1,Math.min(97,lanes[i]+(r()*4-2)));
+    h+=`<i class="sh" style="left:${x.toFixed(1)}%;width:${s}px;--c:${P[i%4]};--swap-duration:${duration}s;--swap-delay:${swapDelay}s;animation-duration:${(32+r()*30).toFixed(0)}s;animation-delay:${(-r()*60).toFixed(0)}s"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${forms}</svg></i>`;
+  }
+  return h;
 }
-new ResizeObserver(fitWarp).observe(content); fitWarp();
 
-/* 장식 */
-$('#prev').innerHTML = icon('left',INK); $('#next').innerHTML = icon('right',INK);
-$('#deco').innerHTML = Array.from({length:12},(_,i)=>`<i style="left:${(Math.random()*92+2)|0}%;top:${(Math.random()*90+2)|0}%;width:${8+(Math.random()*8|0)}px;animation-delay:${(-Math.random()*3).toFixed(1)}s;animation-duration:${(1.6+Math.random()*2.4).toFixed(1)}s">${icon('plus',COLORS[i%4])}</i>`).join('');
-const cursorAssets=(()=>{
-  const arrow=`<svg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'><path d='M1 1h2v2h2v2h2v2h2v2h2v2h2v2h-2v2h-2v2H7v-2H5v-2H3V9H1z' fill='#eee9dd' stroke='#15181e' stroke-width='1.5' shape-rendering='crispEdges'/></svg>`;
-  const hand=`<svg xmlns='http://www.w3.org/2000/svg' width='20' height='22' viewBox='0 0 20 22'><path d='M7 2h3v7h2V5h3v4h2v5l-3 6H7l-4-6V9h3v3h1z' fill='#eee9dd' stroke='#15181e' stroke-width='1.5' shape-rendering='crispEdges'/></svg>`;
-  const arrowUrl=`url("data:image/svg+xml,${encodeURIComponent(arrow)}") 0 0, auto`;
-  const handUrl=`url("data:image/svg+xml,${encodeURIComponent(hand)}") 4 2, pointer`;
-  body.style.cursor=arrowUrl;
-  document.documentElement.style.setProperty('--pixel-pointer',handUrl);
-  return {arrowUrl,handUrl};
-})();
-let lastT=0, ci=0;
-addEventListener('mousemove',e=>{
-  const n=performance.now(); if(n-lastT<70) return; lastT=n;
-  const t=document.createElement('i'); t.className='trail';
-  t.style.left=e.clientX+'px'; t.style.top=e.clientY+'px'; t.style.background=COLORS[ci++%4];
-  t.style.setProperty('--dx',(Math.random()*20-10)+'px'); t.style.setProperty('--dy',(Math.random()*20+4)+'px');
-  body.appendChild(t); setTimeout(()=>t.remove(),520);
-},{passive:true});
-const toastEl=$('#toast');
-function toast(m){ toastEl.textContent=m; toastEl.classList.remove('on'); void toastEl.offsetWidth; toastEl.classList.add('on'); }
+const bez=$('#bezel'),scr=$('#screen'),frame=$('#frame'),scene=$('#scene'),hint=$('#hint'),boot=$('#boot'),sayw=$('#sayw');
 
-/* ── 시디 바퀴: 화면 밖 아래쪽의 한 점을 중심으로 원을 그리며 돌아요 ── */
-const stage=$('#stage'), track=$('#track'), N=DISCS.length;
-const cds = DISCS.map((d,i)=>{
-  const b=document.createElement('button'); b.className='cd'; b.dataset.id=d.id; b.style.setProperty('--c',d.c); b.setAttribute('aria-label',d.name+' 시디 선택');
-  b.innerHTML=`<span class="face"><span class="pat"></span><span class="disc">${disc(d.c,d.id)}</span><span class="case-name">${d.name}</span></span>`;
-  b.addEventListener('click',e=>{
-    if(performance.now()<suppressClickUntil){ e.preventDefault(); return; }
-    const current=((Math.round(target)%N)+N)%N;
-    const step=Math.round(norm(i-current));
-    /* 시디는 고르기만 하고, 들어갈 때는 가운데 재생 버튼을 눌러요. */
-    if(step!==0) rotate(step);
-  });
-  stage.appendChild(b); return b;
-});
-$('#pager').innerHTML=DISCS.map(()=>'<i></i>').join('');
-const pagerDots=[...$('#pager').children];
-let pos=0, target=0, sel=0, W=0, H=0, R=0, cy=0, raf=0, where='home', busy=false;
-const norm = v => (((v%N)+N*1.5)%N)-N/2;       /* -1.5 ~ 1.5 로 접기 */
+/* 곡면 렌즈: 왜곡 지도를 직접 만들어 가운데를 볼록하게 */
+const warpImg=$('#warpImg'),warpMap=$('#warpMap'),warpMaskImg=$('#warpMaskImg');
+(function(){try{
+  const M=128,cv=document.createElement('canvas');cv.width=cv.height=M;
+  const cx=cv.getContext('2d'),im=cx.createImageData(M,M);
+  for(let y=0;y<M;y++)for(let x=0;x<M;x++){
+    const u=x/(M-1)*2-1,v=y/(M-1)*2-1,r2=u*u+v*v,i=(y*M+x)*4;
+    im.data[i]=Math.max(0,Math.min(255,Math.round((.5+.5*u*(r2-1))*255)));
+    im.data[i+1]=Math.max(0,Math.min(255,Math.round((.5+.5*v*(r2-1))*255)));
+    im.data[i+2]=128;im.data[i+3]=255}
+  cx.putImageData(im,0,0);warpImg.setAttribute('href',cv.toDataURL());
+  const maskCanvas=document.createElement('canvas');maskCanvas.width=maskCanvas.height=M;
+  const mx=maskCanvas.getContext('2d');
+  /* 화면 외부로 밀려난 픽셀만 자르도록 본체 경계에 맞춘 마스크.
+     이전 마스크는 좌우 가장자리를 2.5~4% 안쪽에서 시작해 테두리까지 잘랐습니다. */
+  mx.fillStyle='#fff';mx.beginPath();
+  mx.moveTo(M*.025,0);
+  mx.lineTo(M*.975,0);
+  mx.bezierCurveTo(M*.989,0,M,M*.014,M,M*.033);
+  mx.lineTo(M,M*.967);
+  mx.bezierCurveTo(M,M*.986,M*.989,M,M*.975,M);
+  mx.lineTo(M*.025,M);
+  mx.bezierCurveTo(M*.011,M,0,M*.986,0,M*.967);
+  mx.lineTo(0,M*.033);
+  mx.bezierCurveTo(0,M*.014,M*.011,0,M*.025,0);
+  mx.closePath();mx.fill();
+  warpMaskImg.setAttribute('href',maskCanvas.toDataURL());
+}catch(e){}})();
+const K=0.11; /* 곡면 세기 (0.08 약하게 ~ 0.2 강하게) */
+let cur=1,curRaf=0; /* 현재 곡면 정도: 1 = 완전히 볼록, 0 = 평평 */
+function fitWarp(){const w=bez.offsetWidth,h=bez.offsetHeight;if(!w)return;
+  warpImg.setAttribute('width',w);warpImg.setAttribute('height',h);warpMaskImg.setAttribute('width',w);warpMaskImg.setAttribute('height',h);
+  warpMap.setAttribute('scale',((K/(1+K))*((w+h)/2)*cur).toFixed(2))}
+function setCurve(v){cur=v;bez.style.setProperty('--cv',v.toFixed(3));bez.classList.toggle('warped',v>0.002);fitWarp()}
+function curveTo(to,ms){return new Promise(res=>{
+  const from=cur,t0=performance.now();cancelAnimationFrame(curRaf);
+  const step=now=>{const t=Math.min(1,(now-t0)/ms),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    setCurve(from+(to-from)*e);if(t<1)curRaf=requestAnimationFrame(step);else res()};
+  curRaf=requestAnimationFrame(step)})}
+new ResizeObserver(fitWarp).observe(bez);setCurve(1);
+let where='home',busy=false,pi=0,stLevel='category',stCat=0,stTopic=0,stEntry=0,stEditing=false,stEditTarget=null,sp=0,ai=-1,ci=0,typing=false,full='',tm=0;
+
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('on');void t.offsetWidth;t.classList.add('on')}
+function setHint(t){hint.textContent=t}
+function setLoc(t){}
+
+/* 홈: 카트리지 바퀴 (화면 밖 아래쪽 한 점을 중심으로 돌아요) */
+const STEP=40,N=G.length;
+let pos=0,target=0,sel=0,W=0,H=0,R=0,cy=0,raf=0,lastTick=0,drag=null,suppress=0,stage,track,cds=[],ro;
+const norm=v=>(((v%N)+N*1.5)%N)-N/2;
+function home(){
+  where='home';setLoc('HOME');scene.className='scene home';frame.classList.add('hm');sayw.style.display='';
+  scene.innerHTML=`<div class="deco" style="--g1:${G[0].c};--g2:${G[1].c};--g3:${G[2].c}" aria-hidden="true">${deco()}</div><div class="stage" id="stage"><svg class="track" id="track" aria-hidden="true"></svg></div>`;
+  stage=$('#stage');track=$('#track');
+  cds=G.map((g,i)=>{const b=document.createElement('button');b.className='cd';b.style.setProperty('--c',g.c);b.style.setProperty('--tint',mixHex(g.c,'#ffffff',.78));b.setAttribute('aria-label',g.name);
+    b.dataset.id=g.id;b.innerHTML=`<span class="cs"><span class="disc">${disc(g.c)}</span><span class="cf"><span class="c-bk"><span class="c-lab">${label(g.id,g.c)}</span><span class="c-dots"><i style="background:#2a3142"></i><i style="background:${g.c}"></i><i style="background:#f0a3b6"></i></span></span><span class="c-hg"><i></i><i></i><i></i></span></span></span><span class="cn">${g.name}</span>`;
+    b.addEventListener('click',()=>{if(performance.now()<suppress||busy)return;const cur2=((Math.round(target)%N)+N)%N,step=Math.round(norm(i-cur2));if(step!==0)rotate(step);else start(g.id)});
+    stage.appendChild(b);return b});
+  bindDrag();if(ro)ro.disconnect();ro=new ResizeObserver(layout);ro.observe(stage);
+  sync(Math.round(target));layout();
+  setHint('◀ ▶ 키 또는 끌어서 돌리기 · 가운데 시디를 눌러 시작');
+}
 function layout(){
-  W=stage.clientWidth; H=stage.clientHeight; if(!W) return;
-  R=W<560?W*.48:Math.max(W*.62,230); cy=H*.5;
-  const py=cy+R; /* 화면 아래로 벗어난 회전 중심점 */
+  if(!stage)return;W=stage.clientWidth;H=stage.clientHeight;if(!W)return;
+  R=W<560?W*.48:Math.max(W*.62,230);cy=H*.5;const py=cy+R;
   track.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  track.innerHTML=`<g id="tg">`+[R-92,R,R+92].map((r,k)=>`<circle cx="${W/2}" cy="${py}" r="${r}" fill="none" stroke="${COLORS[k===1?0:k===0?1:2]}" stroke-width="4" stroke-dasharray="4 ${k===1?14:22}" opacity="${k===1?.4:.22}" shape-rendering="crispEdges"/>`).join('')+`</g>`;
+  const ringRadii=W<560?[Math.max(20,R*.46),R*.74,R*1.02]:[R-90,R,R+90];
+  track.innerHTML=`<g id="tg">`+ringRadii.map((r,k)=>`<circle cx="${W/2}" cy="${py}" r="${r}" fill="none" stroke="${night?G[k].c:mixHex(G[k].c,'#2a3142',.4)}" stroke-width="${W<560?3:4}" stroke-dasharray="${W<560?'3 '+(k===1?10:16):'4 '+(k===1?14:22)}" opacity="${night?(k===1?.55:.3):(k===1?.95:.65)}" shape-rendering="crispEdges"/>`).join('')+`</g>`;
   draw();
 }
 function draw(){
-  if(!W) return; const py=cy+R;
+  if(!W)return;const py=cy+R;
   cds.forEach((el,i)=>{
-    const d=norm(i-pos), a=d*STEP*Math.PI/180, ad=Math.abs(d);
-    const x=Math.round((W/2+R*Math.sin(a))/4)*4, y=Math.round((py-R*Math.cos(a))/4)*4;
+    const d=norm(i-pos),a=d*STEP*Math.PI/180,ad=Math.abs(d);
+    const x=Math.round((W/2+R*Math.sin(a))/4)*4,y=Math.round((py-R*Math.cos(a))/4)*4;
     el.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%) scale(${(1-.12*Math.min(ad,1.3)).toFixed(3)})`;
     el.style.opacity=ad<1?1:Math.max(0,1-(ad-1)*3);
     el.style.zIndex=10-Math.round(ad*4);
-    el.style.filter=`brightness(${(1-.2*Math.min(ad,1)).toFixed(2)})`;
+    el.style.filter=`brightness(${(1-.1*Math.min(ad,1)).toFixed(2)})`;
     el.classList.toggle('on',ad<.5);
   });
-  const g=$('#tg'); if(g) g.setAttribute('transform',`rotate(${-pos*STEP} ${W/2} ${py})`);
+  const g=$('#tg');if(g)g.setAttribute('transform',`rotate(${-pos*STEP} ${W/2} ${py})`);
 }
-function syncSelection(index){
-  sel=((index%N)+N)%N;
-  const chosen=DISCS[sel], c=chosen.c;
-  $('#run').style.setProperty('--c',c); $('#run').innerHTML=icon('play',BG);
-  $('#pager').style.setProperty('--c',c);
-  $('#selectedLabel').style.setProperty('--c',c);
-  $('#selectedName').textContent=chosen.name;
-  pagerDots.forEach((p,k)=>p.classList.toggle('on',k===sel));
+function sync(i){
+  sel=((i%N)+N)%N;const say=$('#say');
+  if(say)say.innerHTML=`${G[sel].name} · ${G[sel].hint}<em>▶ 가운데 시디를 눌러 시작</em>`;
 }
-let lastTick=0;
-function tick(now=0){
-  /* 작은 간격으로 한 칸씩 끊어 움직이는 느린 도트식 이동 */
-  if(now-lastTick<42){ raf=requestAnimationFrame(tick); return; }
-  lastTick=now;
-  const diff=target-pos;
-  const jump=Math.sign(diff)*Math.min(Math.abs(diff),0.052);
-  pos+=jump;
-  if(Math.abs(target-pos)<0.006){ pos=target; raf=0; draw(); return; }
-  draw(); raf=requestAnimationFrame(tick);
+function stepAnim(now=0){
+  /* 작게 끊어 움직이는 느린 도트식 이동 */
+  if(now-lastTick<42){raf=requestAnimationFrame(stepAnim);return}
+  lastTick=now;const diff=target-pos;
+  pos+=Math.sign(diff)*Math.min(Math.abs(diff),.052);
+  if(Math.abs(target-pos)<.006){pos=target;raf=0;draw();return}
+  draw();raf=requestAnimationFrame(stepAnim);
 }
-function rotate(n){
-  target+=n;
-  syncSelection(Math.round(target));
-  if(!raf) raf=requestAnimationFrame(tick);
-}
-new ResizeObserver(layout).observe(stage);
-syncSelection(0); draw();
-$('#prev').addEventListener('click',()=>rotate(-1));
-$('#next').addEventListener('click',()=>rotate(1));
-$('#run').addEventListener('click',()=>go(DISCS[sel].id));
-
-/* 시디 옆을 누르면 선택되고, 잡아 끌면 바퀴가 따라 움직여요. */
-let drag=null, suppressClickUntil=0;
+function rotate(n){target+=n;sync(Math.round(target));if(!raf)raf=requestAnimationFrame(stepAnim)}
 function finishDrag(e){
-  if(!drag || (e && e.pointerId!==drag.pointerId)) return;
-  const finished=drag;
-  if(finished.card) finished.card.classList.remove('is-grabbed');
+  if(!drag||(e&&e.pointerId!==drag.pointerId))return;
   stage.classList.remove('dragging');
-  if(finished.moved){
-    suppressClickUntil=performance.now()+420;
-    target=Math.round(pos);
-    syncSelection(target);
-    if(!raf) raf=requestAnimationFrame(tick);
-  }
+  if(drag.moved){suppress=performance.now()+420;target=Math.round(pos);sync(target);if(!raf)raf=requestAnimationFrame(stepAnim)}
   drag=null;
 }
-stage.addEventListener('pointerdown',e=>{
-  if(where!=='home'||busy||e.button>0) return;
-  drag={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,startPos:pos,moved:false,captured:false,card:e.target.closest('.cd')};
-});
-stage.addEventListener('pointermove',e=>{
-  if(!drag||e.pointerId!==drag.pointerId) return;
-  const dx=e.clientX-drag.startX, dy=e.clientY-drag.startY;
-  if(!drag.moved && Math.abs(dx)>7 && Math.abs(dx)>Math.abs(dy)*.75){
-    drag.moved=true;
-    stage.classList.add('dragging');
-    if(drag.card) drag.card.classList.add('is-grabbed');
-    try{stage.setPointerCapture(e.pointerId);drag.captured=true;}catch(_){ }
+function bindDrag(){
+  stage.addEventListener('pointerdown',e=>{if(where!=='home'||busy||e.button>0)return;drag={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,startPos:pos,moved:false}});
+  stage.addEventListener('pointermove',e=>{
+    if(!drag||e.pointerId!==drag.pointerId)return;
+    const dx=e.clientX-drag.startX,dy=e.clientY-drag.startY;
+    if(!drag.moved&&Math.abs(dx)>7&&Math.abs(dx)>Math.abs(dy)*.75){drag.moved=true;stage.classList.add('dragging');try{stage.setPointerCapture(e.pointerId)}catch(_){}}
+    if(!drag.moved)return;e.preventDefault();
+    pos=drag.startPos-dx/Math.max(90,R*Math.sin(STEP*Math.PI/180));target=pos;
+    const nx=((Math.round(pos)%N)+N)%N;if(nx!==sel)sync(nx);draw();
+  },{passive:false});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(t=>stage.addEventListener(t,finishDrag));
+}
+
+/* 게임 시작/종료 연출
+   시작: 곡면이 먼저 천천히 펴짐 → 동그란 로딩 화면이 열렸다 닫히며 내용 교체
+   종료: 평평한 채로 내용 교체 → 곡면이 천천히 다시 휘어짐 */
+async function transition(g,label,fn,curveAfter){
+  if(busy)return;busy=true;
+  if(!curveAfter)await curveTo(0,480);
+  boot.style.setProperty('--c',g.c);
+  boot.innerHTML=`<div class="bt">${icon(g.icon,'#2a3142','#fff','#fff')}<b>${g.name}</b><em>${label}<u>.</u><u>.</u><u>.</u></em></div>`;
+  boot.className='boot on';
+  await wait(label==='LOADING'?950:600);
+  if(curveAfter){
+    /* 메인으로 돌아갈 때는 로딩 화면이 덮여 있는 동안 곡률을 먼저 시작해요. */
+    const curveMotion=curveTo(1,600);
+    await wait(240);
+    fn();scene.scrollTop=0;boot.className='boot off';
+    await wait(380);boot.className='boot';
+    await curveMotion;
+  }else{
+    fn();scene.scrollTop=0;boot.className='boot off';
+    await wait(380);boot.className='boot';
   }
-  if(!drag.moved) return;
-  e.preventDefault();
-  const unit=Math.max(90,R*Math.sin(STEP*Math.PI/180));
-  pos=drag.startPos-dx/unit;
-  target=pos;
-  const next=((Math.round(pos)%N)+N)%N;
-  if(next!==sel) syncSelection(next);
-  draw();
-},{passive:false});
-stage.addEventListener('pointerup',finishDrag);
-stage.addEventListener('pointercancel',finishDrag);
-stage.addEventListener('lostpointercapture',finishDrag);
-addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ if($('#lb').classList.contains('on')) $('#lb').classList.remove('on'); else if(where!=='home') go('home'); return; }
-  if(where!=='home') return;
-  if(e.key==='ArrowLeft') rotate(-1);
-  if(e.key==='ArrowRight') rotate(1);
-  if(e.key==='Enter' && document.activeElement.tagName!=='A') go(DISCS[sel].id);
-});
-
-/* ── 화면 전환: 첨부 예시의 도트 블라인드 효과만 가져왔어요. ── */
-const wipe=$('#wipe');
-wipe.innerHTML='<i></i>'.repeat(16);
-[...wipe.children].forEach((tile,i)=>{ tile.style.animationDelay=(i*6)+'ms'; });
-function go(id){
-  if(busy||id===where) return;
-  busy=true;
-  wipe.className='';
-  void wipe.offsetWidth;
-  wipe.className='in';
-  /* 픽셀 커튼이 화면을 덮는 순간 내용을 바꾸고 바로 걷어내요. */
-  setTimeout(()=>{
-    where=id;
-    render(id);
-    body.classList.toggle('flat',id!=='home'); body.dataset.v=id;
-    scrollTo(0,0);
-    if(id==='home') requestAnimationFrame(layout);
-    wipe.className='';
-    void wipe.offsetWidth;
-    wipe.className='out';
-    setTimeout(()=>{
-      wipe.className='';
-      busy=false;
-    },390);
-  },390);
+  busy=false;
+}
+function start(id){const g=G.find(x=>x.id===id);transition(g,'LOADING',()=>enter(id),false)}
+function exit(){if(where==='home')return;const g=G.find(x=>x.id===where);transition(g,'SAVING',()=>{clearInterval(tm);home()},true)}
+function enter(id){
+  where=id;frame.classList.remove('hm');sayw.style.display='none';const g=G.find(x=>x.id===id);setLoc('▶ '+g.name);
+  scene.style.setProperty('--c',g.c);scene.className='scene g-'+id;
+  ({plat:plat,story:story,cut:cut})[id]();
+  const bk=document.createElement('button');bk.className='bk';bk.textContent='← 홈';bk.addEventListener('click',exit);scene.querySelector('.gh').appendChild(bk);
 }
 
-/* ── 내부 화면 ── */
-function header(d,sub){
-  $('#head').innerHTML=`<span class="ic">${disc(d.c)}</span><div class="head-copy"><h2 style="color:${d.c}">${d.name}</h2><p>${sub}</p></div><button class="back" id="back">← 돌아가기</button>`;
-  $('#back').addEventListener('click',()=>go('home'));
+/* 1. 공개 캐릭터 : RPG 메뉴창 (왼쪽 캐릭터 · 오른쪽 상세와 공개 중인 플랫폼) */
+function plat(){
+  const g=G[0];
+  scene.innerHTML=`<div class="gh">${icon('win',g.c)}<span>${g.name}</span></div><div class="rpg"><div class="win menu" id="mn"></div><div class="win info" id="inf"></div></div>`;
+  drawPlat();setHint('▲ ▼ 캐릭터 고르기 · 플랫폼을 눌러 이동 · Esc 돌아가기');
 }
-function hero(kicker,title,desc,count,label,c){
-  return `<section class="inner-hero" style="--c:${c}"><div class="hero-copy"><span class="eyebrow">${kicker}</span><h3>${title}</h3><p>${desc}</p></div><div class="hero-mark"><strong>${count}</strong><span>${label}</span></div></section>`;
+function drawPlat(){
+  $('#mn').innerHTML=CHARS.map((p,i)=>`<button class="mi${i===pi?' on':''}" data-i="${i}"><i>▶</i>${p.name}</button>`).join('');
+  const p=CHARS[pi];
+  $('#inf').innerHTML=`<h3>${p.name}</h3><p>${p.desc}</p><h4 class="pt">공개 중인 곳</h4>`+(p.on.length?`<div class="pfs">${p.on.map((o,k)=>`<button class="pf" data-k="${k}"><span>${o.p}</span><em>↗</em></button>`).join('')}</div>`:`<p class="no">아직 공개된 곳이 없어요</p>`);
+  $('#mn').querySelectorAll('.mi').forEach(b=>b.addEventListener('click',()=>{pi=+b.dataset.i;drawPlat()}));
+  $('#inf').querySelectorAll('.pf').forEach(b=>b.addEventListener('click',()=>openPlat(p.on[+b.dataset.k])));
 }
-function render(id){
-  $('#v-home').classList.toggle('on',id==='home');
-  $('#v-inner').classList.toggle('on',id!=='home');
-  if(id==='home') return;
-  const d=DISCS.find(x=>x.id===id), box=$('#inner');
-  if(!d) return;
-  box.style.setProperty('--c',d.c);
+function openPlat(o){if(!o.url||o.url==='#')toast('아직 주소가 없어요. 주소를 넣어 주세요!');else window.open(o.url,'_blank','noopener')}
 
-  if(id==='plat'){
-    header(d,'자주 가는 곳을 모아 뒀어요.');
-    box.innerHTML=`<div class="grid">`+PLATFORMS.map((p,i)=>{
-      const c=COLORS[i%3];
-      return `<a class="plat" style="--c:${c}" href="${p.url}" target="_blank" rel="noopener" data-u="${p.url}"><span class="ic">${icon('win',c)}</span><div class="copy"><strong>${p.name}</strong><span>${p.desc}</span></div><em>열기</em></a>`;
-    }).join('')+`</div>`;
-    box.querySelectorAll('.plat').forEach(a=>a.addEventListener('click',e=>{
-      if(a.dataset.u==='#'){e.preventDefault();toast('아직 비어 있어요. 주소를 넣어 주세요!');}
-    }));
-    $('#footL').textContent='바로가기 모음';
-
-  } else if(id==='story'){
-    header(d,'왼쪽에서 글을 골라 읽어 보세요.');
-    box.innerHTML=`<div class="story-layout"><nav class="story-list" aria-label="사담 제목">`+
-      STORIES.map((item,i)=>`<button class="story-item" data-i="${i}" style="--c:${d.c}"><strong>${item.title}</strong><small>${item.who}</small></button>`).join('')+
-      `</nav><article class="story-paper" id="post" style="--c:${d.c}"></article></div>`;
-    const show=i=>{
-      const item=STORIES[i];
-      box.querySelectorAll('.story-item').forEach((b,k)=>b.classList.toggle('on',k===i));
-      const post=$('#post');
-      post.innerHTML=`<div class="story-post-tools"><span class="date">${item.date}</span></div><h3>${item.title}</h3><div class="story-copy">${item.body.map(t=>`<p>${t}</p>`).join('')}</div>`;
-    };
-    box.querySelectorAll('.story-item').forEach(b=>b.addEventListener('click',()=>show(+b.dataset.i)));
-    show(0); $('#footL').textContent='사담';
-
-  } else if(id==='cut'){
-    header(d,'가로 그림과 세로 그림을 나눠 모아 뒀어요.');
-    box.innerHTML=`<nav class="album-tabs" aria-label="이미지 폴더">`+
-      ALBUMS.map((a,i)=>`<button class="album-tab" data-i="${i}">${a.name}</button>`).join('')+
-      `</nav><div id="gallery"></div>`;
-    const show=i=>{
-      const album=ALBUMS[i];
-      box.querySelectorAll('.album-tab').forEach((b,k)=>b.classList.toggle('on',k===i));
-      const groups=[
-        {key:'landscape',title:'가로 그림',items:album.items.filter(m=>(m.w||4)>(m.h||3)),ratio:'4 / 3'},
-        {key:'portrait',title:'세로 그림',items:album.items.filter(m=>(m.w||4)<(m.h||3)),ratio:'3 / 4'},
-        {key:'square',title:'정사각 그림',items:album.items.filter(m=>(m.w||4)===(m.h||3)),ratio:'1 / 1'}
-      ].filter(g=>g.items.length);
-      $('#gallery').innerHTML=groups.map(group=>`<section class="gallery-group"><h3 class="gallery-heading">${group.title}<span>${group.items.length}장</span></h3><div class="gallery-grid ${group.key}">`+
-        group.items.map(m=>{
-          const c=COLORS[album.items.indexOf(m)%3];
-          const inner=m.src?`<img src="${m.src}" alt="${m.cap||''}" loading="lazy">`:`<span class="ph" style="--c:${c}"><span class="ph-icon">${icon('photo',c)}</span><span class="ph-label">그림 넣기</span></span>`;
-          return `<button class="shot" style="--c:${c};--ratio:${group.ratio}" data-s="${m.src}" data-c="${m.cap||''}"><span class="shot-visual">${inner}</span><span class="shot-meta"><span class="cap">${m.cap||'이름 없는 그림'}</span></span></button>`;
-        }).join('')+`</div></section>`).join('');
-      box.querySelectorAll('.shot').forEach(sh=>sh.addEventListener('click',()=>{
-        if(!sh.dataset.s){toast('여기에 이미지를 넣을 수 있어요.');return;}
-        $('#lb img').src=sh.dataset.s; $('#lb p').textContent=sh.dataset.c; $('#lb').classList.add('on');
-      }));
-    };
-    box.querySelectorAll('.album-tab').forEach(b=>b.addEventListener('click',()=>show(+b.dataset.i)));
-    show(0); $('#footL').textContent='이미지 보관함';
+/* 2. 사담 : 큰 맥락 → 작은 맥락 → 글 제목 → 본문 */
+function storyEscape(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function storyDisplayDate(value){
+  const s=String(value||'');
+  return /^\d{4}-\d{2}-\d{2}$/.test(s)?s.replace(/-/g,'.'):s;
+}
+function normalizeStoryData(rows){
+  if(!Array.isArray(rows))throw new Error('게시글 데이터가 배열 형식이 아닙니다.');
+  /* 이전에 사용하던 계층형 JSON도 읽을 수 있도록 호환성을 유지합니다. */
+  if(rows.length&&rows[0]&&Array.isArray(rows[0].topics))return rows;
+  const categories=[];
+  rows.forEach(row=>{
+    if(!row||typeof row!=='object')return;
+    const categoryName=String(row.category||'미분류').trim()||'미분류';
+    const topicName=String(row.subcategory||'미분류').trim()||'미분류';
+    let category=categories.find(item=>item.title===categoryName);
+    if(!category){category={title:categoryName,topics:[]};categories.push(category)}
+    let topic=category.topics.find(item=>item.title===topicName);
+    if(!topic){topic={title:topicName,entries:[]};category.topics.push(topic)}
+    let body=[];
+    if(Array.isArray(row.body))body=row.body.map(v=>String(v)).filter(v=>v.trim());
+    else body=String(row.body||'').split(/\n\s*\n/).map(v=>v.trim()).filter(Boolean);
+    topic.entries.push({
+      title:String(row.title||'제목 없음'),
+      date:storyDisplayDate(row.date),
+      body
+    });
+  });
+  return categories;
+}
+async function loadStoryData(){
+  const requestId=++storyLoadSerial;
+  storyLoadState='loading';storyLoadError='';STORIES=[];drawStory();
+  try{
+    const response=await fetch(STORY_DATA_URL,{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const raw=await response.json();
+    const data=normalizeStoryData(raw);
+    if(requestId!==storyLoadSerial||where!=='story')return;
+    STORIES=data;storyLoadState='ready';storyLoadError='';
+    stCat=0;stTopic=0;stEntry=0;stLevel='category';drawStory();
+  }catch(err){
+    if(requestId!==storyLoadSerial||where!=='story')return;
+    storyLoadState='error';storyLoadError=String(err&&err.message||err);STORIES=[];drawStory();
   }
 }
-function setTheme(mode){
-  const light=mode==='light';
-  body.classList.toggle('light-mode',light);
-  $('#themeDark').classList.toggle('on',!light);
-  $('#themeLight').classList.toggle('on',light);
-  $('#themeDark').setAttribute('aria-pressed',String(!light));
-  $('#themeLight').setAttribute('aria-pressed',String(light));
-  $('#themeDark').setAttribute('aria-label',light?'어두운 화면으로 전환':'어두운 화면');
-  $('#themeLight').setAttribute('aria-label',light?'밝은 화면':'밝은 화면으로 전환');
+function story(){
+  const g=G[1];
+  scene.innerHTML=`<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div><div class="vn"><div class="slots" id="sl"></div><div class="stg" id="stg"></div></div>`;
+  stLevel='category';stCat=0;stTopic=0;stEntry=0;stEditing=false;stEditTarget=null;
+  loadStoryData();
 }
-$('#themeLight').innerHTML=icon('sun','currentColor');
-$('#themeDark').innerHTML=icon('moon','currentColor');
-$('#themeDark').addEventListener('click',()=>setTheme('dark'));
-$('#themeLight').addEventListener('click',()=>setTheme('light'));
+function storyItems(){
+  if(!STORIES.length)return [];
+  if(stLevel==='category')return STORIES;
+  const cat=STORIES[stCat];if(!cat)return [];
+  if(stLevel==='topic')return cat.topics||[];
+  const topic=(cat.topics||[])[stTopic];if(!topic)return [];
+  return topic.entries||[];
+}
+function storyIndex(){
+  if(stLevel==='category')return stCat;
+  if(stLevel==='topic')return stTopic;
+  return stEntry;
+}
+function setStoryIndex(i){
+  if(stLevel==='category')stCat=i;
+  else if(stLevel==='topic')stTopic=i;
+  else stEntry=i;
+}
+function storyOpen(){
+  if(stLevel==='category')stLevel='topic';
+  else if(stLevel==='topic')stLevel='entry';
+  else if(stLevel==='entry')stLevel='article';
+  drawStory();
+}
+function storyBack(){
+  if(stLevel==='article')stLevel='entry';
+  else if(stLevel==='entry')stLevel='topic';
+  else if(stLevel==='topic')stLevel='category';
+  else {exit();return}
+  drawStory();
+}
+function storySelect(i){
+  setStoryIndex(i);
+  if(stLevel!=='article')storyOpen();
+  else drawStory();
+}
+function drawStory(){
+  if(!$('#sl')||!$('#stg'))return;
+  if(storyLoadState==='loading'){
+    $('#sl').innerHTML='';$('#stg').innerHTML='<div class="win"><h3>사담을 불러오는 중이에요</h3><p class="st-copy">게시글 목록을 확인하고 있어요.</p></div>';
+    setHint('사담 게시글 불러오는 중…');return;
+  }
+  if(storyLoadState==='error'){
+    $('#sl').innerHTML='';$('#stg').innerHTML=`<div class="win"><h3>게시글을 불러오지 못했어요</h3><p class="st-copy">GitHub 저장소에 <code>data/stories.json</code> 파일이 있는지 확인해 주세요. 홈페이지가 GitHub Pages 주소에서 열려 있는지도 확인해 주세요.</p><p class="st-copy">오류: ${storyEscape(storyLoadError)}</p><button class="st-action" id="stRetry">다시 불러오기</button></div>`;
+    $('#stRetry').addEventListener('click',loadStoryData);setHint('게시글을 불러오지 못했어요 · Esc로 홈으로');return;
+  }
+  if(!STORIES.length){
+    $('#sl').innerHTML='';$('#stg').innerHTML='<div class="win"><h3>아직 게시글이 없어요</h3><p class="st-copy">Pages CMS에서 첫 번째 게시글을 저장하면 여기에 표시됩니다.</p></div>';
+    setHint('아직 게시글이 없어요 · 게시글은 Pages CMS에서 관리');return;
+  }
+  stCat=Math.max(0,Math.min(stCat,STORIES.length-1));
+  if(!STORIES[stCat])return;
+  stTopic=Math.max(0,Math.min(stTopic,Math.max(0,STORIES[stCat].topics.length-1)));
+  const cat=STORIES[stCat];
+  const topic=cat.topics[stTopic];
+  if(topic)stEntry=Math.max(0,Math.min(stEntry,Math.max(0,topic.entries.length-1)));
+  const entry=topic&&topic.entries[stEntry];
+  let list=[],idx=0;
+  if(stLevel==='category'){list=STORIES;idx=stCat}
+  else if(stLevel==='topic'){list=cat.topics;idx=stTopic}
+  else if(topic){list=topic.entries;idx=stEntry}
+  if(stLevel==='topic'&&!cat.topics.length)stLevel='category';
+  if((stLevel==='entry'||stLevel==='article')&&(!topic||!topic.entries.length))stLevel='topic';
+  const crumb=stLevel==='category'?'사담 보관함':stLevel==='topic'?cat.title:stLevel==='entry'?`${cat.title}  ›  ${topic.title}`:`${cat.title}  ›  ${topic.title}  ›  ${entry?entry.title:''}`;
+  const listHtml=list.map((it,i)=>{
+    const small=stLevel==='category'?`${it.topics.length}개 세부 카테고리`:stLevel==='topic'?`${it.entries.length}개 글`:it.date;
+    return `<button class="sl${i===idx?' on':''}" data-i="${i}"><span>${storyEscape(it.title)}</span><small>${storyEscape(small||'')}</small></button>`;
+  }).join('');
+  $('#sl').innerHTML=`<div class="st-crumb">${crumb.split('  ›  ').map((v,i)=>`${i?'<span>›</span>':''}${storyEscape(v)}`).join(' ')}</div>${listHtml}`;
+  $('#sl').querySelectorAll('.sl').forEach(b=>b.addEventListener('click',()=>storySelect(+b.dataset.i)));
+  let content='';
+  if(stLevel==='category'){
+    content=`<h3>${storyEscape(cat.title)}</h3><div class="dt">카테고리 · ${cat.topics.length}개 세부 카테고리</div><p class="st-copy">이 카테고리 안에서 관련된 이야기를 골라 읽을 수 있어요.</p><div class="st-pills">${cat.topics.map(t=>`<span class="st-pill">${storyEscape(t.title)}</span>`).join('')}</div>${cat.topics.length?'<button class="st-action" data-story-open>세부 카테고리 열기 →</button>':''}`;
+  }else if(stLevel==='topic'){
+    content=`<h3>${storyEscape(topic.title)}</h3><div class="dt">${storyEscape(cat.title)} · 세부 카테고리</div><p class="st-copy">이곳에 모아 둔 글을 확인해 보세요.</p><div class="st-pills">${topic.entries.map(e=>`<span class="st-pill">${storyEscape(e.title)}</span>`).join('')}</div>${topic.entries.length?'<button class="st-action" data-story-open>글 목록 열기 →</button>':'<p class="st-copy">아직 글이 없어요.</p>'}`;
+  }else if(stLevel==='entry'&&entry){
+    content=`<h3>${storyEscape(entry.title)}</h3><div class="dt">${storyEscape(cat.title)} · ${storyEscape(topic.title)} · ${storyEscape(entry.date)}</div><p class="st-copy">선택한 글의 제목과 날짜예요. 열기를 누르면 본문이 나타납니다.</p><button class="st-action" data-story-open>본문 읽기 →</button>`;
+  }else if(entry){
+    content=`<h3>${storyEscape(entry.title)}</h3><div class="dt">${storyEscape(cat.title)} · ${storyEscape(topic.title)} · ${storyEscape(entry.date)}</div><div class="win dlg"><span class="nm">${storyEscape(topic.title)}</span><div class="st-category">${storyEscape(cat.title)}</div>${entry.body.map(t=>`<p>${storyEscape(t).replace(/\n/g,'<br>')}</p>`).join('')}</div><div class="st-edit-actions"><button data-story-back>← 글 목록</button></div>`;
+  }
+  $('#stg').innerHTML=content||'<div class="win"><p class="st-copy">표시할 내용이 없어요.</p></div>';
+  const open=$('#stg').querySelector('[data-story-open]');if(open)open.addEventListener('click',storyOpen);
+  const back=$('#stg').querySelector('[data-story-back]');if(back)back.addEventListener('click',storyBack);
+  const help={category:'▲ ▼ 카테고리 고르기 · Enter 열기 · Esc 홈으로',topic:'▲ ▼ 세부 카테고리 고르기 · Enter 글 목록 · Esc 이전',entry:'▲ ▼ 게시글 고르기 · Enter 본문 읽기 · Esc 이전',article:'본문 읽기 · Esc 글 목록으로 돌아가기'};
+  setHint(help[stLevel]);
+}
 
+/* 3. 이미지 : 캐릭터 고르기 창 → 그 캐릭터의 앨범 */
+function cut(){
+  const g=G[2];
+  scene.innerHTML=`<div class="gh">${icon('photo',g.c)}<span id="gt">${g.name}</span></div><div id="gal"></div>`;
+  ai=-1;drawAlbum();
+}
+function drawAlbum(){
+  const old=$('#bkl');if(old)old.remove();
+  const C=[...G.map(g=>g.c),night?'#8fc3a6':'#7ea58f'];
+  scene.scrollTop=0;
+  if(ai<0){
+    $('#gt').textContent=G[2].name;
+    $('#gal').innerHTML=`<div class="emp"><div class="emp-st">${ALBUMS.map((a,i)=>`<button class="pk${i===ci?' on':''}" style="--k:${C[i%4]}" data-i="${i}"><span class="pl">${icon('photo',C[i%4])}<span class="pl-name">${a.name}</span></span></button>`).join('')}</div><b>캐릭터를 골라 보세요</b><em>고르면 그 아이의 그림이 펼쳐져요</em></div>`;
+    $('#gal').querySelectorAll('.pk').forEach(b=>b.addEventListener('click',()=>{ai=ci=+b.dataset.i;drawAlbum()}));
+    setHint('◀ ▶ 캐릭터 고르기 · Enter 열기 · Esc 홈으로');
+    return;
+  }
+  const al=ALBUMS[ai],gh=scene.querySelector('.gh');
+  $('#gt').textContent=G[2].name+' · '+al.name;
+  const bk=document.createElement('button');bk.id='bkl';bk.className='bk';bk.textContent='← 캐릭터 목록';
+  bk.addEventListener('click',()=>{ai=-1;drawAlbum()});
+  gh.insertBefore(bk,gh.querySelector('.bk'));
+  const grp=[['landscape','가로 그림','4 / 3',m=>(m.w||4)>(m.h||3)],['portrait','세로 그림','3 / 4',m=>(m.w||4)<(m.h||3)],['square','정사각 그림','1 / 1',m=>(m.w||4)===(m.h||3)]]
+    .map(([k,t,r,f])=>({k,t,r,it:al.items.filter(f)})).filter(g=>g.it.length);
+  $('#gal').innerHTML=grp.map(g=>`<section class="gg"><h4>${g.t} ${g.it.length}장</h4><div class="grid ${g.k}">`+g.it.map(m=>{
+    const c=C[al.items.indexOf(m)%4];
+    const inner=m.src?`<img src="${m.src}" alt="${m.cap||''}" loading="lazy">`:`<span class="ph" style="--c:${c}">${icon('photo',c)}그림 넣기</span>`;
+    return `<button class="shot" style="--ratio:${g.r};--c:${c}" data-s="${m.src}" data-c="${m.cap||''}"><span class="sv">${inner}</span><span class="sc">${m.cap||'이름 없는 그림'}</span></button>`}).join('')+`</div></section>`).join('');
+  $('#gal').querySelectorAll('.shot').forEach(sh=>sh.addEventListener('click',()=>{
+    if(!sh.dataset.s){toast('여기에 이미지를 넣을 수 있어요.');return}
+    $('#lb img').src=sh.dataset.s;$('#lb p').textContent=sh.dataset.c;$('#lb').classList.add('on')}));
+  setHint('▲ ▼ 내려보기 · ◀ ▶ 다른 캐릭터 · 그림을 눌러 크게 보기 · Esc 캐릭터 목록으로');
+}
+
+/* 버튼 입력 (키보드·화면 버튼 공통) */
+function press(k){
+  if($('#lb').classList.contains('on')){if(k==='b'||k==='a')$('#lb').classList.remove('on');return}
+  if(busy)return;
+  if(where==='home'){
+    if(k==='l')rotate(-1);else if(k==='r')rotate(1);else if(k==='a')start(G[sel].id);
+  }else if(where==='plat'){
+    if(k==='u'){pi=(pi+CHARS.length-1)%CHARS.length;drawPlat()}
+    else if(k==='d'){pi=(pi+1)%CHARS.length;drawPlat()}
+    else if(k==='b')exit();
+  }else if(where==='story'){
+    const items=storyItems();
+    if(k==='u'||k==='d'){
+      if(items.length){const next=(storyIndex()+(k==='d'?1:items.length-1))%items.length;setStoryIndex(next);drawStory();}
+    }else if(k==='a'){
+      if(storyLoadState!=='ready'||!STORIES.length)return;
+      if(stLevel==='article'){
+        const before=scene.scrollTop;scene.scrollBy(0,140);
+        if(scene.scrollTop===before)toast('글을 다 읽었어요. Esc로 글 목록으로 돌아갈 수 있어요.');
+      }else if(items.length)storyOpen();
+    }else if(k==='b')storyBack();
+  }else if(where==='cut'){
+    const L=ALBUMS.length;
+    if(ai<0){
+      if(k==='l'||k==='r'){ci=(ci+(k==='r'?1:L-1))%L;drawAlbum()}
+      else if(k==='a'){ai=ci;drawAlbum()}
+      else if(k==='b')exit();
+    }else{
+      if(k==='l'||k==='r'){ai=(ai+(k==='r'?1:L-1))%L;ci=ai;drawAlbum()}
+      else if(k==='u')scene.scrollBy(0,-90);else if(k==='d')scene.scrollBy(0,90);
+      else if(k==='b'){ai=-1;drawAlbum()}
+    }
+  }
+}
+const KEYS={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d',Enter:'a',' ':'a',Escape:'b',Backspace:'b'};
+addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea,select,[contenteditable="true"]')){if(e.key==='Escape'&&stEditing){e.preventDefault();stEditing=false;stEditTarget=null;drawStory()}return}const k=KEYS[e.key];if(!k)return;if(e.target.closest&&e.target.closest('button,a')&&(e.key==='Enter'||e.key===' '))return;e.preventDefault();press(k)});
+
+/* 테마 */
+$('#tLight').innerHTML=icon('sun','currentColor');$('#tDark').innerHTML=icon('moon','currentColor');
+function theme(n){
+  night=n;scr.classList.toggle('night',n);bez.classList.toggle('night-mode',n);$('#tDark').classList.toggle('on',n);$('#tLight').classList.toggle('on',!n);
+  const P=n?PAL.night:PAL.day;G.forEach((g,i)=>g.c=P[i]);
+  if(where==='home')home();else enter(where);
+}
+$('#tLight').addEventListener('click',()=>theme(false));$('#tDark').addEventListener('click',()=>theme(true));
 $('#lb').addEventListener('click',()=>$('#lb').classList.remove('on'));
+theme(false);
 </script>
 </body>
 </html>
