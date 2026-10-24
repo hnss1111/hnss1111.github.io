@@ -217,7 +217,7 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
 /* ── CRT 곡면: 화면 전체에 일정하게. 곡면 정도(--cv 1→0)를 천천히 바꿔서 평면과 이어져요 ── */
 .screen{border-radius:14px}
 .screen::before{content:"";position:absolute;inset:0;z-index:29;pointer-events:none;border-radius:inherit;opacity:var(--cv,1);background:radial-gradient(ellipse at 50% 48%,transparent 55%,rgba(8,12,22,.12) 74%,rgba(8,12,22,.34) 100%);box-shadow:inset 0 0 40px 4px rgba(8,12,22,.28)}
-.bezel.warped{filter:url(#warp);transform:perspective(1050px) rotateX(calc(1.2deg * var(--cv,1))) scale(calc(1 - .01 * var(--cv,1)));transform-origin:center 54%}
+.bezel.warped{filter:url(#warp);transform:perspective(1050px) rotateX(calc(.85deg * var(--cv,1))) scale(calc(1 - .006 * var(--cv,1)));transform-origin:center 54%}
 
 
 /* ── 모바일 전용 보정: 게임기 외형과 PC 디자인은 유지하고 터치·가독성만 조정 ── */
@@ -320,6 +320,131 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
 @media (hover:none){
   .bk:hover,.pf:hover,.shot:hover{transform:none;filter:none}
   button{-webkit-tap-highlight-color:transparent}
+}
+
+
+
+/* ── 테마별 본체 외장 색상: 라이트는 밝고 부드럽게, 다크는 대비를 분명하게 ── */
+body{background:var(--outside-bg,#1b2130);transition:background .22s steps(3)}
+body.day-mode{
+  --outside-bg:#EFF3F7;
+  --shell-bg:#D4DEE8;
+  --shell-edge:#AEBECD;
+  --shell-highlight:#F8FAFC;
+  --switch-bg:#DCE5ED;
+  --switch-edge:#A7B8C8;
+  --switch-ink:#42556A;
+  --switch-active:#7AA6CC;
+  --switch-active-ink:#13263A;
+}
+body.night-mode{
+  --outside-bg:#151B26;
+  --shell-bg:#283448;
+  --shell-edge:#172233;
+  --shell-highlight:#35445A;
+  --switch-bg:#253247;
+  --switch-edge:#101825;
+  --switch-ink:#D3E0F0;
+  --switch-active:#9BC4E8;
+  --switch-active-ink:#1A2A3C;
+}
+.bezel{background:var(--shell-bg,#2a3142);box-shadow:inset 0 0 0 3px var(--shell-edge,#1a2030),inset 0 0 0 6px var(--shell-highlight,#343d50)}
+.tgbar button{background:var(--switch-bg,#1f2638);color:var(--switch-ink,#8fa0b8);box-shadow:2px 0 0 var(--switch-edge,#0f1422),-2px 0 0 var(--switch-edge,#0f1422),0 2px 0 var(--switch-edge,#0f1422),0 -2px 0 var(--switch-edge,#0f1422)}
+.tgbar button.on{background:var(--switch-active,#c9d4e2);color:var(--switch-active-ink,#1a2030)}
+.bezel.night-mode .tgbar button{background:var(--switch-bg);color:var(--switch-ink);box-shadow:2px 0 0 var(--switch-edge),-2px 0 0 var(--switch-edge),0 2px 0 var(--switch-edge),0 -2px 0 var(--switch-edge)}
+.bezel.night-mode .tgbar button.on{background:var(--switch-active);color:var(--switch-active-ink)}
+
+/* 다크모드 명암 단계와 글자 대비 보정 */
+.screen.night{
+  --bg:#202A39;
+  --ink:#F5F3ED;
+  --dim:#CAD4E1;
+  --panel:#303D51;
+  --bd:#121B28;
+  --shade:#46566D;
+  --dot:#74869F;
+  --b1:#253348;
+  --b2:#2B3A50;
+  --b3:#314159;
+  --b4:#394A63;
+  --b5:#29374B;
+}
+.screen.night .g-story{background:#273448;color:var(--ink)}
+.screen.night .win{color:var(--ink)}
+.screen.night .st-copy,.screen.night .info p,.screen.night .dlg p{color:var(--ink)}
+.screen.night .st-crumb,.screen.night .stg .dt,.screen.night .st-field label{color:var(--dim)}
+.screen.night .st-field input,.screen.night .st-field select,.screen.night .st-field textarea{background:#202B3B;color:#F5F3ED;border-color:#53657D}
+.screen.night .sl{background:#35445A;color:#F5F3ED}
+.screen.night .sl small{color:#D3DCE8}
+.screen.night .sl.on{background:var(--c);color:#172334}
+.screen.night .sl.on small{color:#263448}
+.screen.night .st-pill{background:#40516A;color:#F5F3ED}
+.screen.night .st-tools .st-tool{background:#35455B;color:#F5F3ED}
+.screen.night .st-tools .st-tool.primary,.screen.night .st-action{background:var(--c);color:#1C2A3B}
+.screen.night .st-empty{background:#35455B;color:#E6ECF3}
+.screen.night::before{background:radial-gradient(ellipse at 50% 48%,transparent 62%,rgba(8,12,22,.08) 82%,rgba(8,12,22,.2) 100%);box-shadow:inset 0 0 26px 2px rgba(8,12,22,.16)}
+
+/* ── 사담: 블로그형 화면. 카테고리·세부 분류는 필터, 글은 목록에서 바로 선택 ── */
+.blog-shell{display:grid;grid-template-columns:minmax(145px, .28fr) minmax(0,1fr);gap:14px;align-items:start;min-width:0}
+.blog-sidebar{min-width:0;padding:12px;background:var(--panel);border:2px solid var(--shade);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--shade) 35%,transparent)}
+.blog-side-label{font-family:var(--px);font-size:11px;color:var(--dim);margin:0 0 8px}
+.blog-side-list{display:flex;flex-direction:column;gap:5px}
+.blog-cat{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:8px 9px;background:transparent;color:var(--ink);text-align:left;font-family:var(--bd2);font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+.blog-cat small{flex:none;font-size:10px;color:var(--dim)}
+.blog-cat.on{background:color-mix(in srgb,var(--c) 28%,var(--panel));box-shadow:inset 3px 0 0 var(--c)}
+.blog-main{min-width:0}
+.blog-main-head{padding:12px 14px;margin-bottom:10px;background:var(--panel);border:2px solid var(--shade)}
+.blog-section-title{font-family:var(--px);font-size:16px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.blog-section-meta{font-size:11px;line-height:1.7;color:var(--dim);margin-top:3px}
+.blog-topics{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.blog-topic{max-width:100%;padding:6px 9px;background:var(--shade);color:var(--ink);font-size:11px;line-height:1.4;overflow-wrap:anywhere}
+.blog-topic.on{background:var(--c);color:#202838}
+.blog-columns{display:grid;grid-template-columns:minmax(170px,.72fr) minmax(0,1.45fr);gap:10px;align-items:start;min-width:0}
+.blog-postlist{min-width:0;display:flex;flex-direction:column;gap:7px}
+.blog-list-heading{font-family:var(--px);font-size:11px;color:var(--dim);margin:1px 0 3px}
+.blog-post{width:100%;min-width:0;display:block;padding:10px 11px;background:var(--panel);color:var(--ink);text-align:left;border:2px solid var(--shade);line-height:1.5;overflow-wrap:anywhere}
+.blog-post.on{border-color:var(--c);box-shadow:inset 3px 0 0 var(--c)}
+.blog-post-meta{display:block;font-size:10px;color:var(--dim);margin-bottom:5px}
+.blog-post-title{display:block;font-size:13px;line-height:1.55;font-weight:600}
+.blog-post-excerpt{display:block;margin-top:5px;font-size:11px;line-height:1.65;color:var(--dim)}
+.blog-article{min-width:0;padding:clamp(13px,2vw,21px);background:var(--panel);border:2px solid var(--shade);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--shade) 24%,transparent)}
+.blog-article-empty{min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;color:var(--dim);font-size:12px;line-height:1.7}
+.blog-article-empty svg{width:26px;color:var(--c)}
+.blog-article-kicker{font-family:var(--px);font-size:10px;line-height:1.7;color:var(--c);margin-bottom:7px;overflow-wrap:anywhere}
+.blog-article h3{margin:0 0 8px;color:var(--ink);font-family:var(--bd2);font-size:clamp(17px,2vw,23px);font-weight:700;line-height:1.5;overflow-wrap:anywhere;word-break:keep-all}
+.blog-article-date{font-size:10px;color:var(--dim);padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--shade)}
+.blog-article-body{font-size:13px;color:var(--ink);line-height:2;overflow-wrap:anywhere;word-break:break-word}
+.blog-article-body p{margin:0 0 15px;white-space:pre-wrap}
+.blog-article-body p:last-child{margin-bottom:0}
+.blog-back{display:none;margin:0 0 10px;padding:7px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
+.blog-status{padding:14px;background:var(--panel);color:var(--dim);font-size:12px;line-height:1.8}
+.screen.night .blog-sidebar,.screen.night .blog-main-head,.screen.night .blog-post,.screen.night .blog-article{background:#303E52;border-color:#4B5B72}
+.screen.night .blog-cat{color:#F5F3ED}
+.screen.night .blog-cat small,.screen.night .blog-post-meta,.screen.night .blog-post-excerpt{color:#D0D9E5}
+.screen.night .blog-cat.on{background:color-mix(in srgb,var(--c) 30%,#303E52)}
+.screen.night .blog-topic{background:#45566D;color:#F3F5F8}
+.screen.night .blog-topic.on{background:var(--c);color:#1B293A}
+.screen.night .blog-post.on{border-color:var(--c)}
+.screen.night .blog-article-date{border-color:#52637A}
+@media(max-width:820px){
+ .blog-shell{grid-template-columns:minmax(0,1fr);gap:10px}
+ .blog-sidebar{padding:9px}
+ .blog-side-list{display:flex;flex-direction:row;gap:6px;overflow-x:auto;padding-bottom:3px}
+ .blog-cat{flex:0 0 auto;width:auto;min-height:38px;padding:8px 10px;white-space:nowrap}
+ .blog-columns{grid-template-columns:minmax(0,1fr);gap:9px}
+ .blog-postlist{display:flex}
+ .blog-shell.article-open .blog-postlist{display:none}
+ .blog-shell.article-open .blog-back{display:inline-block}
+ .blog-main-head{padding:10px 11px}
+ .blog-article{padding:13px}
+ .blog-article h3{font-size:clamp(17px,5vw,22px)}
+ .blog-article-body{font-size:13px;line-height:1.9}
+}
+@media(max-width:400px){
+ .blog-topic{font-size:10px;padding:6px 7px}
+ .blog-post{padding:9px}
+ .blog-post-title{font-size:12px}
+ .blog-article{padding:11px}
 }
 
 </style>
@@ -567,7 +692,7 @@ const K=0.11; /* 곡면 세기 (0.08 약하게 ~ 0.2 강하게) */
 let cur=1,curRaf=0; /* 현재 곡면 정도: 1 = 완전히 볼록, 0 = 평평 */
 function fitWarp(){const w=bez.offsetWidth,h=bez.offsetHeight;if(!w)return;
   warpImg.setAttribute('width',w);warpImg.setAttribute('height',h);warpMaskImg.setAttribute('width',w);warpMaskImg.setAttribute('height',h);
-  warpMap.setAttribute('scale',((K/(1+K))*((w+h)/2)*cur).toFixed(2))}
+  warpMap.setAttribute('scale',Math.min(62,(K/(1+K))*((w+h)/2)*cur).toFixed(2))}
 function setCurve(v){cur=v;bez.style.setProperty('--cv',v.toFixed(3));bez.classList.toggle('warped',v>0.002);fitWarp()}
 function curveTo(to,ms){return new Promise(res=>{
   const from=cur,t0=performance.now();cancelAnimationFrame(curRaf);
@@ -737,7 +862,7 @@ async function loadStoryData(){
     const data=normalizeStoryData(raw);
     if(requestId!==storyLoadSerial||where!=='story')return;
     STORIES=data;storyLoadState='ready';storyLoadError='';
-    stCat=0;stTopic=0;stEntry=0;stLevel='category';drawStory();
+    stCat=0;stTopic=-1;stEntry=0;stLevel='list';drawStory();
   }catch(err){
     if(requestId!==storyLoadSerial||where!=='story')return;
     storyLoadState='error';storyLoadError=String(err&&err.message||err);STORIES=[];drawStory();
@@ -745,95 +870,96 @@ async function loadStoryData(){
 }
 function story(){
   const g=G[1];
-  scene.innerHTML=`<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div><div class="vn"><div class="slots" id="sl"></div><div class="stg" id="stg"></div></div>`;
-  stLevel='category';stCat=0;stTopic=0;stEntry=0;stEditing=false;stEditTarget=null;
+  scene.innerHTML=`<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
+    <div class="blog-shell" id="blogShell">
+      <aside class="blog-sidebar" id="blogSidebar"></aside>
+      <main class="blog-main">
+        <div class="blog-main-head"><div class="blog-section-title" id="blogSectionTitle">사담 보관함</div><div class="blog-section-meta" id="blogSectionMeta">기록을 모아 둔 곳</div><div class="blog-topics" id="blogTopics"></div></div>
+        <div class="blog-columns">
+          <section class="blog-postlist" id="blogPostList" aria-label="게시글 목록"></section>
+          <article class="blog-article" id="blogArticle" aria-live="polite"></article>
+        </div>
+      </main>
+    </div>`;
+  stLevel='list';stCat=0;stTopic=-1;stEntry=0;stEditing=false;stEditTarget=null;
   loadStoryData();
 }
-function storyItems(){
-  if(!STORIES.length)return [];
-  if(stLevel==='category')return STORIES;
-  const cat=STORIES[stCat];if(!cat)return [];
-  if(stLevel==='topic')return cat.topics||[];
-  const topic=(cat.topics||[])[stTopic];if(!topic)return [];
-  return topic.entries||[];
+function storyVisibleEntries(){
+  if(!STORIES.length||!STORIES[stCat])return [];
+  const cat=STORIES[stCat];
+  const topics=stTopic<0?(cat.topics||[]):[(cat.topics||[])[stTopic]].filter(Boolean);
+  return topics.flatMap(topic=>(topic.entries||[]).map(entry=>({
+    title:String(entry.title||'제목 없음'),date:String(entry.date||''),body:Array.isArray(entry.body)?entry.body:[],
+    categoryTitle:cat.title,topicTitle:topic.title
+  }))).sort((a,b)=>{
+    const da=String(a.date||'').replace(/\./g,'-'),db=String(b.date||'').replace(/\./g,'-');
+    return db.localeCompare(da);
+  });
 }
-function storyIndex(){
-  if(stLevel==='category')return stCat;
-  if(stLevel==='topic')return stTopic;
-  return stEntry;
-}
-function setStoryIndex(i){
-  if(stLevel==='category')stCat=i;
-  else if(stLevel==='topic')stTopic=i;
-  else stEntry=i;
-}
-function storyOpen(){
-  if(stLevel==='category')stLevel='topic';
-  else if(stLevel==='topic')stLevel='entry';
-  else if(stLevel==='entry')stLevel='article';
-  drawStory();
-}
+function storyItems(){return storyVisibleEntries()}
+function storyIndex(){return stEntry}
+function setStoryIndex(i){stEntry=i}
+function storyOpen(){stLevel='article';drawStory()}
 function storyBack(){
-  if(stLevel==='article')stLevel='entry';
-  else if(stLevel==='entry')stLevel='topic';
-  else if(stLevel==='topic')stLevel='category';
-  else {exit();return}
-  drawStory();
+  if(stLevel==='article'){stLevel='list';drawStory()}
+  else exit();
 }
-function storySelect(i){
-  setStoryIndex(i);
-  if(stLevel!=='article')storyOpen();
-  else drawStory();
-}
+function storySelect(i){stEntry=i;stLevel='article';drawStory()}
 function drawStory(){
-  if(!$('#sl')||!$('#stg'))return;
+  const sidebar=$('#blogSidebar'),topicsBox=$('#blogTopics'),titleBox=$('#blogSectionTitle'),metaBox=$('#blogSectionMeta'),postList=$('#blogPostList'),article=$('#blogArticle'),shell=$('#blogShell');
+  if(!sidebar||!topicsBox||!titleBox||!metaBox||!postList||!article||!shell)return;
   if(storyLoadState==='loading'){
-    $('#sl').innerHTML='';$('#stg').innerHTML='<div class="win"><h3>사담을 불러오는 중이에요</h3><p class="st-copy">게시글 목록을 확인하고 있어요.</p></div>';
-    setHint('사담 게시글 불러오는 중…');return;
+    sidebar.innerHTML='';topicsBox.innerHTML='';postList.innerHTML='';
+    article.innerHTML='<div class="blog-status">사담 게시글을 불러오고 있어요…</div>';setHint('사담 게시글 불러오는 중…');return;
   }
   if(storyLoadState==='error'){
-    $('#sl').innerHTML='';$('#stg').innerHTML=`<div class="win"><h3>게시글을 불러오지 못했어요</h3><p class="st-copy">GitHub 저장소에 <code>data/stories.json</code> 파일이 있는지 확인해 주세요. 홈페이지가 GitHub Pages 주소에서 열려 있는지도 확인해 주세요.</p><p class="st-copy">오류: ${storyEscape(storyLoadError)}</p><button class="st-action" id="stRetry">다시 불러오기</button></div>`;
-    $('#stRetry').addEventListener('click',loadStoryData);setHint('게시글을 불러오지 못했어요 · Esc로 홈으로');return;
+    sidebar.innerHTML='';topicsBox.innerHTML='';postList.innerHTML='';
+    article.innerHTML=`<div class="blog-status"><strong>게시글을 불러오지 못했어요.</strong><p>GitHub 저장소에 <code>data/stories.json</code> 파일이 있는지, 홈페이지가 GitHub Pages 주소에서 열려 있는지 확인해 주세요.</p><p>오류: ${storyEscape(storyLoadError)}</p><button class="st-action" id="stRetry">다시 불러오기</button></div>`;
+    $('#stRetry').addEventListener('click',loadStoryData);setHint('게시글 불러오기 오류 · Esc로 홈으로');return;
   }
   if(!STORIES.length){
-    $('#sl').innerHTML='';$('#stg').innerHTML='<div class="win"><h3>아직 게시글이 없어요</h3><p class="st-copy">Pages CMS에서 첫 번째 게시글을 저장하면 여기에 표시됩니다.</p></div>';
-    setHint('아직 게시글이 없어요 · 게시글은 Pages CMS에서 관리');return;
+    sidebar.innerHTML='<div class="blog-side-label">카테고리</div><p class="st-copy">아직 분류가 없어요.</p>';topicsBox.innerHTML='';postList.innerHTML='';
+    article.innerHTML='<div class="blog-status">아직 게시글이 없어요.<br>Pages CMS에서 첫 게시글을 저장하면 여기에 표시됩니다.</div>';
+    titleBox.textContent='사담 보관함';metaBox.textContent='아직 등록된 글이 없습니다.';setHint('게시글은 Pages CMS에서 관리');return;
   }
   stCat=Math.max(0,Math.min(stCat,STORIES.length-1));
-  if(!STORIES[stCat])return;
-  stTopic=Math.max(0,Math.min(stTopic,Math.max(0,STORIES[stCat].topics.length-1)));
   const cat=STORIES[stCat];
-  const topic=cat.topics[stTopic];
-  if(topic)stEntry=Math.max(0,Math.min(stEntry,Math.max(0,topic.entries.length-1)));
-  const entry=topic&&topic.entries[stEntry];
-  let list=[],idx=0;
-  if(stLevel==='category'){list=STORIES;idx=stCat}
-  else if(stLevel==='topic'){list=cat.topics;idx=stTopic}
-  else if(topic){list=topic.entries;idx=stEntry}
-  if(stLevel==='topic'&&!cat.topics.length)stLevel='category';
-  if((stLevel==='entry'||stLevel==='article')&&(!topic||!topic.entries.length))stLevel='topic';
-  const crumb=stLevel==='category'?'사담 보관함':stLevel==='topic'?cat.title:stLevel==='entry'?`${cat.title}  ›  ${topic.title}`:`${cat.title}  ›  ${topic.title}  ›  ${entry?entry.title:''}`;
-  const listHtml=list.map((it,i)=>{
-    const small=stLevel==='category'?`${it.topics.length}개 세부 카테고리`:stLevel==='topic'?`${it.entries.length}개 글`:it.date;
-    return `<button class="sl${i===idx?' on':''}" data-i="${i}"><span>${storyEscape(it.title)}</span><small>${storyEscape(small||'')}</small></button>`;
-  }).join('');
-  $('#sl').innerHTML=`<div class="st-crumb">${crumb.split('  ›  ').map((v,i)=>`${i?'<span>›</span>':''}${storyEscape(v)}`).join(' ')}</div>${listHtml}`;
-  $('#sl').querySelectorAll('.sl').forEach(b=>b.addEventListener('click',()=>storySelect(+b.dataset.i)));
-  let content='';
-  if(stLevel==='category'){
-    content=`<h3>${storyEscape(cat.title)}</h3><div class="dt">카테고리 · ${cat.topics.length}개 세부 카테고리</div><p class="st-copy">이 카테고리 안에서 관련된 이야기를 골라 읽을 수 있어요.</p><div class="st-pills">${cat.topics.map(t=>`<span class="st-pill">${storyEscape(t.title)}</span>`).join('')}</div>${cat.topics.length?'<button class="st-action" data-story-open>세부 카테고리 열기 →</button>':''}`;
-  }else if(stLevel==='topic'){
-    content=`<h3>${storyEscape(topic.title)}</h3><div class="dt">${storyEscape(cat.title)} · 세부 카테고리</div><p class="st-copy">이곳에 모아 둔 글을 확인해 보세요.</p><div class="st-pills">${topic.entries.map(e=>`<span class="st-pill">${storyEscape(e.title)}</span>`).join('')}</div>${topic.entries.length?'<button class="st-action" data-story-open>글 목록 열기 →</button>':'<p class="st-copy">아직 글이 없어요.</p>'}`;
-  }else if(stLevel==='entry'&&entry){
-    content=`<h3>${storyEscape(entry.title)}</h3><div class="dt">${storyEscape(cat.title)} · ${storyEscape(topic.title)} · ${storyEscape(entry.date)}</div><p class="st-copy">선택한 글의 제목과 날짜예요. 열기를 누르면 본문이 나타납니다.</p><button class="st-action" data-story-open>본문 읽기 →</button>`;
-  }else if(entry){
-    content=`<h3>${storyEscape(entry.title)}</h3><div class="dt">${storyEscape(cat.title)} · ${storyEscape(topic.title)} · ${storyEscape(entry.date)}</div><div class="win dlg"><span class="nm">${storyEscape(topic.title)}</span><div class="st-category">${storyEscape(cat.title)}</div>${entry.body.map(t=>`<p>${storyEscape(t).replace(/\n/g,'<br>')}</p>`).join('')}</div><div class="st-edit-actions"><button data-story-back>← 글 목록</button></div>`;
+  if(!cat.topics)cat.topics=[];
+  if(stTopic>=cat.topics.length)stTopic=-1;
+  let entries=storyVisibleEntries();
+  if(entries.length)stEntry=Math.max(0,Math.min(stEntry,entries.length-1));else stEntry=0;
+  const total=cat.topics.reduce((sum,t)=>sum+(t.entries||[]).length,0);
+  sidebar.innerHTML=`<div class="blog-side-label">카테고리</div><div class="blog-side-list">${STORIES.map((c,i)=>{
+    const count=(c.topics||[]).reduce((sum,t)=>sum+(t.entries||[]).length,0);
+    return `<button class="blog-cat${i===stCat?' on':''}" data-cat="${i}"><span>${storyEscape(c.title)}</span><small>${count}</small></button>`;
+  }).join('')}</div>`;
+  sidebar.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{stCat=+b.dataset.cat;stTopic=-1;stEntry=0;stLevel='list';drawStory()}));
+  topicsBox.innerHTML=`<button class="blog-topic${stTopic<0?' on':''}" data-topic="-1">전체 글</button>`+cat.topics.map((t,i)=>`<button class="blog-topic${i===stTopic?' on':''}" data-topic="${i}">${storyEscape(t.title)} <span>· ${(t.entries||[]).length}</span></button>`).join('');
+  topicsBox.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>{stTopic=+b.dataset.topic;stEntry=0;stLevel='list';drawStory()}));
+  entries=storyVisibleEntries();
+  titleBox.textContent=stTopic<0?cat.title:cat.topics[stTopic].title;
+  metaBox.textContent=`${stTopic<0?'카테고리 전체':'세부 분류'} · ${entries.length}개의 글`;
+  if(!entries.length){
+    postList.innerHTML='<div class="blog-status">이 분류에는 아직 게시글이 없어요.</div>';
+    article.innerHTML='<div class="blog-article-empty">아직 등록된 글이 없어요.</div>';
+    shell.classList.remove('article-open');setHint('카테고리를 선택해 게시글을 찾아보세요 · Esc 홈으로');return;
   }
-  $('#stg').innerHTML=content||'<div class="win"><p class="st-copy">표시할 내용이 없어요.</p></div>';
-  const open=$('#stg').querySelector('[data-story-open]');if(open)open.addEventListener('click',storyOpen);
-  const back=$('#stg').querySelector('[data-story-back]');if(back)back.addEventListener('click',storyBack);
-  const help={category:'▲ ▼ 카테고리 고르기 · Enter 열기 · Esc 홈으로',topic:'▲ ▼ 세부 카테고리 고르기 · Enter 글 목록 · Esc 이전',entry:'▲ ▼ 게시글 고르기 · Enter 본문 읽기 · Esc 이전',article:'본문 읽기 · Esc 글 목록으로 돌아가기'};
-  setHint(help[stLevel]);
+  stEntry=Math.max(0,Math.min(stEntry,entries.length-1));
+  postList.innerHTML=`<div class="blog-list-heading">게시글 목록 · ${entries.length}</div>`+entries.map((entry,i)=>{
+    const excerpt=entry.body.join(' ').replace(/\s+/g,' ').trim();
+    return `<button class="blog-post${i===stEntry?' on':''}" data-post="${i}"><span class="blog-post-meta">${storyEscape(entry.topicTitle)} · ${storyEscape(entry.date)}</span><span class="blog-post-title">${storyEscape(entry.title)}</span><span class="blog-post-excerpt">${storyEscape(excerpt.slice(0,76))}${excerpt.length>76?'…':''}</span></button>`;
+  }).join('');
+  postList.querySelectorAll('[data-post]').forEach(b=>b.addEventListener('click',()=>storySelect(+b.dataset.post)));
+  const selected=entries[stEntry];
+  if(stLevel==='article'&&selected){
+    shell.classList.add('article-open');
+    article.innerHTML=`<button class="blog-back" data-blog-back>← 게시글 목록</button><div class="blog-article-kicker">${storyEscape(selected.categoryTitle)}　/　${storyEscape(selected.topicTitle)}</div><h3>${storyEscape(selected.title)}</h3><div class="blog-article-date">${storyEscape(selected.date)}</div><div class="blog-article-body">${selected.body.map(t=>`<p>${storyEscape(t).replace(/\n/g,'<br>')}</p>`).join('')}</div>`;
+    const back=article.querySelector('[data-blog-back]');if(back)back.addEventListener('click',()=>{stLevel='list';drawStory()});
+  }else{
+    shell.classList.remove('article-open');
+    article.innerHTML=`<div class="blog-article-empty">${icon('bubble','var(--c)')}<strong>읽고 싶은 글을 선택해 주세요.</strong><span>왼쪽 목록에서 제목을 누르면 본문이 여기에 표시됩니다.</span></div>`;
+  }
+  setHint(stLevel==='article'?'게시글 읽기 · Esc로 목록으로 돌아가기':'게시글 제목을 눌러 읽기 · 카테고리로 글 찾기 · Esc 홈으로');
 }
 
 /* 3. 이미지 : 캐릭터 고르기 창 → 그 캐릭터의 앨범 */
@@ -888,7 +1014,7 @@ function press(k){
       if(storyLoadState!=='ready'||!STORIES.length)return;
       if(stLevel==='article'){
         const before=scene.scrollTop;scene.scrollBy(0,140);
-        if(scene.scrollTop===before)toast('글을 다 읽었어요. Esc로 글 목록으로 돌아갈 수 있어요.');
+        if(scene.scrollTop===before)toast('글을 다 읽었어요. Esc로 목록으로 돌아갈 수 있어요.');
       }else if(items.length)storyOpen();
     }else if(k==='b')storyBack();
   }else if(where==='cut'){
@@ -910,7 +1036,7 @@ addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,text
 /* 테마 */
 $('#tLight').innerHTML=icon('sun','currentColor');$('#tDark').innerHTML=icon('moon','currentColor');
 function theme(n){
-  night=n;scr.classList.toggle('night',n);bez.classList.toggle('night-mode',n);$('#tDark').classList.toggle('on',n);$('#tLight').classList.toggle('on',!n);
+  night=n;document.body.classList.toggle('night-mode',n);document.body.classList.toggle('day-mode',!n);scr.classList.toggle('night',n);bez.classList.toggle('night-mode',n);$('#tDark').classList.toggle('on',n);$('#tLight').classList.toggle('on',!n);
   const P=n?PAL.night:PAL.day;G.forEach((g,i)=>g.c=P[i]);
   if(where==='home')home();else enter(where);
 }
