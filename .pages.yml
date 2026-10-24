@@ -9,12 +9,12 @@ content:
     list: true
     fields:
       - name: category
-        label: 큰 맥락
+        label: 카테고리
         type: string
         required: true
 
       - name: subcategory
-        label: 작은 맥락
+        label: 세부 카테고리
         type: string
         required: true
 
