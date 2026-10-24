@@ -384,66 +384,63 @@ body.night-mode{
 .screen.night .st-empty{background:#35455B;color:#E6ECF3}
 .screen.night::before{background:radial-gradient(ellipse at 50% 48%,transparent 62%,rgba(8,12,22,.08) 82%,rgba(8,12,22,.2) 100%);box-shadow:inset 0 0 26px 2px rgba(8,12,22,.16)}
 
-/* ── 사담: 카테고리를 누르면 바로 아래로 펼쳐지는 세로형 블로그 ── */
-.blog-shell{display:flex;flex-direction:column;gap:8px;min-width:0;width:100%}
-.blog-accordion{display:flex;flex-direction:column;gap:7px;min-width:0;width:100%}
-.blog-side-label{font-family:var(--px);font-size:11px;color:var(--dim);margin:0 0 2px}
-.blog-category-group{display:flex;flex-direction:column;gap:0;min-width:0;width:100%}
-.blog-cat{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0;padding:11px 13px;background:var(--panel);color:var(--ink);text-align:left;font-family:var(--bd2);font-size:13px;line-height:1.5;overflow-wrap:anywhere;border:2px solid var(--shade);}
-.blog-cat-label{display:flex;align-items:center;gap:8px;min-width:0}
-.blog-cat-name{overflow-wrap:anywhere}
+/* ── 사담: PC는 왼쪽에 카테고리·태그·목록, 오른쪽에는 본문 ── */
+.blog-shell{display:grid;grid-template-columns:minmax(175px,.32fr) minmax(0,1fr);gap:14px;align-items:start;min-width:0}
+.blog-sidebar{min-width:0;padding:11px;background:var(--panel);border:2px solid var(--shade);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--shade) 35%,transparent)}
+.blog-side-label{font-family:var(--px);font-size:11px;color:var(--dim);margin:0 0 8px}
+.blog-side-list{display:flex;flex-direction:column;gap:5px}
+.blog-cat{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:8px 9px;background:transparent;color:var(--ink);text-align:left;font-family:var(--bd2);font-size:12px;line-height:1.45;overflow-wrap:anywhere}
 .blog-cat small{flex:none;font-size:10px;color:var(--dim)}
-.blog-cat-tail{display:flex;align-items:center;gap:10px;flex:none;color:var(--dim)}
-.blog-cat-mark{display:inline-grid;place-items:center;width:20px;height:20px;font-family:var(--px);font-size:15px;line-height:1}
-.blog-cat.on{background:color-mix(in srgb,var(--c) 24%,var(--panel));border-color:var(--c);box-shadow:inset 3px 0 0 var(--c)}
-.blog-cat.on .blog-cat-mark{color:var(--c)}
-.blog-expanded{display:flex;flex-direction:column;gap:9px;min-width:0;width:100%;padding:10px 0 12px 14px;margin:0 0 3px;border-left:3px solid color-mix(in srgb,var(--c) 48%,var(--shade));animation:blogExpand .18s ease-out both}
-@keyframes blogExpand{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.blog-main-head{padding:12px 14px;background:var(--panel);border:2px solid var(--shade);min-width:0}
-.blog-section-title{font-family:var(--px);font-size:15px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
-.blog-section-meta{font-size:11px;line-height:1.7;color:var(--dim);margin-top:3px}
-.blog-topics{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-width:0}
-.blog-topic{max-width:100%;padding:6px 10px;background:var(--shade);color:var(--ink);font-size:11px;line-height:1.4;overflow-wrap:anywhere;border-radius:2px}
+.blog-cat.on{background:color-mix(in srgb,var(--c) 28%,var(--panel));box-shadow:inset 3px 0 0 var(--c)}
+.blog-category-details{margin-top:12px;padding-top:10px;border-top:1px dashed var(--shade);min-width:0}
+.blog-section-title{font-family:var(--px);font-size:13px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.blog-section-meta{font-size:10px;line-height:1.7;color:var(--dim);margin-top:3px}
+.blog-topics{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.blog-topic{max-width:100%;padding:5px 7px;background:var(--shade);color:var(--ink);font-size:10px;line-height:1.4;overflow-wrap:anywhere;text-align:left}
 .blog-topic.on{background:var(--c);color:#202838}
-.blog-postlist{min-width:0;display:flex;flex-direction:column;gap:7px;width:100%}
-.blog-list-heading{font-family:var(--px);font-size:11px;color:var(--dim);margin:1px 0 3px}
-.blog-post{width:100%;min-width:0;display:block;padding:11px 13px;background:var(--panel);color:var(--ink);text-align:left;border:2px solid var(--shade);line-height:1.55;overflow-wrap:anywhere}
+.blog-postlist{min-width:0;display:flex;flex-direction:column;gap:6px;margin-top:11px}
+.blog-list-heading{font-family:var(--px);font-size:10px;color:var(--dim);margin:1px 0 2px}
+.blog-post{width:100%;min-width:0;display:block;padding:8px 9px;background:var(--panel);color:var(--ink);text-align:left;border:1px solid var(--shade);line-height:1.45;overflow-wrap:anywhere}
 .blog-post.on{border-color:var(--c);box-shadow:inset 3px 0 0 var(--c)}
-.blog-post-meta{display:block;font-size:10px;color:var(--dim);margin-bottom:5px}
-.blog-post-title{display:block;font-size:13px;line-height:1.6;font-weight:600}
-.blog-post-excerpt{display:block;margin-top:5px;font-size:11px;line-height:1.7;color:var(--dim)}
-.blog-article{min-width:0;width:100%;padding:clamp(13px,2vw,21px);background:var(--panel);color:var(--ink);border:2px solid var(--shade);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--shade) 24%,transparent)}
-.blog-article-empty{min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;color:var(--dim);font-size:12px;line-height:1.7;padding:12px}
+.blog-post-meta{display:block;font-size:9px;color:var(--dim);margin-bottom:3px}
+.blog-post-title{display:block;font-size:11px;line-height:1.55;font-weight:600}
+.blog-post-excerpt{display:none}
+.blog-main{min-width:0}
+.blog-article{min-width:0;min-height:240px;padding:clamp(13px,2vw,21px);background:var(--panel);border:2px solid var(--shade);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--shade) 24%,transparent)}
+.blog-article-empty{min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;color:var(--dim);font-size:12px;line-height:1.7}
 .blog-article-empty svg{width:26px;color:var(--c)}
 .blog-article-kicker{font-family:var(--px);font-size:10px;line-height:1.7;color:var(--c);margin-bottom:7px;overflow-wrap:anywhere}
 .blog-article h3{margin:0 0 8px;color:var(--ink);font-family:var(--bd2);font-size:clamp(17px,2vw,23px);font-weight:700;line-height:1.5;overflow-wrap:anywhere;word-break:keep-all}
 .blog-article-date{font-size:10px;color:var(--dim);padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--shade)}
-.blog-article-body{max-width:78ch;font-size:13px;color:var(--ink);line-height:2;overflow-wrap:anywhere;word-break:break-word}
+.blog-article-body{font-size:13px;color:var(--ink);line-height:2;overflow-wrap:anywhere;word-break:break-word}
 .blog-article-body p{margin:0 0 15px;white-space:pre-wrap}
 .blog-article-body p:last-child{margin-bottom:0}
-.blog-back{display:inline-block;margin:0 0 12px;padding:7px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
-.blog-status{padding:14px;background:var(--panel);color:var(--dim);font-size:12px;line-height:1.8;border:2px solid var(--shade)}
-.screen.night .blog-cat,.screen.night .blog-main-head,.screen.night .blog-post,.screen.night .blog-article,.screen.night .blog-status{background:#303E52;border-color:#4B5B72}
+.blog-back{display:none;margin:0 0 10px;padding:7px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
+.blog-status{padding:14px;background:var(--panel);color:var(--dim);font-size:12px;line-height:1.8}
+.screen.night .blog-sidebar,.screen.night .blog-post,.screen.night .blog-article{background:#303E52;border-color:#4B5B72}
 .screen.night .blog-cat{color:#F5F3ED}
-.screen.night .blog-cat small,.screen.night .blog-post-meta,.screen.night .blog-post-excerpt{color:#D0D9E5}
-.screen.night .blog-cat.on{background:color-mix(in srgb,var(--c) 30%,#303E52);border-color:var(--c)}
-.screen.night .blog-expanded{border-left-color:color-mix(in srgb,var(--c) 58%,#4B5B72)}
+.screen.night .blog-cat small,.screen.night .blog-post-meta{color:#D0D9E5}
+.screen.night .blog-cat.on{background:color-mix(in srgb,var(--c) 30%,#303E52)}
+.screen.night .blog-category-details{border-color:#52637A}
 .screen.night .blog-topic{background:#45566D;color:#F3F5F8}
 .screen.night .blog-topic.on{background:var(--c);color:#1B293A}
 .screen.night .blog-post.on{border-color:var(--c)}
 .screen.night .blog-article-date{border-color:#52637A}
 @media(max-width:820px){
- .blog-expanded{padding-left:9px;gap:8px}
- .blog-cat{min-height:42px;padding:10px 11px;font-size:12px}
- .blog-main-head{padding:10px 11px}
- .blog-post{padding:10px}
- .blog-article{padding:13px}
+ .blog-shell{grid-template-columns:minmax(0,1fr);gap:10px}
+ .blog-sidebar{padding:9px}
+ .blog-side-list{display:flex;flex-direction:row;gap:6px;overflow-x:auto;padding-bottom:3px}
+ .blog-cat{flex:0 0 auto;width:auto;min-height:38px;padding:8px 10px;white-space:nowrap}
+ .blog-category-details{margin-top:8px;padding-top:8px}
+ .blog-shell.article-open .blog-category-details{display:none}
+ .blog-post-excerpt{display:block;margin-top:4px;font-size:10px;line-height:1.55;color:var(--dim)}
+ .blog-shell.article-open .blog-back{display:inline-block}
+ .blog-article{min-height:160px;padding:13px}
  .blog-article h3{font-size:clamp(17px,5vw,22px)}
  .blog-article-body{font-size:13px;line-height:1.9}
- .blog-topic{font-size:10px;padding:7px 9px}
 }
 @media(max-width:400px){
- .blog-expanded{padding-left:7px}
+ .blog-topic{font-size:10px;padding:6px 7px}
  .blog-post{padding:9px}
  .blog-post-title{font-size:12px}
  .blog-article{padding:11px}
@@ -883,7 +880,19 @@ function story(){
   const g=G[1];
   scene.innerHTML=`<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
     <div class="blog-shell" id="blogShell">
-      <div class="blog-accordion" id="blogAccordion" aria-label="카테고리와 게시글"></div>
+      <aside class="blog-sidebar" id="blogSidebar">
+        <div class="blog-side-label">카테고리</div>
+        <div class="blog-side-list" id="blogCategoryList"></div>
+        <div class="blog-category-details" id="blogCategoryDetails">
+          <div class="blog-section-title" id="blogSectionTitle">사담 보관함</div>
+          <div class="blog-section-meta" id="blogSectionMeta">기록을 모아 둔 곳</div>
+          <div class="blog-topics" id="blogTopics"></div>
+          <section class="blog-postlist" id="blogPostList" aria-label="게시글 목록"></section>
+        </div>
+      </aside>
+      <main class="blog-main">
+        <article class="blog-article" id="blogArticle" aria-live="polite"></article>
+      </main>
     </div>`;
   stLevel='list';stCat=0;stTopic=-1;stEntry=0;stEditing=false;stEditTarget=null;
   loadStoryData();
@@ -915,75 +924,63 @@ function storyBack(){
 }
 function storySelect(i){stEntry=i;stLevel='article';drawStory()}
 function drawStory(){
-  const accordion=$('#blogAccordion');
-  if(!accordion)return;
+  const sidebar=$('#blogSidebar'),categoryList=$('#blogCategoryList'),topicsBox=$('#blogTopics'),titleBox=$('#blogSectionTitle'),metaBox=$('#blogSectionMeta'),postList=$('#blogPostList'),article=$('#blogArticle'),shell=$('#blogShell');
+  if(!sidebar||!categoryList||!topicsBox||!titleBox||!metaBox||!postList||!article||!shell)return;
   if(storyLoadState==='loading'){
-    accordion.innerHTML='<div class="blog-status">사담 게시글을 불러오고 있어요…</div>';
-    setHint('사담 게시글 불러오는 중…');return;
+    categoryList.innerHTML='';topicsBox.innerHTML='';postList.innerHTML='';
+    article.innerHTML='<div class="blog-status">사담 게시글을 불러오고 있어요…</div>';setHint('사담 게시글 불러오는 중…');return;
   }
   if(storyLoadState==='error'){
-    accordion.innerHTML=`<div class="blog-status"><strong>게시글을 불러오지 못했어요.</strong><p>GitHub 저장소에 <code>data/stories.json</code> 파일이 있는지, 홈페이지가 GitHub Pages 주소에서 열려 있는지 확인해 주세요.</p><p>오류: ${storyEscape(storyLoadError)}</p><button class="st-action" id="stRetry">다시 불러오기</button></div>`;
-    const retry=$('#stRetry');if(retry)retry.addEventListener('click',loadStoryData);
-    setHint('게시글 불러오기 오류 · Esc로 홈으로');return;
+    categoryList.innerHTML='';topicsBox.innerHTML='';postList.innerHTML='';
+    article.innerHTML=`<div class="blog-status"><strong>게시글을 불러오지 못했어요.</strong><p>GitHub 저장소에 <code>data/stories.json</code> 파일이 있는지, 홈페이지가 GitHub Pages 주소에서 열려 있는지 확인해 주세요.</p><p>오류: ${storyEscape(storyLoadError)}</p><button class="st-action" id="stRetry">다시 불러오기</button></div>`;
+    $('#stRetry').addEventListener('click',loadStoryData);setHint('게시글 불러오기 오류 · Esc로 홈으로');return;
   }
   if(!STORIES.length){
-    accordion.innerHTML='<div class="blog-side-label">카테고리</div><div class="blog-status">아직 게시글이 없어요.<br>Pages CMS에서 첫 게시글을 저장하면 여기에 표시됩니다.</div>';
-    setHint('게시글은 Pages CMS에서 관리');return;
+    categoryList.innerHTML='<p class="st-copy">아직 분류가 없어요.</p>';topicsBox.innerHTML='';postList.innerHTML='';
+    article.innerHTML='<div class="blog-status">아직 게시글이 없어요.<br>Pages CMS에서 첫 게시글을 저장하면 여기에 표시됩니다.</div>';
+    titleBox.textContent='사담 보관함';metaBox.textContent='아직 등록된 글이 없습니다.';setHint('게시글은 Pages CMS에서 관리');return;
   }
-
   stCat=Math.max(0,Math.min(stCat,STORIES.length-1));
-  if(!STORIES[stCat].entries)STORIES[stCat].entries=[];
   const cat=STORIES[stCat];
+  if(!cat.entries)cat.entries=[];
   const tags=storyTags();
   if(stTopic>=tags.length)stTopic=-1;
   let entries=storyVisibleEntries();
   if(entries.length)stEntry=Math.max(0,Math.min(stEntry,entries.length-1));else stEntry=0;
-
-  const categoryMarkup=STORIES.map((item,i)=>{
-    const active=i===stCat;
-    const count=(item.entries||[]).length;
-    const button=`<button class="blog-cat${active?' on':''}" data-cat="${i}" aria-expanded="${active?'true':'false'}"><span class="blog-cat-label"><span class="blog-cat-name">${storyEscape(item.title)}</span></span><span class="blog-cat-tail"><small>${count}개</small><span class="blog-cat-mark" aria-hidden="true">${active?'−':'+'}</span></span></button>`;
-    if(!active)return `<section class="blog-category-group">${button}</section>`;
-
-    const topicMarkup=`<button class="blog-topic${stTopic<0?' on':''}" data-topic="-1">전체 글 <span>· ${(cat.entries||[]).length}</span></button>`+tags.map((tag,j)=>{
-      const tagCount=(cat.entries||[]).filter(entry=>String(entry.topicTitle||'기타')===tag).length;
-      return `<button class="blog-topic${j===stTopic?' on':''}" data-topic="${j}">${storyEscape(tag)} <span>· ${tagCount}</span></button>`;
-    }).join('');
-
-    const postMarkup=entries.length
-      ? `<div class="blog-list-heading">게시글 목록 · ${entries.length}</div>`+entries.map((entry,j)=>{
-          const excerpt=entry.body.join(' ').replace(/\s+/g,' ').trim();
-          return `<button class="blog-post${j===stEntry?' on':''}" data-post="${j}"><span class="blog-post-meta">#${storyEscape(entry.topicTitle)} · ${storyEscape(entry.date)}</span><span class="blog-post-title">${storyEscape(entry.title)}</span><span class="blog-post-excerpt">${storyEscape(excerpt.slice(0,76))}${excerpt.length>76?'…':''}</span></button>`;
-        }).join('')
-      : '<div class="blog-status">이 분류에는 아직 게시글이 없어요.</div>';
-
-    let articleMarkup='';
-    if(stLevel==='article'&&entries[stEntry]){
-      const selected=entries[stEntry];
-      articleMarkup=`<article class="blog-article" id="blogArticle" aria-live="polite"><button class="blog-back" data-blog-back>← 게시글 목록으로</button><div class="blog-article-kicker">${storyEscape(selected.categoryTitle)}　/　#${storyEscape(selected.topicTitle)}</div><h3>${storyEscape(selected.title)}</h3><div class="blog-article-date">${storyEscape(selected.date)}</div><div class="blog-article-body">${selected.body.map(t=>`<p>${storyEscape(t).replace(/\n/g,'<br>')}</p>`).join('')}</div></article>`;
-    }else{
-      articleMarkup=`<article class="blog-article" id="blogArticle" aria-live="polite"><div class="blog-article-empty">${icon('bubble','var(--c)')}<strong>${entries.length?'읽고 싶은 글을 선택해 주세요.':'아직 등록된 글이 없어요.'}</strong><span>${entries.length?'게시글을 누르면 본문이 목록 아래에 펼쳐집니다.':'다른 태그를 선택하거나 Pages CMS에서 글을 추가해 주세요.'}</span></div></article>`;
-    }
-
-    const expanded=`<div class="blog-expanded">
-      <div class="blog-main-head"><div class="blog-section-title">${storyEscape(cat.title)}</div><div class="blog-section-meta">${stTopic<0?'전체 게시글':'태그: '+storyEscape(tags[stTopic])} · ${entries.length}개의 글</div><div class="blog-topics" aria-label="태그 필터">${topicMarkup}</div></div>
-      <section class="blog-postlist" id="blogPostList" aria-label="게시글 목록">${postMarkup}</section>
-      ${articleMarkup}
-    </div>`;
-    return `<section class="blog-category-group active">${button}${expanded}</section>`;
+  categoryList.innerHTML=STORIES.map((c,i)=>{
+    const count=(c.entries||[]).length;
+    return `<button class="blog-cat${i===stCat?' on':''}" data-cat="${i}"><span>${storyEscape(c.title)}</span><small>${count}</small></button>`;
   }).join('');
-
-  accordion.innerHTML=`<div class="blog-side-label">카테고리</div>${categoryMarkup}`;
-  accordion.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{
-    const next=+b.dataset.cat;
-    if(next===stCat){stLevel='list';stTopic=-1;stEntry=0;drawStory();return}
-    stCat=next;stTopic=-1;stEntry=0;stLevel='list';drawStory();
-  }));
-  accordion.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>{stTopic=+b.dataset.topic;stEntry=0;stLevel='list';drawStory()}));
-  accordion.querySelectorAll('[data-post]').forEach(b=>b.addEventListener('click',()=>storySelect(+b.dataset.post)));
-  const back=accordion.querySelector('[data-blog-back]');
-  if(back)back.addEventListener('click',()=>{stLevel='list';drawStory()});
-  setHint(stLevel==='article'?'게시글 본문 · 목록 아래에 표시 · Esc로 목록으로':'카테고리를 누르면 바로 아래에 태그와 글 목록이 펼쳐집니다');
+  categoryList.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{stCat=+b.dataset.cat;stTopic=-1;stEntry=0;stLevel='list';drawStory()}));
+  topicsBox.innerHTML=`<button class="blog-topic${stTopic<0?' on':''}" data-topic="-1">전체 글 <span>· ${(cat.entries||[]).length}</span></button>`+tags.map((tag,i)=>{
+    const count=(cat.entries||[]).filter(entry=>String(entry.topicTitle||'기타')===tag).length;
+    return `<button class="blog-topic${i===stTopic?' on':''}" data-topic="${i}">${storyEscape(tag)} <span>· ${count}</span></button>`;
+  }).join('');
+  topicsBox.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>{stTopic=+b.dataset.topic;stEntry=0;stLevel='list';drawStory()}));
+  entries=storyVisibleEntries();
+  titleBox.textContent=cat.title;
+  metaBox.textContent=`${stTopic<0?'전체 게시글':'태그: '+tags[stTopic]} · ${entries.length}개의 글`;
+  if(!entries.length){
+    postList.innerHTML='<div class="blog-status">이 분류에는 아직 게시글이 없어요.</div>';
+    article.innerHTML='<div class="blog-article-empty">아직 등록된 글이 없어요.</div>';
+    shell.classList.remove('article-open');setHint('카테고리를 선택하고 태그로 글을 걸러 보세요 · Esc 홈으로');return;
+  }
+  stEntry=Math.max(0,Math.min(stEntry,entries.length-1));
+  postList.innerHTML=`<div class="blog-list-heading">게시글 목록 · ${entries.length}</div>`+entries.map((entry,i)=>{
+    const excerpt=entry.body.join(' ').replace(/\s+/g,' ').trim();
+    return `<button class="blog-post${i===stEntry?' on':''}" data-post="${i}"><span class="blog-post-meta">#${storyEscape(entry.topicTitle)} · ${storyEscape(entry.date)}</span><span class="blog-post-title">${storyEscape(entry.title)}</span><span class="blog-post-excerpt">${storyEscape(excerpt.slice(0,76))}${excerpt.length>76?'…':''}</span></button>`;
+  }).join('');
+  postList.querySelectorAll('[data-post]').forEach(b=>b.addEventListener('click',()=>storySelect(+b.dataset.post)));
+  const selected=entries[stEntry];
+  if(stLevel==='article'&&selected){
+    shell.classList.add('article-open');
+    article.innerHTML=`<button class="blog-back" data-blog-back>← 게시글 목록</button><div class="blog-article-kicker">${storyEscape(selected.categoryTitle)}　/　#${storyEscape(selected.topicTitle)}</div><h3>${storyEscape(selected.title)}</h3><div class="blog-article-date">${storyEscape(selected.date)}</div><div class="blog-article-body">${selected.body.map(t=>`<p>${storyEscape(t).replace(/\n/g,'<br>')}</p>`).join('')}</div>`;
+    const back=article.querySelector('[data-blog-back]');if(back)back.addEventListener('click',()=>{stLevel='list';drawStory()});
+  }else{
+    shell.classList.remove('article-open');
+    article.innerHTML=`<div class="blog-article-empty">${icon('bubble','var(--c)')}<strong>읽고 싶은 글을 선택해 주세요.</strong><span>게시글 제목을 누르면 본문이 여기에 표시됩니다.</span></div>`;
+  }
+  setHint(stLevel==='article'?'게시글 읽기 · Esc로 목록으로 돌아가기':'왼쪽에서 카테고리와 태그를 고른 뒤 게시글을 눌러 읽기');
 }
 
 /* 3. 이미지 : 캐릭터 고르기 창 → 그 캐릭터의 앨범 */
