@@ -1,13 +1,14 @@
 media: media
 
 content:
+  # Categories are managed as CMS collection entries. Create/edit them in the CMS;
+  # posts reference the entries by their name, so the list is not hard-coded here.
   - name: story_categories
     label: 사담 카테고리
     type: collection
     path: data/story-categories
-    format: json
-    filename: "{name}.json"
-    exclude: [README.md]
+    format: yaml-frontmatter
+    filename: "{primary}.md"
     view:
       primary: name
       sort: [name]
@@ -24,9 +25,8 @@ content:
     label: 사담 세부 카테고리
     type: collection
     path: data/story-subcategories
-    format: json
-    filename: "{category}-{name}.json"
-    exclude: [README.md]
+    format: yaml-frontmatter
+    filename: "{category}-{name}.md"
     view:
       primary: name
       sort: [name, category]
@@ -94,47 +94,3 @@ content:
     path: data/platforms.json
     format: json
     list: true
-    fields:
-      - name: name
-        label: 플랫폼 이름
-        type: string
-        required: true
-
-      - name: url
-        label: 플랫폼 링크
-        type: string
-        required: true
-        description: https://로 시작하는 전체 주소를 넣어 주세요.
-
-  - name: gallery
-    label: 이미지 앨범
-    type: file
-    path: data/gallery.json
-    format: json
-    list: true
-    fields:
-      - name: name
-        label: 앨범 이름
-        type: string
-        required: true
-
-      - name: cover
-        label: 앨범 대표 이미지 (언제든 변경 가능)
-        type: image
-        options:
-          path: gallery
-          extensions: [png, jpg, jpeg, webp]
-          rename: true
-        description: 비워 두면 첫 번째 앨범 이미지가 대표 이미지로 자동 사용됩니다. 나중에 여기서 다른 이미지로 바꿀 수 있어요.
-
-      - name: images
-        label: 앨범 이미지 (여러 장 한 번에 선택)
-        type: image
-        options:
-          path: gallery
-          multiple:
-            max: 200
-          unique: true
-          extensions: [png, jpg, jpeg, webp]
-          rename: safe
-        description: 한 번에 여러 이미지를 선택/업로드할 수 있어요. 파일 이름이 그림 설명으로 표시되고 가로·세로 비율은 자동으로 맞춰집니다.
