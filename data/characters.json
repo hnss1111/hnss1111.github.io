@@ -36,5 +36,43 @@
         "url": "https://www.nekochat.xyz/character/char_1771853842853_vn9xb8w"
       }
     ]
+  },
+  {
+    "name": "개허접 각성자 구한다",
+    "desc": "언세이프티 캐릭터/\n티팟은 링크 공개",
+    "on": [
+      {
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/ed8e8a25-250d-4095-8722-e8b3f4464768"
+      },
+      {
+        "p": "티팟",
+        "url": "https://teapotchat.com/character/OHG5Q0Kv1zCA3JH1pEpr"
+      }
+    ]
+  },
+  {
+    "name": "디어",
+    "desc": "언세이프티 캐릭터",
+    "on": [
+      {
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/156da760-8454-4f54-a1b8-4762dc8f53ae"
+      }
+    ]
+  },
+  {
+    "name": "리비",
+    "desc": "언세이프티 캐릭터/ 티팟은 링크 공개",
+    "on": [
+      {
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/45c04511-131c-4d2d-94cf-d3b06d10340c"
+      },
+      {
+        "p": "티팟",
+        "url": "https://teapotchat.com/character/DJYQvHQRco8MecWx4BwP"
+      }
+    ]
   }
 ]
