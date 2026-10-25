@@ -6,9 +6,7 @@ content:
     type: collection
     path: data/story-categories
     format: yaml-frontmatter
-    filename:
-      template: "{primary}.md"
-      field: create
+    filename: "{primary}.md"
     view:
       primary: name
       sort: [name]
@@ -26,9 +24,7 @@ content:
     type: collection
     path: data/story-subcategories
     format: yaml-frontmatter
-    filename:
-      template: "{category}-{name}.md"
-      field: create
+    filename: "{category}-{name}.md"
     view:
       primary: name
       sort: [name, category]
