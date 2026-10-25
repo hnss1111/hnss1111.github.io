@@ -1,14 +1,14 @@
 media: media
 
 content:
-  # Categories are managed as CMS collection entries. Create/edit them in the CMS;
-  # posts reference the entries by their name, so the list is not hard-coded here.
   - name: story_categories
     label: 사담 카테고리
     type: collection
     path: data/story-categories
     format: yaml-frontmatter
-    filename: "{primary}.md"
+    filename:
+      template: "{primary}.md"
+      field: create
     view:
       primary: name
       sort: [name]
@@ -26,7 +26,9 @@ content:
     type: collection
     path: data/story-subcategories
     format: yaml-frontmatter
-    filename: "{category}-{name}.md"
+    filename:
+      template: "{category}-{name}.md"
+      field: create
     view:
       primary: name
       sort: [name, category]
@@ -119,16 +121,16 @@ content:
         required: true
 
       - name: cover
-        label: 앨범 대표 이미지 (언제든 변경 가능)
+        label: 앨범 대표 이미지
         type: image
         options:
           path: gallery
           extensions: [png, jpg, jpeg, webp]
           rename: safe
-        description: 비워 두면 첫 번째 앨범 이미지가 대표 이미지로 자동 사용됩니다. 나중에 여기서 다른 이미지로 바꿀 수 있어요.
+        description: 비워 두면 첫 번째 앨범 이미지가 대표 이미지로 자동 사용됩니다.
 
       - name: images
-        label: 앨범 이미지 (여러 장 한 번에 선택)
+        label: 앨범 이미지
         type: image
         options:
           path: gallery
@@ -137,4 +139,4 @@ content:
           unique: true
           extensions: [png, jpg, jpeg, webp]
           rename: safe
-        description: 여러 이미지를 한 번에 선택할 수 있어요. 파일명에서 이미지 설명을 만들고, 화면 비율은 자동으로 맞춰집니다.
+        description: 여러 이미지를 한 번에 선택할 수 있습니다.
