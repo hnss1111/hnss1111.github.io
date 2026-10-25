@@ -1,0 +1,43 @@
+name: Optimize uploaded images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "media/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install image tools
+        run: python -m pip install --upgrade Pillow
+
+      - name: Convert images to WebP and strip metadata
+        run: python .github/scripts/optimize_media.py
+
+      - name: Commit optimized files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A media data
+          if git diff --cached --quiet; then
+            echo "No optimized image changes to commit."
+          else
+            git commit -m "Optimize uploaded images to WebP"
+            git push
+          fi
