@@ -22,5 +22,19 @@
         "url": "https://www.univers.chat/character/e274e25b-efad-4d2a-92c3-973a1fb7e5bc"
       }
     ]
+  },
+  {
+    "name": "괴담마트에서 살아남기",
+    "desc": "언세이프티 캐릭터\n유니챗은 리메이크 버전입니다.\n네코챗은 업데이트 없습니다!",
+    "on": [
+      {
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/faa35c68-8789-43d5-80a2-a6a2b694bb5d"
+      },
+      {
+        "p": "네코챗",
+        "url": "https://www.nekochat.xyz/character/char_1771853842853_vn9xb8w"
+      }
+    ]
   }
 ]
