@@ -1,6 +1,53 @@
 media: media
 
 content:
+  - name: story_categories
+    label: 사담 카테고리
+    type: collection
+    path: data/story-categories
+    format: json
+    filename: "{name}.json"
+    exclude: [README.md]
+    view:
+      primary: name
+      sort: [name]
+      default:
+        sort: name
+        order: asc
+    fields:
+      - name: name
+        label: 카테고리 이름
+        type: string
+        required: true
+
+  - name: story_subcategories
+    label: 사담 세부 카테고리
+    type: collection
+    path: data/story-subcategories
+    format: json
+    filename: "{category}-{name}.json"
+    exclude: [README.md]
+    view:
+      primary: name
+      sort: [name, category]
+      default:
+        sort: name
+        order: asc
+    fields:
+      - name: name
+        label: 세부 카테고리 이름
+        type: string
+        required: true
+
+      - name: category
+        label: 소속 카테고리
+        type: reference
+        options:
+          collection: story_categories
+          value: "{name}"
+          label: "{name}"
+        required: true
+
   - name: stories
     label: 사담 게시글
     type: file
@@ -10,12 +57,20 @@ content:
     fields:
       - name: category
         label: 카테고리
-        type: string
+        type: reference
+        options:
+          collection: story_categories
+          value: "{name}"
+          label: "{name}"
         required: true
 
       - name: subcategory
         label: 세부 카테고리
-        type: string
+        type: reference
+        options:
+          collection: story_subcategories
+          value: "{name}"
+          label: "{name} ({fields.category})"
         required: true
 
       - name: title
@@ -33,37 +88,23 @@ content:
         type: text
         required: true
 
-  - name: characters
-    label: 공개 캐릭터
+  - name: platforms
+    label: 사용 플랫폼
     type: file
-    path: data/characters.json
+    path: data/platforms.json
     format: json
     list: true
     fields:
       - name: name
-        label: 캐릭터 이름
+        label: 플랫폼 이름
         type: string
         required: true
 
-      - name: desc
-        label: 한 줄 소개
-        type: text
+      - name: url
+        label: 플랫폼 링크
+        type: string
         required: true
-
-      - name: "on"
-        label: 공개 중인 플랫폼
-        type: object
-        list: true
-        fields:
-          - name: p
-            label: 플랫폼 이름
-            type: string
-            required: true
-
-          - name: url
-            label: 공개 주소
-            type: string
-            required: true
+        description: https://로 시작하는 전체 주소를 넣어 주세요.
 
   - name: gallery
     label: 이미지 앨범
@@ -73,12 +114,19 @@ content:
     list: true
     fields:
       - name: name
-        label: 앨범 이름 또는 캐릭터 이름
+        label: 앨범 이름
         type: string
         required: true
 
+      - name: cover
+        label: 앨범 대표 이미지
+        type: image
+        options:
+          extensions: [png, jpg, jpeg, webp]
+          rename: true
+
       - name: items
-        label: 앨범 이미지
+        label: 앨범 이미지 목록
         type: object
         list: true
         fields:
@@ -86,7 +134,7 @@ content:
             label: 이미지 파일
             type: image
             options:
-              extensions: [png, jpg, jpeg, webp, gif]
+              extensions: [png, jpg, jpeg, webp]
               rename: true
 
           - name: cap
