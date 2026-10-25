@@ -121,6 +121,7 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
 .pf em{font-style:normal}
 .pf:hover{filter:brightness(1.06)}
 .info .no{margin:0;font-size:12px;color:var(--dim)}
+.platform-link{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
 
 /* 사담: 대화창 */
 .vn{display:grid;grid-template-columns:minmax(150px,.4fr) 1fr;gap:20px;align-items:start}
@@ -184,7 +185,10 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
 .emp{display:flex;flex-direction:column;align-items:center;gap:8px;padding:30px 0 10px;text-align:center}
 .emp-st{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-bottom:14px}
 .pk{display:flex;flex-direction:column;align-items:center;--k:#f0a3b6}
-.pk .pl{width:clamp(76px,14vw,116px);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px;background:color-mix(in srgb,var(--k) 22%,var(--panel));box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd);animation:bob 1.2s steps(2) infinite}
+.pk .pl{position:relative;overflow:hidden;width:clamp(76px,14vw,116px);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px;background:color-mix(in srgb,var(--k) 22%,var(--panel));box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd);animation:bob 1.2s steps(2) infinite}
+.pk .pl .album-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0}
+.pk .pl svg{position:relative;z-index:1}
+.pk .pl .pl-name{position:relative;z-index:1;margin-top:auto;max-width:100%;padding:4px 5px;background:var(--k);color:#202838;font-family:var(--px);font-size:clamp(9px,1vw,12px);line-height:1.35;overflow-wrap:anywhere;text-align:center;box-shadow:2px 0 0 var(--bd),-2px 0 0 var(--bd),0 2px 0 var(--bd),0 -2px 0 var(--bd)}
 .pk:nth-child(2) .pl{animation-delay:.3s}.pk:nth-child(3) .pl{animation-delay:.6s}.pk:nth-child(4) .pl{animation-delay:.9s}
 .pk .pl svg{width:42%;flex:none}
 .pk .pl-name{display:block;max-width:100%;padding:4px 5px;background:var(--k);color:#202838;font-family:var(--px);font-size:clamp(9px,1vw,12px);line-height:1.35;overflow-wrap:anywhere;text-align:center;box-shadow:2px 0 0 var(--bd),-2px 0 0 var(--bd),0 2px 0 var(--bd),0 -2px 0 var(--bd)}
@@ -204,9 +208,10 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
 .bt svg{width:60px;margin:0 auto 12px}.bt b{display:block;font-weight:400;font-size:22px;margin-bottom:8px}
 .bt em{font-style:normal;font-size:12px}.bt u{text-decoration:none;animation:blink .9s steps(2) infinite}
 .bt u:nth-child(2){animation-delay:.2s}.bt u:nth-child(3){animation-delay:.4s}
-#lb{position:absolute;inset:0;z-index:25;background:rgba(15,20,34,.9);display:none;place-items:center;padding:20px}
-#lb.on{display:grid}#lb img{max-width:100%;max-height:78%;display:block;box-shadow:4px 0 0 #fff,-4px 0 0 #fff,0 4px 0 #fff,0 -4px 0 #fff}
-#lb p{color:#f6f1e4;font-family:var(--px);font-size:12px;text-align:center;margin:14px 0 0}
+#lb{position:absolute;inset:0;z-index:25;background:rgba(15,20,34,.9);display:none;place-items:center;padding:16px;overflow:hidden}
+#lb.on{display:grid}#lb>div{width:min(86%,720px);max-height:82%;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+#lb img{width:auto;height:auto;max-width:min(80vw,680px);max-height:min(52vh,390px);object-fit:contain;display:block;box-shadow:4px 0 0 #fff,-4px 0 0 #fff,0 4px 0 #fff,0 -4px 0 #fff}
+#lb p{max-width:100%;color:#f6f1e4;font-family:var(--px);font-size:12px;line-height:1.5;text-align:center;overflow-wrap:anywhere;margin:4px 0 0}
 .toast{position:absolute;left:50%;bottom:44px;z-index:28;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:7px 12px;font-family:var(--px);font-size:12px;opacity:0;pointer-events:none}
 .toast.on{animation:tst 1.8s steps(6) forwards}
 @keyframes tst{0%{opacity:0}10%,80%{opacity:1}100%{opacity:0}}
@@ -291,8 +296,9 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
   .pk .pl-name{max-width:100%;padding:4px 3px;font-size:10px;line-height:1.3;overflow-wrap:anywhere}
   .emp b{font-size:13px}
   .emp em{font-size:11px;line-height:1.6}
-  #lb{padding:12px}
-  #lb img{max-width:calc(100vw - 48px);max-height:68%;object-fit:contain}
+  #lb{padding:10px}
+  #lb>div{width:92%;max-height:78%}
+  #lb img{max-width:calc(100vw - 76px);max-height:min(46vh,320px);object-fit:contain}
   #lb p{font-size:11px;line-height:1.5;overflow-wrap:anywhere}
   .toast{width:max-content;max-width:calc(100% - 20px);white-space:normal;text-align:center;line-height:1.5;font-size:10px;bottom:42px}
   .bt svg{width:48px}
@@ -475,40 +481,18 @@ body.night-mode{
 
 <script>
 /* ===== ✏️ 내용 입력 구역 ===== */
-/* 공개 중인 캐릭터: on 에 그 캐릭터가 공개된 플랫폼(p)과 주소(url)를 적어요 */
-let CHARS=[
-  {name:'캐릭터 하나',desc:'어떤 아이인지 한 줄 소개',on:[{p:'플랫폼 이름',url:'#'},{p:'다른 플랫폼',url:'#'}]},
-  {name:'캐릭터 둘',desc:'어떤 아이인지 한 줄 소개',on:[{p:'플랫폼 이름',url:'#'}]},
-  {name:'캐릭터 셋',desc:'어떤 아이인지 한 줄 소개',on:[{p:'플랫폼 이름',url:'#'},{p:'다른 플랫폼',url:'#'},{p:'또 다른 플랫폼',url:'#'}]},
-];
+/* 사용 플랫폼은 Pages CMS의 data/platforms.json에서 불러옵니다. */
+let PLATFORMS=[];
 /* 사담 게시글은 Pages CMS가 관리하는 JSON 파일에서 불러옵니다. */
 let STORIES=[];
 let storyLoadState='idle';
 let storyLoadError='';
 let storyLoadSerial=0;
 const STORY_DATA_URL='./data/stories.json';
-/* name 은 캐릭터 이름으로 바꾸세요. 버튼을 눌러야 그 캐릭터의 그림이 나와요.
-   src 에 이미지 주소를 넣으면 그림이 나오고, 비워두면 빈 액자. w·h 는 빈 액자의 가로세로 비율 */
-let ALBUMS=[
-  {name:'캐릭터 하나',items:[
-    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
-    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
-  {name:'캐릭터 둘',items:[
-    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
-    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
-  {name:'캐릭터 셋',items:[
-    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
-    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
-  {name:'캐릭터 넷',items:[
-    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
-    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]},
-  {name:'캐릭터 다섯',items:[
-    {src:'',w:4,h:3,cap:'그림 1'},{src:'',w:3,h:4,cap:'그림 2'},{src:'',w:1,h:1,cap:'그림 3'},
-    {src:'',w:3,h:4,cap:'그림 4'},{src:'',w:4,h:3,cap:'그림 5'}]}
-];
+/* 앨범 목록과 대표 이미지는 Pages CMS의 data/gallery.json에서 관리합니다. */
+let ALBUMS=[];
 
-/* CMS에서 관리하는 공개 캐릭터와 이미지 앨범을 불러옵니다.
-   JSON을 읽지 못하면 위의 기본 예시 데이터로 화면을 유지합니다. */
+/* CMS에서 관리하는 사용 플랫폼과 이미지 앨범을 불러옵니다. */
 let catalogDataPromise = null;
 function catalogImageUrl(value){
   const valueText = String(value == null ? '' : value).trim();
@@ -521,19 +505,19 @@ async function loadCatalogData(){
   if(catalogDataPromise) return catalogDataPromise;
   catalogDataPromise = (async()=>{
     const results = await Promise.allSettled([
-      fetch('./data/characters.json', {cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('characters.json HTTP '+r.status);return r.json()}),
+      fetch('./data/platforms.json', {cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('platforms.json HTTP '+r.status);return r.json()}),
       fetch('./data/gallery.json', {cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('gallery.json HTTP '+r.status);return r.json()})
     ]);
     if(results[0].status==='fulfilled' && Array.isArray(results[0].value)){
-      CHARS = results[0].value.map(p=>({
-        name:String(p && p.name || '이름 없는 캐릭터'),
-        desc:String(p && p.desc || ''),
-        on:Array.isArray(p && p.on) ? p.on.map(o=>({p:String(o && o.p || ''),url:String(o && o.url || '')})) : []
+      PLATFORMS = results[0].value.map(p=>({
+        name:String(p && p.name || '이름 없는 플랫폼'),
+        url:String(p && p.url || '')
       }));
     }
     if(results[1].status==='fulfilled' && Array.isArray(results[1].value)){
       ALBUMS = results[1].value.map(a=>({
         name:String(a && a.name || '이름 없는 앨범'),
+        cover:String(a && a.cover || ''),
         items:Array.isArray(a && a.items) ? a.items.map(m=>({
           src:String(m && m.src || ''), cap:String(m && m.cap || ''),
           w:Number(m && m.w) || 4, h:Number(m && m.h) || 3
@@ -547,7 +531,7 @@ async function loadCatalogData(){
 const PAL={night:['#9bc4e8','#e2c984','#e3aabd'],day:['#7aa6cc','#d2b567','#d691a4']};
 let night=false; /* 밝은 화면이 기본 */
 const G=[
-  {id:'plat',name:'공개 캐릭터',c:'#8cc4f0',hint:'공개 중인 아이들이 어느 플랫폼에 있는지 보는 게임',icon:'win'},
+  {id:'plat',name:'사용 플랫폼',c:'#8cc4f0',hint:'자주 사용하는 플랫폼의 링크를 모아 둔 곳',icon:'win'},
   {id:'story',name:'사담',c:'#f3d27a',hint:'별말 아닌 이야기를 읽는 게임',icon:'bubble'},
   {id:'cut',name:'이미지',c:'#f0a3b6',hint:'그림과 사진을 모아 둔 앨범',icon:'photo'},
 ];
@@ -844,22 +828,26 @@ async function enter(id){
   const bk=document.createElement('button');bk.className='bk';bk.textContent='← 홈';bk.addEventListener('click',exit);scene.querySelector('.gh').appendChild(bk);
 }
 
-/* 1. 공개 캐릭터 : RPG 메뉴창 (왼쪽 캐릭터 · 오른쪽 상세와 공개 중인 플랫폼) */
+/* 1. 사용 플랫폼 : 왼쪽에서 플랫폼을 고르고 오른쪽 링크로 이동 */
 function plat(){
   const g=G[0];
   scene.innerHTML=`<div class="gh">${icon('win',g.c)}<span>${g.name}</span></div><div class="rpg"><div class="win menu" id="mn"></div><div class="win info" id="inf"></div></div>`;
-  drawPlat();setHint('▲ ▼ 캐릭터 고르기 · 플랫폼을 눌러 이동 · Esc 돌아가기');
+  drawPlat();setHint('▲ ▼ 플랫폼 고르기 · 링크를 눌러 이동 · Esc 돌아가기');
 }
 function drawPlat(){
-  if(!CHARS.length){$('#mn').innerHTML='<div class="no">아직 등록된 캐릭터가 없어요.</div>';$('#inf').innerHTML='<h3>공개 캐릭터가 없습니다</h3><p>Pages CMS의 공개 캐릭터 메뉴에서 등록해 주세요.</p>';return}
-  pi=Math.max(0,Math.min(pi,CHARS.length-1));
-  $('#mn').innerHTML=CHARS.map((p,i)=>`<button class="mi${i===pi?' on':''}" data-i="${i}"><i>▶</i>${p.name}</button>`).join('');
-  const p=CHARS[pi];
-  $('#inf').innerHTML=`<h3>${p.name}</h3><p>${p.desc}</p><h4 class="pt">공개 중인 곳</h4>`+(p.on.length?`<div class="pfs">${p.on.map((o,k)=>`<button class="pf" data-k="${k}"><span>${o.p}</span><em>↗</em></button>`).join('')}</div>`:`<p class="no">아직 공개된 곳이 없어요</p>`);
+  if(!PLATFORMS.length){
+    $('#mn').innerHTML='<div class="no">등록된 플랫폼이 없어요.</div>';
+    $('#inf').innerHTML='<h3>사용 플랫폼</h3><p>Pages CMS의 사용 플랫폼 메뉴에서 플랫폼 이름과 링크를 추가해 주세요.</p>';
+    return;
+  }
+  pi=Math.max(0,Math.min(pi,PLATFORMS.length-1));
+  $('#mn').innerHTML=PLATFORMS.map((p,i)=>`<button class="mi${i===pi?' on':''}" data-i="${i}"><i>▶</i>${storyEscape(p.name)}</button>`).join('');
+  const p=PLATFORMS[pi];
+  const validUrl=/^https?:\/\//i.test(p.url);
+  const action=validUrl?`<a class="go" href="${storyEscape(p.url)}" target="_blank" rel="noopener noreferrer">플랫폼 열기 ↗</a>`:'<p class="no">아직 링크가 등록되지 않았어요.</p>';
+  $('#inf').innerHTML=`<h3>${storyEscape(p.name)}</h3><p class="no">등록된 플랫폼 링크</p><div class="platform-link">${action}</div>`;
   $('#mn').querySelectorAll('.mi').forEach(b=>b.addEventListener('click',()=>{pi=+b.dataset.i;drawPlat()}));
-  $('#inf').querySelectorAll('.pf').forEach(b=>b.addEventListener('click',()=>openPlat(p.on[+b.dataset.k])));
 }
-function openPlat(o){if(!o.url||o.url==='#')toast('아직 주소가 없어요. 주소를 넣어 주세요!');else window.open(o.url,'_blank','noopener')}
 
 /* 2. 사담 : 큰 맥락 → 작은 맥락 → 글 제목 → 본문 */
 function storyEscape(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
@@ -1037,14 +1025,18 @@ function drawAlbum(){
     $('#gt').textContent=G[2].name;
     if(!ALBUMS.length){$('#gal').innerHTML='<div class="emp"><b>아직 이미지 앨범이 없어요</b><em>Pages CMS의 이미지 앨범 메뉴에서 추가해 주세요.</em></div>';setHint('이미지 앨범은 Pages CMS에서 관리');return}
     ci=Math.max(0,Math.min(ci,ALBUMS.length-1));
-    $('#gal').innerHTML=`<div class="emp"><div class="emp-st">${ALBUMS.map((a,i)=>`<button class="pk${i===ci?' on':''}" style="--k:${C[i%4]}" data-i="${i}"><span class="pl">${icon('photo',C[i%4])}<span class="pl-name">${a.name}</span></span></button>`).join('')}</div><b>캐릭터를 골라 보세요</b><em>고르면 그 아이의 그림이 펼쳐져요</em></div>`;
+    $('#gal').innerHTML=`<div class="emp"><div class="emp-st">${ALBUMS.map((a,i)=>{
+      const cover=catalogImageUrl(a.cover || (a.items && a.items.length ? a.items[0].src : ''));
+      const visual=cover?`<img class="album-cover" src="${storyEscape(cover)}" alt="" loading="lazy">`:`${icon('photo',C[i%4])}`;
+      return `<button class="pk${i===ci?' on':''}" style="--k:${C[i%4]}" data-i="${i}"><span class="pl">${visual}<span class="pl-name">${storyEscape(a.name)}</span></span></button>`;
+    }).join('')}</div><b>앨범을 골라 보세요</b><em>대표 이미지를 누르면 그 앨범의 그림이 펼쳐져요</em></div>`;
     $('#gal').querySelectorAll('.pk').forEach(b=>b.addEventListener('click',()=>{ai=ci=+b.dataset.i;drawAlbum()}));
-    setHint('◀ ▶ 캐릭터 고르기 · Enter 열기 · Esc 홈으로');
+    setHint('◀ ▶ 앨범 고르기 · Enter 열기 · Esc 홈으로');
     return;
   }
   const al=ALBUMS[ai],gh=scene.querySelector('.gh');
   $('#gt').textContent=G[2].name+' · '+al.name;
-  const bk=document.createElement('button');bk.id='bkl';bk.className='bk';bk.textContent='← 캐릭터 목록';
+  const bk=document.createElement('button');bk.id='bkl';bk.className='bk';bk.textContent='← 앨범 목록';
   bk.addEventListener('click',()=>{ai=-1;drawAlbum()});
   gh.insertBefore(bk,gh.querySelector('.bk'));
   const grp=[['landscape','가로 그림','4 / 3',m=>(m.w||4)>(m.h||3)],['portrait','세로 그림','3 / 4',m=>(m.w||4)<(m.h||3)],['square','정사각 그림','1 / 1',m=>(m.w||4)===(m.h||3)]]
@@ -1058,7 +1050,7 @@ function drawAlbum(){
   $('#gal').querySelectorAll('.shot').forEach(sh=>sh.addEventListener('click',()=>{
     if(!sh.dataset.s){toast('여기에 이미지를 넣을 수 있어요.');return}
     $('#lb img').src=sh.dataset.s;$('#lb p').textContent=sh.dataset.c;$('#lb').classList.add('on')}));
-  setHint('▲ ▼ 내려보기 · ◀ ▶ 다른 캐릭터 · 그림을 눌러 크게 보기 · Esc 캐릭터 목록으로');
+  setHint('▲ ▼ 내려보기 · ◀ ▶ 다른 앨범 · 그림을 눌러 크게 보기 · Esc 앨범 목록으로');
 }
 
 /* 버튼 입력 (키보드·화면 버튼 공통) */
@@ -1068,9 +1060,9 @@ function press(k){
   if(where==='home'){
     if(k==='l')rotate(-1);else if(k==='r')rotate(1);else if(k==='a')start(G[sel].id);
   }else if(where==='plat'){
-    if(!CHARS.length)return;
-    if(k==='u'){pi=(pi+CHARS.length-1)%CHARS.length;drawPlat()}
-    else if(k==='d'){pi=(pi+1)%CHARS.length;drawPlat()}
+    if(!PLATFORMS.length)return;
+    if(k==='u'){pi=(pi+PLATFORMS.length-1)%PLATFORMS.length;drawPlat()}
+    else if(k==='d'){pi=(pi+1)%PLATFORMS.length;drawPlat()}
     else if(k==='b')exit();
   }else if(where==='story'){
     const items=storyItems();
