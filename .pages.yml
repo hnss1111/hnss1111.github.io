@@ -8,6 +8,7 @@ content:
     type: collection
     path: data/story-categories
     format: yaml-frontmatter
+    extension: md
     filename: "{primary}.md"
     view:
       primary: name
@@ -26,6 +27,7 @@ content:
     type: collection
     path: data/story-subcategories
     format: yaml-frontmatter
+    extension: md
     filename: "{category}-{name}.md"
     view:
       primary: name
