@@ -515,14 +515,26 @@ async function loadCatalogData(){
       }));
     }
     if(results[1].status==='fulfilled' && Array.isArray(results[1].value)){
-      ALBUMS = results[1].value.map(a=>({
-        name:String(a && a.name || '이름 없는 앨범'),
-        cover:String(a && a.cover || ''),
-        items:Array.isArray(a && a.items) ? a.items.map(m=>({
-          src:String(m && m.src || ''), cap:String(m && m.cap || ''),
-          w:Number(m && m.w) || 4, h:Number(m && m.h) || 3
-        })) : []
-      }));
+      ALBUMS = results[1].value.map(a=>{
+        const bulkImages = Array.isArray(a && a.images);
+        const imageItems = bulkImages
+          ? a.images.map(value=>{
+              const src = String(typeof value === 'string' ? value : (value && (value.src || value.url)) || '');
+              const clean = src.split(/[?#]/)[0].split('/').pop() || '';
+              const cap = clean.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+              return {src, cap, w:0, h:0};
+            }).filter(item=>item.src)
+          : (Array.isArray(a && a.items) ? a.items.map(m=>({
+              src:String(m && m.src || ''), cap:String(m && m.cap || ''),
+              w:Number(m && m.w) || 4, h:Number(m && m.h) || 3
+            })).filter(item=>item.src) : []);
+        return {
+          name:String(a && a.name || '이름 없는 앨범'),
+          cover:String(a && a.cover || ''),
+          items:imageItems,
+          autoRatio:bulkImages
+        };
+      });
     }
   })();
   return catalogDataPromise;
@@ -1039,6 +1051,34 @@ function drawAlbum(){
   const bk=document.createElement('button');bk.id='bkl';bk.className='bk';bk.textContent='← 앨범 목록';
   bk.addEventListener('click',()=>{ai=-1;drawAlbum()});
   gh.insertBefore(bk,gh.querySelector('.bk'));
+  if(al.autoRatio){
+    const items=al.items.filter(m=>m.src);
+    if(!items.length){
+      $('#gal').innerHTML='<div class="emp"><b>아직 이 앨범에 그림이 없어요</b><em>Pages CMS의 이미지 앨범에서 여러 이미지를 한 번에 추가해 주세요.</em></div>';
+      setHint('이미지 앨범은 Pages CMS에서 관리');
+      return;
+    }
+    $('#gal').innerHTML=`<section class="gg"><h4>그림 ${items.length}장</h4><div class="grid bulk-grid">`+items.map((m,i)=>{
+      const c=C[i%4];
+      const src=catalogImageUrl(m.src);
+      const cap=String(m.cap||'');
+      return `<button class="shot bulk-shot" style="--ratio:3 / 4;--c:${c}" data-s="${storyEscape(src)}" data-c="${storyEscape(cap)}"><span class="sv"><img src="${storyEscape(src)}" alt="${storyEscape(cap)}" loading="lazy"></span><span class="sc">${storyEscape(cap||'이름 없는 그림')}</span></button>`;
+    }).join('')+'</div></section>';
+    $('#gal').querySelectorAll('.bulk-shot img').forEach(img=>{
+      const fitRatio=()=>{
+        if(!img.naturalWidth||!img.naturalHeight)return;
+        const shot=img.closest('.bulk-shot');
+        if(shot)shot.style.setProperty('--ratio',`${img.naturalWidth} / ${img.naturalHeight}`);
+      };
+      if(img.complete)fitRatio();else img.addEventListener('load',fitRatio,{once:true});
+    });
+    $('#gal').querySelectorAll('.shot').forEach(sh=>sh.addEventListener('click',()=>{
+      if(!sh.dataset.s){toast('먼저 이미지를 등록해 주세요.');return}
+      $('#lb img').src=sh.dataset.s;$('#lb p').textContent=sh.dataset.c;$('#lb').classList.add('on')
+    }));
+    setHint('그림을 눌러 크게 보기 · Esc로 앨범 목록으로');
+    return;
+  }
   const grp=[['landscape','가로 그림','4 / 3',m=>(m.w||4)>(m.h||3)],['portrait','세로 그림','3 / 4',m=>(m.w||4)<(m.h||3)],['square','정사각 그림','1 / 1',m=>(m.w||4)===(m.h||3)]]
     .map(([k,t,r,f])=>({k,t,r,it:al.items.filter(f)})).filter(g=>g.it.length);
   $('#gal').innerHTML=grp.map(g=>`<section class="gg"><h4>${g.t} ${g.it.length}장</h4><div class="grid ${g.k}">`+g.it.map(m=>{

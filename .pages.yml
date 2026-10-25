@@ -119,36 +119,22 @@ content:
         required: true
 
       - name: cover
-        label: 앨범 대표 이미지
+        label: 앨범 대표 이미지 (언제든 변경 가능)
         type: image
         options:
+          path: gallery
           extensions: [png, jpg, jpeg, webp]
           rename: true
+        description: 비워 두면 첫 번째 앨범 이미지가 대표 이미지로 자동 사용됩니다. 나중에 여기서 다른 이미지로 바꿀 수 있어요.
 
-      - name: items
-        label: 앨범 이미지 목록
-        type: object
-        list: true
-        fields:
-          - name: src
-            label: 이미지 파일
-            type: image
-            options:
-              extensions: [png, jpg, jpeg, webp]
-              rename: true
-
-          - name: cap
-            label: 이미지 설명
-            type: string
-
-          - name: w
-            label: 가로 비율 값
-            type: number
-            description: 가로 그림은 4, 세로 그림은 3, 정사각형은 1을 입력해 주세요.
-            required: true
-
-          - name: h
-            label: 세로 비율 값
-            type: number
-            description: 가로 그림은 3, 세로 그림은 4, 정사각형은 1을 입력해 주세요.
-            required: true
+      - name: images
+        label: 앨범 이미지 (여러 장 한 번에 선택)
+        type: image
+        options:
+          path: gallery
+          multiple:
+            max: 200
+          unique: true
+          extensions: [png, jpg, jpeg, webp]
+          rename: safe
+        description: 한 번에 여러 이미지를 선택/업로드할 수 있어요. 파일 이름이 그림 설명으로 표시되고 가로·세로 비율은 자동으로 맞춰집니다.
