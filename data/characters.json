@@ -1,11 +1,25 @@
 [
   {
     "name": "오메가 알레르기",
-    "desc": "서일준",
+    "desc": "언세이프티 캐릭터",
     "on": [
       {
         "p": "유니챗",
         "url": "https://www.univers.chat/character/bf309839-d1b7-4241-8579-59d98bbba58d"
+      }
+    ]
+  },
+  {
+    "name": "영원",
+    "desc": "언세이프티 캐릭터",
+    "on": [
+      {
+        "p": "로판 ai",
+        "url": "https://rofan.ai/character/60760019-a1c9-44f8-a390-eb21579a60cb"
+      },
+      {
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/e274e25b-efad-4d2a-92c3-973a1fb7e5bc"
       }
     ]
   }
