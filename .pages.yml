@@ -32,3 +32,75 @@ content:
         label: 본문
         type: text
         required: true
+
+  - name: characters
+    label: 공개 캐릭터
+    type: file
+    path: data/characters.json
+    format: json
+    list: true
+    fields:
+      - name: name
+        label: 캐릭터 이름
+        type: string
+        required: true
+
+      - name: desc
+        label: 한 줄 소개
+        type: text
+        required: true
+
+      - name: "on"
+        label: 공개 중인 플랫폼
+        type: object
+        list: true
+        fields:
+          - name: p
+            label: 플랫폼 이름
+            type: string
+            required: true
+
+          - name: url
+            label: 공개 주소
+            type: string
+            required: true
+
+  - name: gallery
+    label: 이미지 앨범
+    type: file
+    path: data/gallery.json
+    format: json
+    list: true
+    fields:
+      - name: name
+        label: 앨범 이름 또는 캐릭터 이름
+        type: string
+        required: true
+
+      - name: items
+        label: 앨범 이미지
+        type: object
+        list: true
+        fields:
+          - name: src
+            label: 이미지 파일
+            type: image
+            options:
+              extensions: [png, jpg, jpeg, webp, gif]
+              rename: true
+
+          - name: cap
+            label: 이미지 설명
+            type: string
+
+          - name: w
+            label: 가로 비율 값
+            type: number
+            description: 가로 그림은 4, 세로 그림은 3, 정사각형은 1을 입력해 주세요.
+            required: true
+
+          - name: h
+            label: 세로 비율 값
+            type: number
+            description: 가로 그림은 3, 세로 그림은 4, 정사각형은 1을 입력해 주세요.
+            required: true
