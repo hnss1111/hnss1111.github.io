@@ -106,22 +106,27 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
 .gh svg{width:28px;flex:none}
 
 /* 사용 플랫폼: RPG 메뉴 */
-.rpg{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;align-items:start}
-.menu{display:flex;flex-direction:column;gap:4px}
-.mi{display:flex;align-items:center;gap:8px;text-align:left;padding:8px 10px;font-family:var(--px);font-size:13px;color:var(--ink)}
-.mi i{width:12px;font-style:normal;color:var(--c);visibility:hidden}
-.mi.on{background:color-mix(in srgb,var(--c) 30%,transparent)}
+.rpg{display:grid;grid-template-columns:minmax(210px,.82fr) minmax(0,1.18fr);gap:clamp(14px,2.4vw,26px);align-items:stretch}
+.menu{display:flex;flex-direction:column;gap:0;padding:8px}
+.mi{display:flex;align-items:center;gap:11px;text-align:left;min-height:48px;padding:12px 13px;font-family:var(--px);font-size:14px;line-height:1.5;color:var(--ink);border-bottom:1px solid var(--shade);transition:background .15s ease}
+.mi:last-child{border-bottom:0}
+.mi i{width:15px;flex:none;font-style:normal;color:var(--c);visibility:hidden}
+.mi.on{background:color-mix(in srgb,var(--c) 22%,var(--panel));font-weight:600}
 .mi.on i{visibility:visible;animation:blink .8s steps(2) infinite}
-.info h3{margin:0 0 8px;font-family:var(--px);font-weight:400;font-size:17px;color:var(--c)}
-.info p{margin:0 0 14px;font-size:13px;line-height:1.8}
-.go{display:inline-block;padding:6px 12px;background:var(--c);color:#2a3142;font-family:var(--px);font-size:12px}
+.info{padding:clamp(20px,3vw,32px);min-height:210px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.info h3{margin:0 0 10px;font-family:var(--px);font-weight:400;font-size:clamp(21px,2.4vw,27px);line-height:1.45;color:var(--c);overflow-wrap:anywhere}
+.info p{margin:0 0 14px;font-size:15px;line-height:1.8}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:48px;padding:12px 18px;background:var(--c);color:#202838;font-family:var(--px);font-size:14px;line-height:1.5;text-decoration:none;transition:filter .15s ease}
+.go:hover{filter:brightness(1.06)}
 .info .pt{margin:0 0 8px;font-family:var(--px);font-weight:400;font-size:12px;color:var(--dim)}
 .pfs{display:flex;flex-wrap:wrap;gap:8px}
 .pf{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--c);color:#2a3142;font-family:var(--px);font-size:12px}
 .pf em{font-style:normal}
 .pf:hover{filter:brightness(1.06)}
-.info .no{margin:0;font-size:12px;color:var(--dim)}
-.platform-link{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.info .no{margin:0;font-size:13px;color:var(--dim)}
+.platform-link{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+.platform-domain{margin:0 0 20px!important;color:var(--dim);font-family:var(--bd2);font-size:13px!important;overflow-wrap:anywhere}
+.platform-overline{margin:0 0 12px;font-family:var(--px);font-size:10px;letter-spacing:.08em;color:var(--dim)}
 
 /* 사담: 대화창 */
 .vn{display:grid;grid-template-columns:minmax(150px,.4fr) 1fr;gap:20px;align-items:start}
@@ -222,7 +227,8 @@ svg{display:block;width:100%;height:auto;image-rendering:pixelated}
 /* ── CRT 곡면: 화면 전체에 일정하게. 곡면 정도(--cv 1→0)를 천천히 바꿔서 평면과 이어져요 ── */
 .screen{border-radius:14px}
 .screen::before{content:"";position:absolute;inset:0;z-index:29;pointer-events:none;border-radius:inherit;opacity:var(--cv,1);background:radial-gradient(ellipse at 50% 48%,transparent 55%,rgba(8,12,22,.12) 74%,rgba(8,12,22,.34) 100%);box-shadow:inset 0 0 40px 4px rgba(8,12,22,.28)}
-.screen.warped{filter:url(#warp);transform:perspective(1050px) rotateX(calc(.85deg * var(--cv,1))) scale(calc(1 - .006 * var(--cv,1)));transform-origin:center 54%}
+.bezel.warped{filter:url(#warp);transform:perspective(1050px) rotateX(calc(.7deg * var(--cv,1))) scale(calc(1 - .004 * var(--cv,1)));transform-origin:center 54%;will-change:filter,transform}
+@media(max-width:600px){.bezel.warped{transform:perspective(900px) rotateX(calc(.45deg * var(--cv,1))) scale(calc(1 - .002 * var(--cv,1)))}}
 
 
 /* ── 모바일 전용 보정: 게임기 외형과 PC 디자인은 유지하고 터치·가독성만 조정 ── */
@@ -390,74 +396,106 @@ body.night-mode{
 .screen.night .st-empty{background:#35455B;color:#E6ECF3}
 .screen.night::before{background:radial-gradient(ellipse at 50% 48%,transparent 62%,rgba(8,12,22,.08) 82%,rgba(8,12,22,.2) 100%);box-shadow:inset 0 0 26px 2px rgba(8,12,22,.16)}
 
-/* ── 사담: PC는 왼쪽에 카테고리·태그·목록, 오른쪽에는 본문 ── */
-.blog-shell{display:grid;grid-template-columns:minmax(175px,.32fr) minmax(0,1fr);gap:14px;align-items:start;min-width:0}
-.blog-sidebar{min-width:0;padding:11px;background:var(--panel);border:2px solid var(--shade);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--shade) 35%,transparent)}
-.blog-side-label{font-family:var(--px);font-size:11px;color:var(--dim);margin:0 0 8px}
-.blog-side-list{display:flex;flex-direction:column;gap:5px}
-.blog-cat{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:8px 9px;background:transparent;color:var(--ink);text-align:left;font-family:var(--bd2);font-size:12px;line-height:1.45;overflow-wrap:anywhere}
-.blog-cat small{flex:none;font-size:10px;color:var(--dim)}
-.blog-cat.on{background:color-mix(in srgb,var(--c) 28%,var(--panel));box-shadow:inset 3px 0 0 var(--c)}
-.blog-category-details{margin-top:12px;padding-top:10px;border-top:1px dashed var(--shade);min-width:0}
-.blog-section-title{font-family:var(--px);font-size:13px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+/* ── 사담: 블로그형 아코디언 목록 + 오른쪽 본문 ── */
+.blog-shell{display:grid;grid-template-columns:minmax(205px,.36fr) minmax(0,1fr);gap:clamp(16px,2.6vw,30px);align-items:start;min-width:0}
+.blog-sidebar{min-width:0;padding:0 13px 0 0;background:transparent;border:0;border-right:1px solid var(--shade);box-shadow:none}
+.blog-side-label{font-family:var(--px);font-size:13px;color:var(--ink);margin:0 0 5px;padding:0 4px 12px;border-bottom:2px solid var(--ink)}
+.blog-side-intro{font-size:11px;line-height:1.7;color:var(--dim);margin:0;padding:9px 4px 11px}
+.blog-side-list{display:flex;flex-direction:column;gap:0;min-width:0}
+.blog-category-item{min-width:0;border-bottom:1px solid var(--shade)}
+.blog-cat{display:flex;align-items:center;gap:9px;width:100%;min-height:47px;padding:11px 7px;background:transparent;color:var(--ink);text-align:left;font-family:var(--bd2);font-size:13px;line-height:1.45;overflow-wrap:anywhere;transition:background .16s ease}
+.blog-cat-name{flex:1;min-width:0;font-weight:500}
+.blog-cat-count{flex:none;font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums}
+.blog-cat-chevron{flex:none;width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s ease;margin:0 4px 4px}
+.blog-cat[aria-expanded="true"]{background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--ink)}
+.blog-cat[aria-expanded="true"] .blog-cat-name{font-weight:700}
+.blog-cat[aria-expanded="true"] .blog-cat-chevron{transform:rotate(225deg) translate(-1px,-1px);color:var(--c)}
+.blog-cat-panel{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .24s ease,opacity .18s ease;pointer-events:none}
+.blog-cat-panel.open{grid-template-rows:1fr;opacity:1;pointer-events:auto}
+.blog-cat-panel-inner{min-height:0;overflow:hidden}
+.blog-cat-panel-content{padding:0 6px 13px 13px;margin:0 0 0 6px;border-left:2px solid color-mix(in srgb,var(--c) 42%,var(--shade));min-width:0}
+.blog-section-title{font-family:var(--px);font-size:12px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
 .blog-section-meta{font-size:10px;line-height:1.7;color:var(--dim);margin-top:3px}
-.blog-topics{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
-.blog-topic{max-width:100%;padding:5px 7px;background:var(--shade);color:var(--ink);font-size:10px;line-height:1.4;overflow-wrap:anywhere;text-align:left}
-.blog-topic.on{background:var(--c);color:#202838}
-.blog-postlist{min-width:0;display:flex;flex-direction:column;gap:6px;margin-top:11px}
-.blog-list-heading{font-family:var(--px);font-size:10px;color:var(--dim);margin:1px 0 2px}
-.blog-post{width:100%;min-width:0;display:block;padding:8px 9px;background:var(--panel);color:var(--ink);text-align:left;border:1px solid var(--shade);line-height:1.45;overflow-wrap:anywhere}
-.blog-post.on{border-color:var(--c);box-shadow:inset 3px 0 0 var(--c)}
-.blog-post-meta{display:block;font-size:9px;color:var(--dim);margin-bottom:3px}
-.blog-post-title{display:block;font-size:11px;line-height:1.55;font-weight:600}
+.blog-topics{display:flex;flex-wrap:wrap;gap:5px;margin:3px 0 12px}
+.blog-topic{max-width:100%;padding:5px 7px;background:transparent;color:var(--dim);font-size:10px;line-height:1.4;border:1px solid var(--shade);overflow-wrap:anywhere;text-align:left}
+.blog-topic.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--ink)}
+.blog-list-heading{font-family:var(--px);font-size:10px;color:var(--dim);margin:0 0 3px}
+.blog-postlist{min-width:0;display:flex;flex-direction:column;gap:0;margin-top:0}
+.blog-post{width:100%;min-width:0;display:block;padding:10px 4px 11px;background:transparent;color:var(--ink);text-align:left;border:0;border-bottom:1px solid color-mix(in srgb,var(--shade) 78%,transparent);line-height:1.45;overflow-wrap:anywhere;transition:padding .15s ease,color .15s ease}
+.blog-post:last-child{border-bottom:0}
+.blog-post:hover{padding-left:8px;color:var(--c)}
+.blog-post.on{box-shadow:inset 2px 0 0 var(--c);padding-left:9px;background:color-mix(in srgb,var(--c) 8%,transparent)}
+.blog-post-meta{display:block;font-size:10px;color:var(--dim);margin-bottom:4px;line-height:1.5}
+.blog-post-title{display:block;font-size:12px;line-height:1.6;font-weight:600;word-break:keep-all}
 .blog-post-excerpt{display:none}
 .blog-main{min-width:0}
-.blog-article{min-width:0;min-height:240px;padding:clamp(13px,2vw,21px);background:var(--panel);border:2px solid var(--shade);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--shade) 24%,transparent)}
-.blog-article-empty{min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;color:var(--dim);font-size:12px;line-height:1.7}
-.blog-article-empty svg{width:26px;color:var(--c)}
-.blog-article-kicker{font-family:var(--px);font-size:10px;line-height:1.7;color:var(--c);margin-bottom:7px;overflow-wrap:anywhere}
-.blog-article h3{margin:0 0 8px;color:var(--ink);font-family:var(--bd2);font-size:clamp(17px,2vw,23px);font-weight:700;line-height:1.5;overflow-wrap:anywhere;word-break:keep-all}
-.blog-article-date{font-size:10px;color:var(--dim);padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--shade)}
-.blog-article-body{font-size:13px;color:var(--ink);line-height:2;overflow-wrap:anywhere;word-break:break-word}
-.blog-article-body p{margin:0 0 15px;white-space:pre-wrap}
+.blog-article{min-width:0;min-height:290px;padding:clamp(18px,3vw,34px);background:color-mix(in srgb,var(--panel) 72%,var(--bg));border:0;border-top:3px solid var(--shade);box-shadow:none}
+.blog-article-empty{min-height:235px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;gap:9px;color:var(--dim);font-size:13px;line-height:1.8}
+.blog-article-empty svg{width:25px;color:var(--c);margin-bottom:3px}
+.blog-article-kicker{font-family:var(--px);font-size:10px;line-height:1.8;color:var(--c);margin-bottom:10px;overflow-wrap:anywhere}
+.blog-article h3{margin:0 0 10px;color:var(--ink);font-family:var(--bd2);font-size:clamp(20px,2.5vw,28px);font-weight:700;line-height:1.5;overflow-wrap:anywhere;word-break:keep-all}
+.blog-article-date{font-size:11px;color:var(--dim);padding-bottom:15px;margin-bottom:19px;border-bottom:1px solid var(--shade)}
+.blog-article-body{font-size:14px;color:var(--ink);line-height:2;overflow-wrap:anywhere;word-break:break-word}
+.blog-article-body p{margin:0 0 17px;white-space:pre-wrap}
 .blog-article-body p:last-child{margin-bottom:0}
-.blog-article-body h2,.blog-article-body h3,.blog-article-body h4{font-size:1.1em;line-height:1.5;margin:20px 0 10px;color:var(--ink)}
-.blog-article-body ul,.blog-article-body ol{padding-left:22px;margin:0 0 15px}
-.blog-article-body li{margin:4px 0}
-.blog-article-body blockquote{margin:12px 0;padding:8px 12px;border-left:3px solid var(--shade);background:var(--panel);color:var(--muted)}
-.blog-article-body a{color:var(--c);text-decoration:underline}
-.blog-article-body code{padding:1px 4px;background:var(--panel);border:1px solid var(--shade);border-radius:3px}
-.blog-article-body hr{border:0;border-top:1px dashed var(--shade);margin:18px 0}
-.blog-back{display:none;margin:0 0 10px;padding:7px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
-.blog-status{padding:14px;background:var(--panel);color:var(--dim);font-size:12px;line-height:1.8}
-.screen.night .blog-sidebar,.screen.night .blog-post,.screen.night .blog-article{background:#303E52;border-color:#4B5B72}
+.blog-article-body h2,.blog-article-body h3,.blog-article-body h4{font-size:1.12em;line-height:1.5;margin:23px 0 10px;color:var(--ink)}
+.blog-article-body ul,.blog-article-body ol{padding-left:22px;margin:0 0 17px}
+.blog-article-body li{margin:5px 0}
+.blog-article-body blockquote{margin:14px 0;padding:3px 0 3px 13px;border-left:2px solid var(--c);background:transparent;color:var(--dim);font-style:italic}
+.blog-article-body a{color:var(--c);text-decoration:underline;text-underline-offset:3px}
+.blog-article-body code{padding:1px 4px;background:var(--bg);border:1px solid var(--shade);border-radius:2px}
+.blog-article-body hr{border:0;border-top:1px solid var(--shade);margin:20px 0}
+.blog-back{display:none;margin:0 0 14px;padding:8px 11px;background:transparent;border:1px solid var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
+.blog-status{padding:12px 0;background:transparent;color:var(--dim);font-size:12px;line-height:1.8}
+.screen.night .blog-sidebar{background:transparent;border-color:#52637A}
+.screen.night .blog-side-label{border-color:#CCD7E5;color:#F5F3ED}
 .screen.night .blog-cat{color:#F5F3ED}
-.screen.night .blog-cat small,.screen.night .blog-post-meta{color:#D0D9E5}
-.screen.night .blog-cat.on{background:color-mix(in srgb,var(--c) 30%,#303E52)}
-.screen.night .blog-category-details{border-color:#52637A}
-.screen.night .blog-topic{background:#45566D;color:#F3F5F8}
-.screen.night .blog-topic.on{background:var(--c);color:#1B293A}
-.screen.night .blog-post.on{border-color:var(--c)}
+.screen.night .blog-cat-count,.screen.night .blog-post-meta{color:#CAD4E1}
+.screen.night .blog-cat[aria-expanded="true"]{background:color-mix(in srgb,var(--c) 17%,transparent)}
+.screen.night .blog-cat-panel-content{border-color:color-mix(in srgb,var(--c) 55%,#52637A)}
+.screen.night .blog-topic{border-color:#52637A;color:#D8E0EA}
+.screen.night .blog-topic.on{background:color-mix(in srgb,var(--c) 20%,#263448);color:#F5F3ED}
+.screen.night .blog-post{border-color:#43536A;color:#F5F3ED}
+.screen.night .blog-post.on{background:color-mix(in srgb,var(--c) 11%,#28374B)}
+.screen.night .blog-article{background:#283548;border-color:#52637A}
 .screen.night .blog-article-date{border-color:#52637A}
 @media(max-width:820px){
- .blog-shell{grid-template-columns:minmax(0,1fr);gap:10px}
- .blog-sidebar{padding:9px}
- .blog-side-list{display:flex;flex-direction:row;gap:6px;overflow-x:auto;padding-bottom:3px}
- .blog-cat{flex:0 0 auto;width:auto;min-height:38px;padding:8px 10px;white-space:nowrap}
- .blog-category-details{margin-top:8px;padding-top:8px}
- .blog-shell.article-open .blog-category-details{display:none}
- .blog-post-excerpt{display:block;margin-top:4px;font-size:10px;line-height:1.55;color:var(--dim)}
- .blog-shell.article-open .blog-back{display:inline-block}
- .blog-article{min-height:160px;padding:13px}
- .blog-article h3{font-size:clamp(17px,5vw,22px)}
- .blog-article-body{font-size:13px;line-height:1.9}
+ .blog-shell{grid-template-columns:minmax(0,1fr);gap:12px}
+ .blog-sidebar{padding:0;border-right:0;border-bottom:1px solid var(--shade);padding-bottom:10px}
+ .blog-side-label{padding-bottom:9px}
+ .blog-side-intro{padding:6px 4px 8px}
+ .blog-cat{min-height:44px;padding:10px 6px;font-size:13px}
+ .blog-cat-panel-content{padding-bottom:10px}
+ .blog-shell.article-open .blog-sidebar{display:none}
+ .blog-shell.article-open{grid-template-columns:minmax(0,1fr)}
+ .blog-shell.article-open .blog-back{display:inline-flex;align-items:center}
+ .blog-article{min-height:190px;padding:16px 14px}
+ .blog-article h3{font-size:clamp(20px,5.5vw,25px)}
+ .blog-article-body{font-size:14px;line-height:1.95}
 }
 @media(max-width:400px){
  .blog-topic{font-size:10px;padding:6px 7px}
- .blog-post{padding:9px}
+ .blog-post{padding:10px 4px}
  .blog-post-title{font-size:12px}
- .blog-article{padding:11px}
+ .blog-article{padding:14px 11px}
 }
+/* 플랫폼 화면은 선택하기 쉬운 넓은 목록과 분명한 이동 버튼으로 구성합니다. */
+@media(max-width:820px){.rpg{grid-template-columns:minmax(0,1fr);gap:12px}.menu{padding:6px}.mi{min-height:46px;font-size:13px}.info{min-height:170px;padding:20px}.info h3{font-size:23px}.go{width:100%;justify-content:space-between}}
+
+/* 앨범 표지: CMS 사진이 없는 경우에만 간결한 자체 제작 표지 그림을 보여줍니다. */
+.album-cover-fallback{--cover-paper:color-mix(in srgb,var(--cover-accent,var(--c)) 8%,var(--panel));position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;width:100%;height:100%;min-width:0;overflow:hidden;padding:10px;background:color-mix(in srgb,var(--cover-accent,var(--c)) 15%,var(--panel));color:var(--ink);isolation:isolate}
+.album-cover-fallback::before{content:"";position:absolute;inset:8px;border:1px solid color-mix(in srgb,var(--cover-accent,var(--c)) 55%,transparent);pointer-events:none;z-index:1}
+.album-cover-fallback svg{position:absolute;inset:0;width:100%;height:100%;z-index:-1;image-rendering:auto}
+.album-cover-kicker{font-family:var(--px);font-size:8px;line-height:1.4;letter-spacing:.08em;opacity:.75;overflow-wrap:anywhere}
+.album-cover-title{font-family:var(--px);font-size:clamp(10px,1.1vw,14px);line-height:1.45;font-weight:600;overflow-wrap:anywhere;text-shadow:0 1px rgba(255,255,255,.18)}
+.album-cover-foot{font-family:var(--bd2);font-size:8px;line-height:1.4;letter-spacing:.06em;opacity:.75}
+.pk .pl .album-cover-fallback{position:absolute;inset:0;padding:11px}
+.pk .pl .album-cover-fallback .album-cover-title{font-size:clamp(9px,1vw,12px)}
+.sv .album-cover-fallback{padding:13px}
+.image-load-fallback{--cover-paper:color-mix(in srgb,var(--cover-accent,var(--c)) 8%,var(--panel));position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;min-height:80px;padding:10px;background:color-mix(in srgb,var(--cover-accent,var(--c)) 12%,var(--panel));color:var(--dim);text-align:center;font-family:var(--px);font-size:10px;line-height:1.6;overflow:hidden}
+.image-load-fallback svg{position:absolute;inset:0;width:100%;height:100%;opacity:.7;image-rendering:auto}
+.image-load-fallback span{position:relative;padding:3px 6px;background:color-mix(in srgb,var(--panel) 88%,transparent)}
+@media(prefers-reduced-motion:reduce){.blog-cat-panel{transition:none}.blog-cat-chevron{transition:none}}
 
 </style>
 </head>
@@ -525,10 +563,11 @@ async function loadCatalogData(){
       ALBUMS = results[1].value.map(a=>{
         const bulkImages = Array.isArray(a && a.images);
         const imageItems = bulkImages
-          ? a.images.map(value=>{
+          ? a.images.map((value,imageIndex)=>{
               const src = String(typeof value === 'string' ? value : (value && (value.src || value.url)) || '');
-              const clean = src.split(/[?#]/)[0].split('/').pop() || '';
-              const cap = clean.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+              const savedCaption = value && typeof value === 'object' ? String(value.cap || value.title || '').trim() : '';
+              /* CMS bulk uploads normally save URLs only; do not expose long, messy filenames as captions. */
+              const cap = savedCaption || `그림 ${imageIndex+1}`;
               return {src, cap, w:0, h:0};
             }).filter(item=>item.src)
           : (Array.isArray(a && a.items) ? a.items.map(m=>({
@@ -729,17 +768,17 @@ const warpImg=$('#warpImg'),warpMap=$('#warpMap'),warpMaskImg=$('#warpMaskImg');
 }catch(e){}})();
 const K=0.11; /* 곡면 세기 (0.08 약하게 ~ 0.2 강하게) */
 let cur=1,curRaf=0; /* 현재 곡면 정도: 1 = 완전히 볼록, 0 = 평평 */
-function fitWarp(){const w=scr.offsetWidth,h=scr.offsetHeight;if(!w)return;
+function fitWarp(){const w=bez.offsetWidth,h=bez.offsetHeight;if(!w)return;
   warpImg.setAttribute('width',w);warpImg.setAttribute('height',h);warpMaskImg.setAttribute('width',w);warpMaskImg.setAttribute('height',h);
   warpMap.setAttribute('scale',Math.min(62,(K/(1+K))*((w+h)/2)*cur).toFixed(2))}
-function setCurve(v){cur=v;scr.style.setProperty('--cv',v.toFixed(3));scr.classList.toggle('warped',v>0.002);fitWarp()}
+function setCurve(v){cur=v;scr.style.setProperty('--cv',v.toFixed(3));bez.style.setProperty('--cv',v.toFixed(3));bez.classList.toggle('warped',v>0.002);fitWarp()}
 function curveTo(to,ms){return new Promise(res=>{
   const from=cur,t0=performance.now();cancelAnimationFrame(curRaf);
   const step=now=>{const t=Math.min(1,(now-t0)/ms),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
     setCurve(from+(to-from)*e);if(t<1)curRaf=requestAnimationFrame(step);else res()};
   curRaf=requestAnimationFrame(step)})}
-new ResizeObserver(fitWarp).observe(scr);setCurve(1);
-let where='home',busy=false,pi=0,stLevel='category',stCat=0,stTopic=0,stEntry=0,stEditing=false,stEditTarget=null,sp=0,ai=-1,ci=0,typing=false,full='',tm=0;
+new ResizeObserver(fitWarp).observe(bez);setCurve(1);
+let where='home',busy=false,pi=0,stLevel='list',stCat=0,stTopic=-1,stEntry=0,stAccordionOpen=true,stEditing=false,stEditTarget=null,sp=0,ai=-1,ci=0,typing=false,full='',tm=0;
 
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('on');void t.offsetWidth;t.classList.add('on')}
 function setHint(t){hint.textContent=t}
@@ -863,8 +902,10 @@ function drawPlat(){
   $('#mn').innerHTML=PLATFORMS.map((p,i)=>`<button class="mi${i===pi?' on':''}" data-i="${i}"><i>▶</i>${storyEscape(p.name)}</button>`).join('');
   const p=PLATFORMS[pi];
   const validUrl=/^https?:\/\//i.test(p.url);
-  const action=validUrl?`<a class="go" href="${storyEscape(p.url)}" target="_blank" rel="noopener noreferrer">플랫폼 열기 ↗</a>`:'<p class="no">아직 링크가 등록되지 않았어요.</p>';
-  $('#inf').innerHTML=`<h3>${storyEscape(p.name)}</h3><p class="no">등록된 플랫폼 링크</p><div class="platform-link">${action}</div>`;
+  let domain='';
+  if(validUrl){try{domain=new URL(p.url).hostname.replace(/^www\./i,'')}catch(_){domain=''}}
+  const action=validUrl?`<a class="go" href="${storyEscape(p.url)}" target="_blank" rel="noopener noreferrer"><span>바로 방문하기</span><span aria-hidden="true">↗</span></a>`:'<p class="no">아직 주소가 등록되지 않았어요.</p>';
+  $('#inf').innerHTML=`<div class="platform-overline">PLATFORM</div><h3>${storyEscape(p.name)}</h3>${domain?`<p class="platform-domain">${storyEscape(domain)}</p>`:''}<div class="platform-link">${action}</div>`;
   $('#mn').querySelectorAll('.mi').forEach(b=>b.addEventListener('click',()=>{pi=+b.dataset.i;drawPlat()}));
 }
 
@@ -948,7 +989,7 @@ async function loadStoryData(){
     const data=normalizeStoryData(raw);
     if(requestId!==storyLoadSerial||where!=='story')return;
     STORIES=data;storyLoadState='ready';storyLoadError='';
-    stCat=0;stTopic=-1;stEntry=0;stLevel='list';drawStory();
+    stCat=0;stTopic=-1;stEntry=0;stLevel='list';stAccordionOpen=true;drawStory();
   }catch(err){
     if(requestId!==storyLoadSerial||where!=='story')return;
     storyLoadState='error';storyLoadError=String(err&&err.message||err);STORIES=[];drawStory();
@@ -960,25 +1001,21 @@ function story(){
     <div class="blog-shell" id="blogShell">
       <aside class="blog-sidebar" id="blogSidebar">
         <div class="blog-side-label">카테고리</div>
+        <p class="blog-side-intro">분류를 열면 그 안의 글 목록이 펼쳐져요.</p>
         <div class="blog-side-list" id="blogCategoryList"></div>
-        <div class="blog-category-details" id="blogCategoryDetails">
-          <div class="blog-section-title" id="blogSectionTitle">사담 보관함</div>
-          <div class="blog-section-meta" id="blogSectionMeta">기록을 모아 둔 곳</div>
-          <div class="blog-topics" id="blogTopics"></div>
-          <section class="blog-postlist" id="blogPostList" aria-label="게시글 목록"></section>
-        </div>
       </aside>
       <main class="blog-main">
         <article class="blog-article" id="blogArticle" aria-live="polite"></article>
       </main>
     </div>`;
-  stLevel='list';stCat=0;stTopic=-1;stEntry=0;stEditing=false;stEditTarget=null;
+  stLevel='list';stCat=0;stTopic=-1;stEntry=0;stAccordionOpen=true;stEditing=false;stEditTarget=null;
   loadStoryData();
 }
-function storyTags(){
-  if(!STORIES.length||!STORIES[stCat])return [];
-  return [...new Set((STORIES[stCat].entries||[]).map(entry=>String(entry.topicTitle||'기타')))].filter(Boolean);
+function storyTagsFor(category){
+  if(!category)return [];
+  return [...new Set((category.entries||[]).map(entry=>String(entry.topicTitle||'기타')))].filter(Boolean);
 }
+function storyTags(){return storyTagsFor(STORIES[stCat])}
 function storyVisibleEntries(){
   if(!STORIES.length||!STORIES[stCat])return [];
   const cat=STORIES[stCat],tags=storyTags();
@@ -995,70 +1032,125 @@ function storyVisibleEntries(){
 function storyItems(){return storyVisibleEntries()}
 function storyIndex(){return stEntry}
 function setStoryIndex(i){stEntry=i}
-function storyOpen(){stLevel='article';drawStory()}
+function storyOpen(){stAccordionOpen=true;stLevel='article';drawStory()}
 function storyBack(){
   if(stLevel==='article'){stLevel='list';drawStory()}
   else exit();
 }
-function storySelect(i){stEntry=i;stLevel='article';drawStory()}
+function storySelect(i){stEntry=i;stAccordionOpen=true;stLevel='article';drawStory()}
+function storyArticleEmpty(){
+  return `<div class="blog-article-empty">${icon('bubble','var(--c)')}<strong>읽고 싶은 글을 선택해 주세요.</strong><span>왼쪽에서 카테고리를 펼친 다음 제목을 누르면 본문이 여기에 표시됩니다.</span></div>`;
+}
+function makeStoryPanel(category,index,isOpen){
+  const tags=storyTagsFor(category);
+  const selectedTags=index===stCat?stTopic:-1;
+  const safeSelected=selectedTags>=tags.length?-1:selectedTags;
+  const counts=(tag)=> (category.entries||[]).filter(entry=>String(entry.topicTitle||'기타')===tag).length;
+  const tagButtons=`<div class="blog-topics"><button class="blog-topic${safeSelected<0?' on':''}" data-topic="-1" data-cat-owner="${index}">전체 글 · ${(category.entries||[]).length}</button>${tags.map((tag,i)=>`<button class="blog-topic${i===safeSelected?' on':''}" data-topic="${i}" data-cat-owner="${index}">${storyEscape(tag)} · ${counts(tag)}</button>`).join('')}</div>`;
+  let entries;
+  if(index===stCat){entries=storyVisibleEntries();}
+  else{entries=(category.entries||[]).map(entry=>({title:String(entry.title||'제목 없음'),date:storyDisplayDate(entry.date),body:Array.isArray(entry.body)?entry.body:String(entry.body||'').split(/\n\s*\n/).filter(Boolean),categoryTitle:category.title,topicTitle:String(entry.topicTitle||'기타')})).sort((a,b)=>String(b.date).localeCompare(String(a.date)));}
+  const postMarkup=entries.length
+    ? `<div class="blog-list-heading">게시글 ${entries.length}개</div><section class="blog-postlist" aria-label="${storyEscape(category.title)} 게시글">${entries.map((entry,i)=>{
+        const excerpt=storyBodyPlainText(entry.body);
+        return `<button class="blog-post${index===stCat&&i===stEntry?' on':''}" data-post="${i}" data-cat-owner="${index}"><span class="blog-post-meta">${storyEscape(entry.topicTitle)}　·　${storyEscape(entry.date)}</span><span class="blog-post-title">${storyEscape(entry.title)}</span><span class="blog-post-excerpt">${storyEscape(excerpt.slice(0,76))}${excerpt.length>76?'…':''}</span></button>`;
+      }).join('')}</section>`
+    : `<div class="blog-status">이 카테고리에는 아직 게시글이 없어요.</div>`;
+  return `<div class="blog-cat-panel-content"><div class="blog-section-title">${storyEscape(category.title)}</div><div class="blog-section-meta">분류와 제목을 눌러 글을 찾아보세요.</div>${tagButtons}${postMarkup}</div>`;
+}
 function drawStory(){
-  const sidebar=$('#blogSidebar'),categoryList=$('#blogCategoryList'),topicsBox=$('#blogTopics'),titleBox=$('#blogSectionTitle'),metaBox=$('#blogSectionMeta'),postList=$('#blogPostList'),article=$('#blogArticle'),shell=$('#blogShell');
-  if(!sidebar||!categoryList||!topicsBox||!titleBox||!metaBox||!postList||!article||!shell)return;
+  const categoryList=$('#blogCategoryList'),article=$('#blogArticle'),shell=$('#blogShell');
+  if(!categoryList||!article||!shell)return;
   if(storyLoadState==='loading'){
-    categoryList.innerHTML='';topicsBox.innerHTML='';postList.innerHTML='';
-    article.innerHTML='<div class="blog-status">사담 게시글을 불러오고 있어요…</div>';setHint('사담 게시글 불러오는 중…');return;
+    categoryList.innerHTML='';article.innerHTML='<div class="blog-status">사담 게시글을 불러오고 있어요…</div>';setHint('사담 게시글 불러오는 중…');return;
   }
   if(storyLoadState==='error'){
-    categoryList.innerHTML='';topicsBox.innerHTML='';postList.innerHTML='';
+    categoryList.innerHTML='';
     article.innerHTML=`<div class="blog-status"><strong>게시글을 불러오지 못했어요.</strong><p>GitHub 저장소에 <code>data/stories.json</code> 파일이 있는지, 홈페이지가 GitHub Pages 주소에서 열려 있는지 확인해 주세요.</p><p>오류: ${storyEscape(storyLoadError)}</p><button class="st-action" id="stRetry">다시 불러오기</button></div>`;
     $('#stRetry').addEventListener('click',loadStoryData);setHint('게시글 불러오기 오류 · Esc로 홈으로');return;
   }
   if(!STORIES.length){
-    categoryList.innerHTML='<p class="st-copy">아직 분류가 없어요.</p>';topicsBox.innerHTML='';postList.innerHTML='';
-    article.innerHTML='<div class="blog-status">아직 게시글이 없어요.<br>Pages CMS에서 첫 게시글을 저장하면 여기에 표시됩니다.</div>';
-    titleBox.textContent='사담 보관함';metaBox.textContent='아직 등록된 글이 없습니다.';setHint('게시글은 Pages CMS에서 관리');return;
+    categoryList.innerHTML='<div class="blog-status">아직 카테고리가 없어요.</div>';
+    article.innerHTML='<div class="blog-article-empty"><strong>사담 보관함</strong><span>Pages CMS에서 첫 게시글을 저장하면 여기에 표시됩니다.</span></div>';
+    setHint('게시글은 Pages CMS에서 관리');return;
   }
   stCat=Math.max(0,Math.min(stCat,STORIES.length-1));
-  const cat=STORIES[stCat];
-  if(!cat.entries)cat.entries=[];
-  const tags=storyTags();
-  if(stTopic>=tags.length)stTopic=-1;
-  let entries=storyVisibleEntries();
-  if(entries.length)stEntry=Math.max(0,Math.min(stEntry,entries.length-1));else stEntry=0;
-  categoryList.innerHTML=STORIES.map((c,i)=>{
-    const count=(c.entries||[]).length;
-    return `<button class="blog-cat${i===stCat?' on':''}" data-cat="${i}"><span>${storyEscape(c.title)}</span><small>${count}</small></button>`;
+  if(!STORIES[stCat].entries)STORIES[stCat].entries=[];
+  const activeCat=STORIES[stCat];
+  const activeTags=storyTagsFor(activeCat);
+  if(stTopic>=activeTags.length)stTopic=-1;
+  let activeEntries=storyVisibleEntries();
+  if(activeEntries.length)stEntry=Math.max(0,Math.min(stEntry,activeEntries.length-1));else stEntry=0;
+  categoryList.innerHTML=STORIES.map((category,i)=>{
+    const count=(category.entries||[]).length;
+    const isOpen=stAccordionOpen&&i===stCat;
+    return `<section class="blog-category-item${isOpen?' expanded':''}"><button class="blog-cat" data-cat="${i}" aria-expanded="${isOpen?'true':'false'}" aria-controls="blog-category-panel-${i}"><span class="blog-cat-name">${storyEscape(category.title)}</span><small class="blog-cat-count">${count}</small><span class="blog-cat-chevron" aria-hidden="true"></span></button><div id="blog-category-panel-${i}" class="blog-cat-panel${isOpen?' open':''}" aria-hidden="${isOpen?'false':'true'}"><div class="blog-cat-panel-inner">${makeStoryPanel(category,i,isOpen)}</div></div></section>`;
   }).join('');
-  categoryList.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{stCat=+b.dataset.cat;stTopic=-1;stEntry=0;stLevel='list';drawStory()}));
-  topicsBox.innerHTML=`<button class="blog-topic${stTopic<0?' on':''}" data-topic="-1">전체 글 <span>· ${(cat.entries||[]).length}</span></button>`+tags.map((tag,i)=>{
-    const count=(cat.entries||[]).filter(entry=>String(entry.topicTitle||'기타')===tag).length;
-    return `<button class="blog-topic${i===stTopic?' on':''}" data-topic="${i}">${storyEscape(tag)} <span>· ${count}</span></button>`;
-  }).join('');
-  topicsBox.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>{stTopic=+b.dataset.topic;stEntry=0;stLevel='list';drawStory()}));
-  entries=storyVisibleEntries();
-  titleBox.textContent=cat.title;
-  metaBox.textContent=`${stTopic<0?'전체 게시글':'태그: '+tags[stTopic]} · ${entries.length}개의 글`;
-  if(!entries.length){
-    postList.innerHTML='<div class="blog-status">이 분류에는 아직 게시글이 없어요.</div>';
-    article.innerHTML='<div class="blog-article-empty">아직 등록된 글이 없어요.</div>';
-    shell.classList.remove('article-open');setHint('카테고리를 선택하고 태그로 글을 걸러 보세요 · Esc 홈으로');return;
-  }
-  stEntry=Math.max(0,Math.min(stEntry,entries.length-1));
-  postList.innerHTML=`<div class="blog-list-heading">게시글 목록 · ${entries.length}</div>`+entries.map((entry,i)=>{
-    const excerpt=storyBodyPlainText(entry.body);
-    return `<button class="blog-post${i===stEntry?' on':''}" data-post="${i}"><span class="blog-post-meta">#${storyEscape(entry.topicTitle)} · ${storyEscape(entry.date)}</span><span class="blog-post-title">${storyEscape(entry.title)}</span><span class="blog-post-excerpt">${storyEscape(excerpt.slice(0,76))}${excerpt.length>76?'…':''}</span></button>`;
-  }).join('');
-  postList.querySelectorAll('[data-post]').forEach(b=>b.addEventListener('click',()=>storySelect(+b.dataset.post)));
-  const selected=entries[stEntry];
-  if(stLevel==='article'&&selected){
+  categoryList.querySelectorAll('[data-cat]').forEach(button=>button.addEventListener('click',()=>{
+    const next=Number(button.dataset.cat);
+    if(next===stCat&&stAccordionOpen){stAccordionOpen=false;stLevel='list';article.innerHTML=storyArticleEmpty();}
+    else{stCat=next;stTopic=-1;stEntry=0;stAccordionOpen=true;stLevel='list';article.innerHTML=storyArticleEmpty();}
+    drawStory();
+  }));
+  categoryList.querySelectorAll('[data-topic]').forEach(button=>button.addEventListener('click',()=>{
+    stCat=Number(button.dataset.catOwner);stTopic=Number(button.dataset.topic);stEntry=0;stAccordionOpen=true;stLevel='list';article.innerHTML=storyArticleEmpty();drawStory();
+  }));
+  categoryList.querySelectorAll('[data-post]').forEach(button=>button.addEventListener('click',()=>{
+    stCat=Number(button.dataset.catOwner);stAccordionOpen=true;
+    if(stCat!==Number(button.dataset.catOwner))stCat=Number(button.dataset.catOwner);
+    stEntry=Number(button.dataset.post);stLevel='article';drawStory();
+  }));
+  activeEntries=storyVisibleEntries();
+  if(stLevel==='article'&&activeEntries.length){
+    stEntry=Math.max(0,Math.min(stEntry,activeEntries.length-1));
+    const selected=activeEntries[stEntry];
     shell.classList.add('article-open');
-    article.innerHTML=`<button class="blog-back" data-blog-back>← 게시글 목록</button><div class="blog-article-kicker">${storyEscape(selected.categoryTitle)}　/　#${storyEscape(selected.topicTitle)}</div><h3>${storyEscape(selected.title)}</h3><div class="blog-article-date">${storyEscape(selected.date)}</div><div class="blog-article-body">${renderStoryBody(selected.body)}</div>`;
+    article.innerHTML=`<button class="blog-back" data-blog-back>← 게시글 목록</button><div class="blog-article-kicker">${storyEscape(selected.categoryTitle)}　/　${storyEscape(selected.topicTitle)}</div><h3>${storyEscape(selected.title)}</h3><div class="blog-article-date">${storyEscape(selected.date)}</div><div class="blog-article-body">${renderStoryBody(selected.body)}</div>`;
     const back=article.querySelector('[data-blog-back]');if(back)back.addEventListener('click',()=>{stLevel='list';drawStory()});
   }else{
     shell.classList.remove('article-open');
-    article.innerHTML=`<div class="blog-article-empty">${icon('bubble','var(--c)')}<strong>읽고 싶은 글을 선택해 주세요.</strong><span>게시글 제목을 누르면 본문이 여기에 표시됩니다.</span></div>`;
+    article.innerHTML=storyArticleEmpty();
   }
-  setHint(stLevel==='article'?'게시글 읽기 · Esc로 목록으로 돌아가기':'왼쪽에서 카테고리와 태그를 고른 뒤 게시글을 눌러 읽기');
+  setHint(stLevel==='article'?'게시글 읽기 · 목록 버튼으로 돌아가기':'카테고리를 펼쳐 태그와 게시글을 찾아보세요 · Esc 홈으로');
+}
+
+/* 이미지가 없거나 주소가 깨진 경우 파일명 대신 보기 좋은 표지 일러스트를 표시합니다. */
+function albumArtSvg(index){
+  const motifs=[
+    '<rect x="12" y="12" width="216" height="296" rx="2" fill="var(--cover-paper)"/><circle cx="120" cy="102" r="52" fill="var(--cover-accent)" opacity=".82"/><circle cx="142" cy="88" r="46" fill="var(--cover-paper)"/><path d="M30 230Q82 164 120 220T210 210" fill="none" stroke="var(--cover-accent)" stroke-width="7"/><path d="M36 250H204M50 267H190" stroke="var(--cover-accent)" stroke-width="2" opacity=".7"/>',
+    '<rect x="12" y="12" width="216" height="296" fill="var(--cover-paper)"/><path d="M120 55C90 95 72 124 120 175C168 124 150 95 120 55Z" fill="var(--cover-accent)" opacity=".86"/><path d="M120 92V240M120 190Q70 150 52 198Q85 221 120 210M120 172Q161 132 190 173Q165 204 120 196" fill="none" stroke="var(--cover-accent)" stroke-width="5"/><circle cx="120" cy="246" r="18" fill="var(--cover-accent)" opacity=".55"/>',
+    '<rect x="12" y="12" width="216" height="296" fill="var(--cover-paper)"/><circle cx="120" cy="140" r="68" fill="none" stroke="var(--cover-accent)" stroke-width="3"/><circle cx="120" cy="140" r="49" fill="none" stroke="var(--cover-accent)" stroke-width="2"/><circle cx="120" cy="140" r="28" fill="var(--cover-accent)" opacity=".84"/><path d="M36 72L204 222M204 72L36 222" stroke="var(--cover-accent)" stroke-width="2" opacity=".55"/>',
+    '<rect x="12" y="12" width="216" height="296" fill="var(--cover-paper)"/><path d="M26 70Q60 22 91 74T155 72T214 73" fill="none" stroke="var(--cover-accent)" stroke-width="5"/><path d="M26 124Q60 76 91 128T155 126T214 127" fill="none" stroke="var(--cover-accent)" stroke-width="5"/><path d="M26 178Q60 130 91 182T155 180T214 181" fill="none" stroke="var(--cover-accent)" stroke-width="5"/><circle cx="120" cy="246" r="28" fill="var(--cover-accent)" opacity=".8"/>'
+  ];
+  return `<svg viewBox="0 0 240 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${motifs[((index%motifs.length)+motifs.length)%motifs.length]}</svg>`;
+}
+function albumCoverFallback(name,index,accent){
+  const title=String(name||'이미지 앨범');
+  return `<span class="album-cover-fallback" style="--cover-accent:${accent}">${albumArtSvg(index)}<span class="album-cover-kicker">VISUAL ARCHIVE · ${(index+1).toString().padStart(2,'0')}</span><span class="album-cover-title">${storyEscape(title)}</span><span class="album-cover-foot">A COLLECTION OF IMAGES</span></span>`;
+}
+function imageLoadFallback(index,accent){
+  return `<span class="image-load-fallback" style="--cover-accent:${accent}">${albumArtSvg(index)}<span>이미지를 불러오지 못했어요</span></span>`;
+}
+function bindAlbumCoverFallbacks(){
+  $('#gal').querySelectorAll('.album-cover').forEach(img=>{
+    const fallback=()=>{
+      if(!img.isConnected)return;
+      const button=img.closest('.pk');const i=button?Number(button.dataset.i):0;const album=ALBUMS[i];
+      img.insertAdjacentHTML('beforebegin',albumCoverFallback(album?album.name:'이미지 앨범',i,['#7aa6cc','#d2b567','#d691a4','#7ea58f'][i%4]));img.remove();
+    };
+    img.addEventListener('error',fallback,{once:true});if(img.complete&&img.naturalWidth===0)fallback();
+  });
+}
+function bindBrokenGalleryImages(){
+  $('#gal').querySelectorAll('.shot img').forEach(img=>{
+    const fallback=()=>{
+      if(!img.isConnected)return;
+      const shot=img.closest('.shot');const index=shot?Array.from($('#gal').querySelectorAll('.shot')).indexOf(shot):0;
+      const accent=shot?(getComputedStyle(shot).getPropertyValue('--c').trim()||'#9aaec4'):'#9aaec4';
+      img.insertAdjacentHTML('beforebegin',imageLoadFallback(Math.max(0,index),accent));img.remove();
+    };
+    img.addEventListener('error',fallback,{once:true});if(img.complete&&img.naturalWidth===0)fallback();
+  });
 }
 
 /* 3. 이미지 : 캐릭터 고르기 창 → 그 캐릭터의 앨범 */
@@ -1077,10 +1169,11 @@ function drawAlbum(){
     ci=Math.max(0,Math.min(ci,ALBUMS.length-1));
     $('#gal').innerHTML=`<div class="emp"><div class="emp-st">${ALBUMS.map((a,i)=>{
       const cover=catalogImageUrl(a.cover || (a.items && a.items.length ? a.items[0].src : ''));
-      const visual=cover?`<img class="album-cover" src="${storyEscape(cover)}" alt="" loading="lazy">`:`${icon('photo',C[i%4])}`;
+      const visual=cover?`<img class="album-cover" src="${storyEscape(cover)}" alt="${storyEscape(a.name)} 앨범 표지" loading="lazy">`:albumCoverFallback(a.name,i,C[i%4]);
       return `<button class="pk${i===ci?' on':''}" style="--k:${C[i%4]}" data-i="${i}"><span class="pl">${visual}<span class="pl-name">${storyEscape(a.name)}</span></span></button>`;
     }).join('')}</div><b>앨범을 골라 보세요</b><em>대표 이미지를 누르면 그 앨범의 그림이 펼쳐져요</em></div>`;
     $('#gal').querySelectorAll('.pk').forEach(b=>b.addEventListener('click',()=>{ai=ci=+b.dataset.i;drawAlbum()}));
+    bindAlbumCoverFallbacks();
     setHint('◀ ▶ 앨범 고르기 · Enter 열기 · Esc 홈으로');
     return;
   }
@@ -1112,8 +1205,9 @@ function drawAlbum(){
     });
     $('#gal').querySelectorAll('.shot').forEach(sh=>sh.addEventListener('click',()=>{
       if(!sh.dataset.s){toast('먼저 이미지를 등록해 주세요.');return}
-      $('#lb img').src=sh.dataset.s;$('#lb p').textContent=sh.dataset.c;$('#lb').classList.add('on')
+      const lightboxImage=$('#lb img');lightboxImage.onerror=()=>{lightboxImage.onerror=null;$('#lb p').textContent='이미지를 불러오지 못했어요. 저장된 이미지 주소를 확인해 주세요.'};lightboxImage.src=sh.dataset.s;$('#lb p').textContent=sh.dataset.c;$('#lb').classList.add('on')
     }));
+    bindBrokenGalleryImages();
     setHint('그림을 눌러 크게 보기 · Esc로 앨범 목록으로');
     return;
   }
@@ -1127,7 +1221,8 @@ function drawAlbum(){
     return `<button class="shot" style="--ratio:${g.r};--c:${c}" data-s="${storyEscape(src)}" data-c="${storyEscape(cap)}"><span class="sv">${inner}</span><span class="sc">${storyEscape(cap||'이름 없는 그림')}</span></button>`}).join('')+`</div></section>`).join('');
   $('#gal').querySelectorAll('.shot').forEach(sh=>sh.addEventListener('click',()=>{
     if(!sh.dataset.s){toast('여기에 이미지를 넣을 수 있어요.');return}
-    $('#lb img').src=sh.dataset.s;$('#lb p').textContent=sh.dataset.c;$('#lb').classList.add('on')}));
+    const lightboxImage=$('#lb img');lightboxImage.onerror=()=>{lightboxImage.onerror=null;$('#lb p').textContent='이미지를 불러오지 못했어요. 저장된 이미지 주소를 확인해 주세요.'};lightboxImage.src=sh.dataset.s;$('#lb p').textContent=sh.dataset.c;$('#lb').classList.add('on')}));
+  bindBrokenGalleryImages();
   setHint('▲ ▼ 내려보기 · ◀ ▶ 다른 앨범 · 그림을 눌러 크게 보기 · Esc 앨범 목록으로');
 }
 
