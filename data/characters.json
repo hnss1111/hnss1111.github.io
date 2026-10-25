@@ -14,7 +14,7 @@
     "desc": "언세이프티 캐릭터",
     "on": [
       {
-        "p": "로판 ai",
+        "p": "로판 AI",
         "url": "https://rofan.ai/character/60760019-a1c9-44f8-a390-eb21579a60cb"
       },
       {
@@ -72,6 +72,16 @@
       {
         "p": "티팟",
         "url": "https://teapotchat.com/character/DJYQvHQRco8MecWx4BwP"
+      }
+    ]
+  },
+  {
+    "name": "백일",
+    "desc": "언세이프티 캐릭터",
+    "on": [
+      {
+        "p": "로판 AI",
+        "url": "https://rofan.ai/character/8f2062f3-424e-421e-907f-7cbbcf9c8afe"
       }
     ]
   }
