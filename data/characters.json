@@ -4,24 +4,6 @@
     "desc": "-"
   },
   {
-    "name": "오메가 알레르기",
-    "desc": "언세이프티 캐릭터",
-    "on": [
-      {
-        "p": "유니챗",
-        "url": "https://www.univers.chat/character/bf309839-d1b7-4241-8579-59d98bbba58d"
-      },
-      {
-        "p": "우마이",
-        "url": "https://uumm.ai/works/019f40e5-2946-75ba-b4d1-2559532abe10"
-      },
-      {
-        "p": "리루",
-        "url": "https://riru.ai/character/5bf7f770-20cb-4dbe-b029-bfe69362b204"
-      }
-    ]
-  },
-  {
     "name": "영원",
     "desc": "언세이프티 캐릭터",
     "on": [
@@ -36,30 +18,12 @@
     ]
   },
   {
-    "name": "괴담마트에서 살아남기",
-    "desc": "언세이프티 캐릭터/\n네코챗은 업데이트 X",
+    "name": "백일",
+    "desc": "언세이프티 캐릭터",
     "on": [
       {
-        "p": "유니챗",
-        "url": "https://www.univers.chat/character/faa35c68-8789-43d5-80a2-a6a2b694bb5d"
-      },
-      {
-        "p": "네코챗",
-        "url": "https://www.nekochat.xyz/character/char_1771853842853_vn9xb8w"
-      }
-    ]
-  },
-  {
-    "name": "개허접 각성자 구한다",
-    "desc": "언세이프티 캐릭터/\n티팟은 링크 공개",
-    "on": [
-      {
-        "p": "유니챗",
-        "url": "https://www.univers.chat/character/ed8e8a25-250d-4095-8722-e8b3f4464768"
-      },
-      {
-        "p": "티팟",
-        "url": "https://teapotchat.com/character/OHG5Q0Kv1zCA3JH1pEpr"
+        "p": "로판 AI",
+        "url": "https://rofan.ai/character/8f2062f3-424e-421e-907f-7cbbcf9c8afe"
       }
     ]
   },
@@ -88,12 +52,48 @@
     ]
   },
   {
-    "name": "백일",
+    "name": "오메가 알레르기",
     "desc": "언세이프티 캐릭터",
     "on": [
       {
-        "p": "로판 AI",
-        "url": "https://rofan.ai/character/8f2062f3-424e-421e-907f-7cbbcf9c8afe"
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/bf309839-d1b7-4241-8579-59d98bbba58d"
+      },
+      {
+        "p": "우마이",
+        "url": "https://uumm.ai/works/019f40e5-2946-75ba-b4d1-2559532abe10"
+      },
+      {
+        "p": "리루",
+        "url": "https://riru.ai/character/5bf7f770-20cb-4dbe-b029-bfe69362b204"
+      }
+    ]
+  },
+  {
+    "name": "개허접 각성자 구한다",
+    "desc": "언세이프티 캐릭터/\n티팟은 링크 공개",
+    "on": [
+      {
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/ed8e8a25-250d-4095-8722-e8b3f4464768"
+      },
+      {
+        "p": "티팟",
+        "url": "https://teapotchat.com/character/OHG5Q0Kv1zCA3JH1pEpr"
+      }
+    ]
+  },
+  {
+    "name": "괴담마트에서 살아남기",
+    "desc": "언세이프티 캐릭터/\n네코챗은 업데이트 X",
+    "on": [
+      {
+        "p": "유니챗",
+        "url": "https://www.univers.chat/character/faa35c68-8789-43d5-80a2-a6a2b694bb5d"
+      },
+      {
+        "p": "네코챗",
+        "url": "https://www.nekochat.xyz/character/char_1771853842853_vn9xb8w"
       }
     ]
   }
