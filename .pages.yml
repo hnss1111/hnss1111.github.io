@@ -1,51 +1,6 @@
 media: media
 
 content:
-  - name: story_categories
-    label: 사담 카테고리
-    type: collection
-    path: data/story-categories
-    format: yaml-frontmatter
-    filename: "{primary}.md"
-    view:
-      primary: name
-      sort: [name]
-      default:
-        sort: name
-        order: asc
-    fields:
-      - name: name
-        label: 카테고리 이름
-        type: string
-        required: true
-
-  - name: story_subcategories
-    label: 사담 세부 카테고리
-    type: collection
-    path: data/story-subcategories
-    format: yaml-frontmatter
-    filename: "{category}-{name}.md"
-    view:
-      primary: name
-      sort: [name, category]
-      default:
-        sort: name
-        order: asc
-    fields:
-      - name: name
-        label: 세부 카테고리 이름
-        type: string
-        required: true
-
-      - name: category
-        label: 소속 카테고리
-        type: reference
-        options:
-          collection: story_categories
-          value: "{fields.name}"
-          label: "{fields.name}"
-        required: true
-
   - name: stories
     label: 사담 게시글
     type: file
@@ -55,21 +10,15 @@ content:
     fields:
       - name: category
         label: 카테고리
-        type: reference
-        options:
-          collection: story_categories
-          value: "{fields.name}"
-          label: "{fields.name}"
+        type: string
         required: true
+        description: 기존 카테고리 이름을 입력해 주세요.
 
       - name: subcategory
         label: 세부 카테고리
-        type: reference
-        options:
-          collection: story_subcategories
-          value: "{fields.name}"
-          label: "{fields.name} ({fields.category})"
+        type: string
         required: true
+        description: 기존 세부 카테고리 이름을 입력해 주세요.
 
       - name: title
         label: 글 제목
