@@ -6,34 +6,45 @@ content:
     type: file
     path: data/stories.json
     format: json
-    list: true
     fields:
-      - name: category
-        label: 카테고리
-        type: string
-        required: true
-        description: 기존 카테고리 이름을 입력해 주세요.
+      - name: posts
+        label: 게시글 목록
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title} · {date} · {category} / {subcategory}"
+        fields:
+          - name: category
+            label: 카테고리
+            type: string
+            required: true
+            description: 기존 카테고리 이름을 입력해 주세요.
 
-      - name: subcategory
-        label: 세부 카테고리
-        type: string
-        required: true
-        description: 기존 세부 카테고리 이름을 입력해 주세요.
+          - name: subcategory
+            label: 세부 카테고리
+            type: string
+            required: true
+            description: 기존 세부 카테고리 이름을 입력해 주세요.
 
-      - name: title
-        label: 글 제목
-        type: string
-        required: true
+          - name: title
+            label: 글 제목
+            type: string
+            required: true
 
-      - name: date
-        label: 작성일
-        type: date
-        required: true
+          - name: date
+            label: 작성일
+            type: date
+            required: true
 
-      - name: body
-        label: 본문
-        type: text
-        required: true
+          - name: body
+            label: 본문
+            type: rich-text
+            options:
+              format: markdown
+              switcher: false
+              media: false
+            required: true
 
   - name: platforms
     label: 사용 플랫폼
