@@ -421,6 +421,13 @@ body.night-mode{
 .blog-article-body{font-size:13px;color:var(--ink);line-height:2;overflow-wrap:anywhere;word-break:break-word}
 .blog-article-body p{margin:0 0 15px;white-space:pre-wrap}
 .blog-article-body p:last-child{margin-bottom:0}
+.blog-article-body h2,.blog-article-body h3,.blog-article-body h4{font-size:1.1em;line-height:1.5;margin:20px 0 10px;color:var(--ink)}
+.blog-article-body ul,.blog-article-body ol{padding-left:22px;margin:0 0 15px}
+.blog-article-body li{margin:4px 0}
+.blog-article-body blockquote{margin:12px 0;padding:8px 12px;border-left:3px solid var(--shade);background:var(--panel);color:var(--muted)}
+.blog-article-body a{color:var(--c);text-decoration:underline}
+.blog-article-body code{padding:1px 4px;background:var(--panel);border:1px solid var(--shade);border-radius:3px}
+.blog-article-body hr{border:0;border-top:1px dashed var(--shade);margin:18px 0}
 .blog-back{display:none;margin:0 0 10px;padding:7px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px}
 .blog-status{padding:14px;background:var(--panel);color:var(--dim);font-size:12px;line-height:1.8}
 .screen.night .blog-sidebar,.screen.night .blog-post,.screen.night .blog-article{background:#303E52;border-color:#4B5B72}
@@ -867,7 +874,38 @@ function storyDisplayDate(value){
   const s=String(value||'');
   return /^\d{4}-\d{2}-\d{2}$/.test(s)?s.replace(/-/g,'.'):s;
 }
-function normalizeStoryData(rows){
+function storyInlineMarkdown(value){
+  let s=storyEscape(value);
+  s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/__([^_]+)__/g,'<strong>$1</strong>');
+  s=s.replace(/~~([^~]+)~~/g,'<del>$1</del>');
+  s=s.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
+  s=s.replace(/(^|[^_])_([^_\n]+)_/g,'$1<em>$2</em>');
+  return s;
+}
+function renderStoryBody(value){
+  const raw=(Array.isArray(value)?value.join('\n\n'):String(value||'')).replace(/\r\n?/g,'\n').trim();
+  if(!raw)return '';
+  const blocks=raw.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
+  return blocks.map(block=>{
+    if(/^([-*_])\1\1+\s*$/.test(block))return '<hr>';
+    const h=block.match(/^(#{1,4})\s+([\s\S]+)$/);
+    if(h){const n=h[1].length+1;return '<h'+n+'>'+storyInlineMarkdown(h[2])+'</h'+n+'>';}
+    if(block.split('\n').every(line=>/^\s*>/.test(line)))return '<blockquote>'+block.split('\n').map(line=>storyInlineMarkdown(line.replace(/^\s*>\s?/,''))).join('<br>')+'</blockquote>';
+    const lines=block.split('\n');
+    if(lines.every(line=>/^\s*[-*+]\s+/.test(line)))return '<ul>'+lines.map(line=>'<li>'+storyInlineMarkdown(line.replace(/^\s*[-*+]\s+/,''))+'</li>').join('')+'</ul>';
+    if(lines.every(line=>/^\s*\d+\.\s+/.test(line)))return '<ol>'+lines.map(line=>'<li>'+storyInlineMarkdown(line.replace(/^\s*\d+\.\s+/,''))+'</li>').join('')+'</ol>';
+    return '<p>'+lines.map(storyInlineMarkdown).join('<br>')+'</p>';
+  }).join('');
+}
+function storyBodyPlainText(value){
+  const raw=Array.isArray(value)?value.join(' '):String(value||'');
+  return raw.replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/<[^>]*>/g,' ').replace(/[`*_~#>]/g,'').replace(/\s+/g,' ').trim();
+}
+function normalizeStoryData(input){
+  const rows=Array.isArray(input)?input:(input&&Array.isArray(input.posts)?input.posts:null);
   if(!Array.isArray(rows))throw new Error('게시글 데이터가 배열 형식이 아닙니다.');
   /* 이전 계층형 데이터도 평탄화하여 카테고리 + 태그 구조로 읽습니다. */
   const flatRows=[];
@@ -1007,14 +1045,14 @@ function drawStory(){
   }
   stEntry=Math.max(0,Math.min(stEntry,entries.length-1));
   postList.innerHTML=`<div class="blog-list-heading">게시글 목록 · ${entries.length}</div>`+entries.map((entry,i)=>{
-    const excerpt=entry.body.join(' ').replace(/\s+/g,' ').trim();
+    const excerpt=storyBodyPlainText(entry.body);
     return `<button class="blog-post${i===stEntry?' on':''}" data-post="${i}"><span class="blog-post-meta">#${storyEscape(entry.topicTitle)} · ${storyEscape(entry.date)}</span><span class="blog-post-title">${storyEscape(entry.title)}</span><span class="blog-post-excerpt">${storyEscape(excerpt.slice(0,76))}${excerpt.length>76?'…':''}</span></button>`;
   }).join('');
   postList.querySelectorAll('[data-post]').forEach(b=>b.addEventListener('click',()=>storySelect(+b.dataset.post)));
   const selected=entries[stEntry];
   if(stLevel==='article'&&selected){
     shell.classList.add('article-open');
-    article.innerHTML=`<button class="blog-back" data-blog-back>← 게시글 목록</button><div class="blog-article-kicker">${storyEscape(selected.categoryTitle)}　/　#${storyEscape(selected.topicTitle)}</div><h3>${storyEscape(selected.title)}</h3><div class="blog-article-date">${storyEscape(selected.date)}</div><div class="blog-article-body">${selected.body.map(t=>`<p>${storyEscape(t).replace(/\n/g,'<br>')}</p>`).join('')}</div>`;
+    article.innerHTML=`<button class="blog-back" data-blog-back>← 게시글 목록</button><div class="blog-article-kicker">${storyEscape(selected.categoryTitle)}　/　#${storyEscape(selected.topicTitle)}</div><h3>${storyEscape(selected.title)}</h3><div class="blog-article-date">${storyEscape(selected.date)}</div><div class="blog-article-body">${renderStoryBody(selected.body)}</div>`;
     const back=article.querySelector('[data-blog-back]');if(back)back.addEventListener('click',()=>{stLevel='list';drawStory()});
   }else{
     shell.classList.remove('article-open');
