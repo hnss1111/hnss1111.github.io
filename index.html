@@ -543,6 +543,31 @@ body.night-mode{
   .pw-more{padding:12px 14px 16px}
 }
 </style>
+<style>
+.scene.g-cut{padding:clamp(10px,2vw,18px);overflow:hidden}
+.tistory-page{display:flex;flex:1;flex-direction:column;width:100%;min-width:0;min-height:0;padding:0;overflow:hidden;background:var(--panel);color:var(--ink)}
+.tistory-browserbar{display:flex;align-items:center;gap:9px;flex:none;padding:9px 10px;background:var(--shade);border-bottom:3px solid var(--bd)}
+.tistory-dots{display:flex;gap:5px;flex:none}
+.tistory-dots i{width:8px;height:8px;background:var(--bd);opacity:.55}
+.tistory-dots i:first-child{background:var(--c);opacity:1}
+.tistory-address{flex:1;min-width:0;padding:5px 9px;background:var(--panel);font-size:11px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tistory-browser-actions{display:flex;gap:5px;flex:none}
+.tistory-browser-actions button,.tistory-browser-actions a{display:grid;place-items:center;width:29px;height:29px;background:var(--panel);color:var(--ink);text-decoration:none;font-size:15px;line-height:1;cursor:pointer}
+.tistory-browser-actions button:hover,.tistory-browser-actions a:hover{background:var(--c);color:#202838}
+.tistory-viewport{position:relative;display:flex;flex:1;min-height:0;overflow:hidden;background:#fff}
+.tistory-iframe{display:block;flex:1;width:100%;height:100%;min-width:0;min-height:300px;border:0;background:#fff}
+.tistory-note{flex:none;padding:5px 8px;background:var(--panel);border-top:1px solid var(--shade);font-size:10px;line-height:1.5;color:var(--dim)}
+.screen.night .tistory-address{background:#202B3B;color:#F5F3ED}
+.screen.night .tistory-browser-actions button,.screen.night .tistory-browser-actions a{background:#202B3B;color:#F5F3ED}
+@media(max-width:600px){
+  .scene.g-cut{padding:8px}
+  .tistory-browserbar{padding:7px;gap:6px}
+  .tistory-address{font-size:10px;padding:5px 6px}
+  .tistory-browser-actions{gap:3px}
+  .tistory-browser-actions button,.tistory-browser-actions a{width:27px;height:27px}
+  .tistory-iframe{min-height:300px}
+}
+</style>
 </head>
 <body>
 <svg aria-hidden="true" width="0" height="0" style="position:absolute">
