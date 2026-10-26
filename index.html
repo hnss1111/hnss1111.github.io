@@ -560,39 +560,6 @@ body.night-mode{
   .tistory-browser-actions button,.tistory-browser-actions a{width:27px;height:27px}
   .tistory-iframe{min-height:300px}
 }
-/* 깃허브 안에서는 비밀번호 입력 대신 티스토리 이동 안내를 표시합니다. */
-.tistory-viewport{background:var(--panel)}
-.tistory-external-notice{
-  display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;
-  gap:13px;min-width:0;padding:clamp(20px,4vw,42px);text-align:center;
-  background:var(--panel);color:var(--ink)
-}
-.tistory-external-mark{
-  display:grid;place-items:center;width:48px;height:48px;flex:none;
-  background:color-mix(in srgb,var(--c) 24%,var(--panel));color:var(--ink);
-  border:2px solid var(--bd);font-family:var(--px);font-size:22px
-}
-.tistory-external-notice h2{
-  margin:0;font-family:var(--px);font-weight:400;
-  font-size:clamp(17px,2.4vw,23px);line-height:1.55;overflow-wrap:anywhere
-}
-.tistory-external-notice p{
-  margin:0;max-width:34em;font-size:13px;line-height:1.85;color:var(--dim)
-}
-.tistory-external-notice strong{color:var(--ink);font-weight:700}
-.tistory-external-link{
-  display:inline-flex;align-items:center;justify-content:center;gap:14px;
-  min-height:44px;margin-top:7px;padding:11px 16px;background:var(--c);
-  color:#202838;text-decoration:none;font-family:var(--px);font-size:12px;line-height:1.5;
-  box-shadow:3px 0 0 var(--bd),-3px 0 0 var(--bd),0 3px 0 var(--bd),0 -3px 0 var(--bd)
-}
-.tistory-external-link:hover{filter:brightness(1.06)}
-@media(max-width:600px){
-  .tistory-external-notice{gap:11px;padding:18px 12px}
-  .tistory-external-notice h2{font-size:17px}
-  .tistory-external-notice p{font-size:12px}
-  .tistory-external-link{width:100%;max-width:280px}
-}
 </style>
 
 <style id="requested-only-adjustments">
@@ -1489,36 +1456,51 @@ $('#lb').addEventListener('click',()=>$('#lb').classList.remove('on'));
 theme(false);
 </script>
 <script>
-/* 티스토리: 깃허브에서는 안내만 표시하고, 실제 보호글은 티스토리에서 엽니다. */
+/* 티스토리: 공개글은 게임기 화면 안에서 그대로 탐색하고, 보호글 안내는 티스토리 스킨에서만 표시합니다. */
 const TISTORY_PUBLIC_URL = 'https://think10191.tistory.com/';
 function cut(){
   const g = G[2];
   scene.innerHTML = `<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
-    <section class="tistory-page win" aria-label="티스토리 이동 안내">
+    <section class="tistory-page win" aria-label="티스토리 화면">
       <div class="tistory-browserbar">
         <span class="tistory-dots" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="tistory-address" title="${TISTORY_PUBLIC_URL}">think10191.tistory.com</span>
-        <div class="tistory-browser-actions" aria-label="티스토리 열기">
-          <a href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer" aria-label="티스토리 새 탭에서 열기" title="티스토리 새 탭에서 열기">↗</a>
+        <div class="tistory-browser-actions" aria-label="브라우저 도구">
+          <button id="tistoryBack" type="button" aria-label="이전 페이지" title="이전 페이지">←</button>
+          <button id="tistoryReload" type="button" aria-label="처음 화면 다시 불러오기" title="처음 화면 다시 불러오기">↻</button>
+          <a href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer" aria-label="새 탭에서 열기" title="새 탭에서 열기">↗</a>
         </div>
       </div>
       <div class="tistory-viewport">
-        <div class="tistory-external-notice">
-          <div class="tistory-external-mark" aria-hidden="true">↗</div>
-          <h2>티스토리에서 확인해 주세요</h2>
-          <p>보호글은 티스토리 페이지로 이동해서 열어 주세요.</p>
-          <p>보호글 비밀번호는 숫자 <strong>1</strong>로 고정되어 있어요.</p>
-          <a class="tistory-external-link" href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer">
-            <span>티스토리로 이동</span><span aria-hidden="true">↗</span>
-          </a>
-        </div>
+        <iframe class="tistory-iframe" id="tistoryFrame"
+          title="think10191 티스토리 블로그"
+          src="${TISTORY_PUBLIC_URL}"
+          loading="eager"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="storage-access https://think10191.tistory.com; clipboard-read; clipboard-write"></iframe>
       </div>
-      <div class="tistory-note">티스토리에서 보호글을 열고 비밀번호 1을 입력해 주세요.</div>
+      <div class="tistory-note">보호글 인증이나 쿠키 문제가 생기면 ↗ 버튼으로 티스토리를 새 탭에서 열어 주세요.</div>
     </section>`;
-  setHint('티스토리로 이동해 보호글 확인 · Esc 홈으로');
+
+  const blogFrame = $('#tistoryFrame');
+  const sendParentTheme = () => {
+    try {
+      if(blogFrame && blogFrame.contentWindow){
+        blogFrame.contentWindow.postMessage({type:'world-console-theme',mode:night?'dark':'light'}, 'https://think10191.tistory.com');
+      }
+    } catch (_) {}
+  };
+  blogFrame.addEventListener('load', sendParentTheme);
+  sendParentTheme();
+  $('#tistoryReload').addEventListener('click', () => { blogFrame.src = TISTORY_PUBLIC_URL; });
+  $('#tistoryBack').addEventListener('click', () => {
+    try { blogFrame.contentWindow.history.back(); }
+    catch (_) { blogFrame.src = TISTORY_PUBLIC_URL; }
+  });
+  setHint('티스토리 화면 안에서 공개 글을 선택하세요 · Esc 홈으로');
 }
 
-/* 티스토리 안내 화면 함수를 연결한 뒤 홈 메뉴를 다시 그립니다. */
+/* 티스토리 화면 함수를 연결한 뒤 홈 메뉴를 다시 그립니다. */
 if (where === 'home') home();
 </script>
 
