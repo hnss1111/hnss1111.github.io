@@ -687,9 +687,9 @@ function catalogImageUrl(value){
 }
 function defaultPlatformDescription(name){
   const key=String(name||'').toLowerCase().replace(/\s+/g,'');
-  if(key.includes('유니챗') || key.includes('unichat')) return '메인 플랫폼. 온리가 끝나면 다른 플랫폼으로 이식될 수 있음.';
-  if(key.includes('케이브덕') || key.includes('caveduck') || key.includes('cave-duck') || key.includes('cave_duck')) return '케이브덕 온리 캐릭터만 올림.';
-  if(key.includes('로판') || key.includes('ropan')) return '개인 캐릭터만 올림. 제작창 제한으로 업로드가 어려움.';
+if(key.includes('유니챗') || key.includes('unichat')) return '현재 메인으로 사용하는 플랫폼이에요. 온리가 끝난 캐릭터를 이식해 공개하기도 해요.';
+if(key.includes('케이브덕') || key.includes('caveduck') || key.includes('cave-duck') || key.includes('cave_duck')) return '플랫폼 온리 캐릭터를 주로 올려요.';
+if(key.includes('로판') || key.includes('ropan')) return '일대일 캐릭터를 중심으로 사용해요. 주로 개인적으로 즐기다가 마음에 드는 캐릭터를 공개해요.';
   return '';
 }
 async function loadCatalogData(){
