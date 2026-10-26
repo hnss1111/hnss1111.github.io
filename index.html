@@ -1359,5 +1359,34 @@ $('#tLight').addEventListener('click',()=>theme(false));$('#tDark').addEventList
 $('#lb').addEventListener('click',()=>$('#lb').classList.remove('on'));
 theme(false);
 </script>
+<script>
+/* 티스토리 시디: 공개 글(캐릭터 비하인드)만 게임기 안에 표시 */
+const TISTORY_PUBLIC_URL='https://think10191.tistory.com/category/캐릭터비하인드';
+G[2].name='티스토리';G[2].hint='캐릭터 비하인드 · 공개 글';G[2].icon='bubble';
+function cut(){
+  const g=G[2];
+  scene.innerHTML=`<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
+    <section class="tistory-page win" aria-label="티스토리 화면">
+      <div class="tistory-browserbar">
+        <span class="tistory-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="tistory-address">think10191.tistory.com</span>
+        <div class="tistory-browser-actions" aria-label="브라우저 도구">
+          <button id="tistoryBack" type="button" aria-label="이전 페이지" title="이전 페이지">←</button>
+          <button id="tistoryReload" type="button" aria-label="처음 화면" title="처음 화면 다시 불러오기">↻</button>
+          <a href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer" aria-label="새 탭에서 열기" title="새 탭에서 열기">↗</a>
+        </div>
+      </div>
+      <div class="tistory-viewport">
+        <iframe class="tistory-iframe" id="tistoryFrame" title="think10191 티스토리 블로그" src="${TISTORY_PUBLIC_URL}" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      <div class="tistory-note">여기서는 공개 글만 볼 수 있어요. 비밀번호가 걸린 이미지는 <a href="https://think10191.tistory.com/" target="_blank" rel="noopener noreferrer" style="color:inherit;font-weight:700">티스토리</a>에서 직접 확인해 주세요.</div>
+    </section>`;
+  const blogFrame=$('#tistoryFrame');
+  $('#tistoryReload').addEventListener('click',()=>{blogFrame.src=TISTORY_PUBLIC_URL;});
+  $('#tistoryBack').addEventListener('click',()=>{try{blogFrame.contentWindow.history.back();}catch(_){blogFrame.src=TISTORY_PUBLIC_URL;}});
+  setHint('티스토리 화면 안에서 공개 글을 선택하세요 · Esc 홈으로');
+}
+if(where==='home')home();
+</script>
 </body>
 </html>
