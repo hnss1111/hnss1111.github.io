@@ -689,7 +689,7 @@ function defaultPlatformDescription(name){
   const key=String(name||'').toLowerCase().replace(/\s+/g,'');
   if(key.includes('유니챗') || key.includes('unichat')) return '메인으로 사용하는 플랫폼이에요. 온리가 끝나면 다른 플랫폼으로 이식될 수도 있어요.';
   if(key.includes('케이브덕') || key.includes('caveduck') || key.includes('cave-duck') || key.includes('cave_duck')) return '케이브덕 온리 캐릭터를 올리고 있어요.';
-  if(key.includes('로판')) return '개인 캐릭터를 올리고 있어요. 제작창에 제한이 있어서 자주 업로드하기는 어려워요.';
+  if(key.includes('로판') || key.includes('ropan')) return '개인 캐릭터를 올리고 있어요. 제작창에 제한이 있어서 자주 업로드하기는 어려워요.';
   return '';
 }
 async function loadCatalogData(){
@@ -706,7 +706,7 @@ async function loadCatalogData(){
         return {
           name:name,
           url:String(p && p.url || ''),
-          description:savedDescription || defaultPlatformDescription(name)
+          description:defaultPlatformDescription(name) || savedDescription
         };
       });
     }
@@ -740,9 +740,9 @@ async function loadCatalogData(){
 const PAL={night:['#9bc4e8','#e2c984','#e3aabd'],day:['#7aa6cc','#d2b567','#d691a4']};
 let night=false; /* 밝은 화면이 기본 */
 const G=[
-  {id:'plat',name:'사용 플랫폼',c:'#8cc4f0',hint:'자주 사용하는 플랫폼과 관련 정보를 모아 둔 곳',icon:'win'},
-  {id:'story',name:'잡담',c:'#f3d27a',hint:'캐릭터 및 플랫폼 관련 개인 이야기 (TMI 많음)',icon:'bubble'},
-  {id:'cut',name:'이미지',c:'#f0a3b6',hint:'그림과 사진을 모아 둔 앨범',icon:'photo'},
+  {id:'plat',name:'사용 플랫폼',c:'#8cc4f0',hint:'',icon:'win'},
+  {id:'story',name:'잡담',c:'#f3d27a',hint:'가볍게 캐릭터 및 플랫폼 이야기 (tmi 많음)',icon:'bubble'},
+  {id:'cut',name:'티스토리',c:'#f0a3b6',hint:'캐릭터 비하인드 및 이미지 확인',icon:'bubble'},
 ];
 
 /* ===== 동작 코드 ===== */
@@ -816,7 +816,7 @@ const SCENE={
     'aaaaaaaaaaaaaaaaaaaa',
     'aaaaaaaaaaaaaaaaaaaa',
     'aaaaaaaaaaaaaaaaaaaa'],
-  /* 이미지 : 달밤 풍경이 담긴 액자 */
+  /* 티스토리 메뉴용 CD 케이스 커버 그림 */
   cut:['','',
     '..kkkkkkkkkkkkkkkk..',
     '..kaaaaaaaaaaaaaak..',
@@ -949,7 +949,7 @@ function home(){
     stage.appendChild(b);return b});
   bindDrag();if(ro)ro.disconnect();ro=new ResizeObserver(layout);ro.observe(stage);
   sync(Math.round(target));layout();
-  setHint('◀ ▶ 키 또는 끌어서 돌리기 · 가운데 시디를 눌러 시작');
+  setHint('◀ ▶ 키 또는 끌어서 돌리기');
 }
 function layout(){
   if(!stage)return;W=stage.clientWidth;H=stage.clientHeight;if(!W)return;
@@ -974,7 +974,7 @@ function draw(){
 }
 function sync(i){
   sel=((i%N)+N)%N;const say=$('#say');
-  if(say)say.innerHTML=`${G[sel].name} · ${G[sel].hint}<em>▶ 가운데 시디를 눌러 시작</em>`;
+  if(say)say.textContent=G[sel].hint?`${G[sel].name} · ${G[sel].hint}`:G[sel].name;
 }
 function stepAnim(now=0){
   /* 작게 끊어 움직이는 느린 도트식 이동 */
@@ -1052,12 +1052,12 @@ function openPlat(){
 function plat(){
   const g=G[0];
   scene.innerHTML=`<div class="gh">${icon('win',g.c)}<span>${g.name}</span></div><div class="rpg"><div class="win menu" id="mn"></div><div class="win info" id="inf"></div></div>`;
-  drawPlat();setHint('▲ ▼ 플랫폼 고르기 · Enter 바로 방문 · Esc 돌아가기');
+  drawPlat();setHint('▲ ▼ 로 플랫폼을 고르고 Enter로 방문해 보세요 · Esc로 홈으로 돌아갈 수 있어요');
 }
 function drawPlat(){
   if(!PLATFORMS.length){
-    $('#mn').innerHTML='<div class="no">등록된 플랫폼이 없어요.</div>';
-    $('#inf').innerHTML='<h3>사용 플랫폼</h3><p>Pages CMS의 사용 플랫폼 메뉴에서 플랫폼 이름과 링크를 추가해 주세요.</p>';
+    $('#mn').innerHTML='<div class="no">아직 등록된 플랫폼이 없어요.</div>';
+    $('#inf').innerHTML='<h3>사용 플랫폼</h3><p>자주 이용하는 플랫폼을 모아 두었어요. 등록된 플랫폼이 있으면 여기에서 바로 확인할 수 있어요.</p>';
     return;
   }
   pi=Math.max(0,Math.min(pi,PLATFORMS.length-1));
@@ -1069,15 +1069,15 @@ function drawPlat(){
   const description=String(p.description||'').trim();
   const action=ok
     ? `<a class="go" href="${storyEscape(p.url)}" target="_blank" rel="noopener noreferrer"><span>플랫폼 방문하기</span><span aria-hidden="true">↗</span></a>`
-    : '<p class="no">방문 주소가 아직 등록되지 않았어요.</p>';
+    : '<p class="no">아직 방문 주소가 없어요.</p>';
   const descriptionMarkup=description
     ? `<p class="pw-note">${storyEscape(description)}</p>`
-    : '<p class="pw-note">이 플랫폼의 설명은 아직 등록되지 않았어요.</p>';
+    : '<p class="pw-note">아직 소개 문구가 없어요.</p>';
   $('#inf').innerHTML=`<div class="pw" style="--c:${platTone(pi)}">
     <div class="pw-bar"><span class="pw-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="pw-addr">${ok?storyEscape(p.url):'주소가 아직 없어요'}<b aria-hidden="true"></b></span><span class="pw-count">${pad2(pi+1)} / ${pad2(PLATFORMS.length)}</span></div>
     <div class="pw-main"><span class="pw-mono" aria-hidden="true">${storyEscape(platMono(p))}</span><div class="pw-txt"><div class="pw-name">${storyEscape(p.name)}</div>${d?`<div class="pw-dom">${storyEscape(d)}</div>`:''}</div></div>
     <div class="pw-act">${action}</div>
-    <div class="pw-more"><h4>플랫폼 안내</h4>${descriptionMarkup}</div>
+    <div class="pw-more"><h4>플랫폼 소개</h4>${descriptionMarkup}</div>
   </div>`;
   $('#mn').querySelectorAll('.mi').forEach(b=>b.addEventListener('click',()=>{pi=+b.dataset.i;drawPlat()}));
 }
@@ -1458,10 +1458,6 @@ theme(false);
 <script>
 /* 티스토리: 전에 작동했던 메인 주소로 열고, 원본 블로그 안에서 공개 글을 탐색합니다. */
 const TISTORY_PUBLIC_URL = 'https://think10191.tistory.com/';
-G[2].name = '티스토리';
-G[2].hint = '캐릭터 비하인드와 이미지를 모아 둔 곳';
-G[2].icon = 'bubble';
-
 function cut(){
   const g = G[2];
   scene.innerHTML = `<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
@@ -1504,7 +1500,7 @@ function cut(){
   setHint('티스토리 화면 안에서 공개 글을 선택하세요 · Esc 홈으로');
 }
 
-/* 앞선 초기화에서 홈 화면을 먼저 그렸으므로 바뀐 CD 이름을 다시 반영합니다. */
+/* 티스토리 화면 함수를 연결한 뒤 홈 메뉴를 다시 그립니다. */
 if (where === 'home') home();
 </script>
 
