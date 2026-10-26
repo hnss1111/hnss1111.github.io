@@ -544,6 +544,7 @@ body.night-mode{
 }
 </style>
 <style>
+/* 티스토리 원격 화면: 게임기 안에 블로그를 표시합니다. */
 .scene.g-cut{padding:clamp(10px,2vw,18px);overflow:hidden}
 .tistory-page{display:flex;flex:1;flex-direction:column;width:100%;min-width:0;min-height:0;padding:0;overflow:hidden;background:var(--panel);color:var(--ink)}
 .tistory-browserbar{display:flex;align-items:center;gap:9px;flex:none;padding:9px 10px;background:var(--shade);border-bottom:3px solid var(--bd)}
@@ -556,9 +557,10 @@ body.night-mode{
 .tistory-browser-actions button:hover,.tistory-browser-actions a:hover{background:var(--c);color:#202838}
 .tistory-viewport{position:relative;display:flex;flex:1;min-height:0;overflow:hidden;background:#fff}
 .tistory-iframe{display:block;flex:1;width:100%;height:100%;min-width:0;min-height:300px;border:0;background:#fff}
-.tistory-note{flex:none;padding:5px 8px;background:var(--panel);border-top:1px solid var(--shade);font-size:10px;line-height:1.5;color:var(--dim)}
+.tistory-note{flex:none;padding:5px 8px;background:var(--panel);border-top:1px solid var(--shade);font-size:10px;line-height:1.6;color:var(--dim)}
 .screen.night .tistory-address{background:#202B3B;color:#F5F3ED}
 .screen.night .tistory-browser-actions button,.screen.night .tistory-browser-actions a{background:#202B3B;color:#F5F3ED}
+.screen.night .tistory-browser-actions button:hover,.screen.night .tistory-browser-actions a:hover{background:var(--c);color:#202838}
 @media(max-width:600px){
   .scene.g-cut{padding:8px}
   .tistory-browserbar{padding:7px;gap:6px}
@@ -1385,33 +1387,48 @@ $('#lb').addEventListener('click',()=>$('#lb').classList.remove('on'));
 theme(false);
 </script>
 <script>
-/* 티스토리 시디: 공개 글(캐릭터 비하인드)만 게임기 안에 표시 */
-const TISTORY_PUBLIC_URL='https://think10191.tistory.com/category/캐릭터비하인드';
-G[2].name='티스토리';G[2].hint='캐릭터 비하인드 · 공개 글';G[2].icon='bubble';
+/* 티스토리: 전에 작동했던 메인 주소로 열고, 원본 블로그 안에서 공개 글을 탐색합니다. */
+const TISTORY_PUBLIC_URL = 'https://think10191.tistory.com/';
+G[2].name = '티스토리';
+G[2].hint = '티스토리의 공개 게시글';
+G[2].icon = 'bubble';
+
 function cut(){
-  const g=G[2];
-  scene.innerHTML=`<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
+  const g = G[2];
+  scene.innerHTML = `<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
     <section class="tistory-page win" aria-label="티스토리 화면">
       <div class="tistory-browserbar">
         <span class="tistory-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="tistory-address">think10191.tistory.com</span>
+        <span class="tistory-address" title="${TISTORY_PUBLIC_URL}">think10191.tistory.com</span>
         <div class="tistory-browser-actions" aria-label="브라우저 도구">
           <button id="tistoryBack" type="button" aria-label="이전 페이지" title="이전 페이지">←</button>
-          <button id="tistoryReload" type="button" aria-label="처음 화면" title="처음 화면 다시 불러오기">↻</button>
+          <button id="tistoryReload" type="button" aria-label="처음 화면 다시 불러오기" title="처음 화면 다시 불러오기">↻</button>
           <a href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer" aria-label="새 탭에서 열기" title="새 탭에서 열기">↗</a>
         </div>
       </div>
       <div class="tistory-viewport">
-        <iframe class="tistory-iframe" id="tistoryFrame" title="think10191 티스토리 블로그" src="${TISTORY_PUBLIC_URL}" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <iframe class="tistory-iframe" id="tistoryFrame"
+          title="think10191 티스토리 블로그"
+          src="${TISTORY_PUBLIC_URL}"
+          loading="eager"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="storage-access https://think10191.tistory.com; clipboard-read; clipboard-write"></iframe>
       </div>
-      <div class="tistory-note">여기서는 공개 글만 볼 수 있어요. 비밀번호가 걸린 이미지는 <a href="https://think10191.tistory.com/" target="_blank" rel="noopener noreferrer" style="color:inherit;font-weight:700">티스토리</a>에서 직접 확인해 주세요.</div>
+      <div class="tistory-note">공개 글은 게임기 안에서 탐색할 수 있어요. 보호글 인증이나 쿠키 문제가 생기면 ↗ 버튼으로 티스토리를 새 탭에서 열어 주세요.</div>
     </section>`;
-  const blogFrame=$('#tistoryFrame');
-  $('#tistoryReload').addEventListener('click',()=>{blogFrame.src=TISTORY_PUBLIC_URL;});
-  $('#tistoryBack').addEventListener('click',()=>{try{blogFrame.contentWindow.history.back();}catch(_){blogFrame.src=TISTORY_PUBLIC_URL;}});
+
+  const blogFrame = $('#tistoryFrame');
+  $('#tistoryReload').addEventListener('click', () => { blogFrame.src = TISTORY_PUBLIC_URL; });
+  $('#tistoryBack').addEventListener('click', () => {
+    try { blogFrame.contentWindow.history.back(); }
+    catch (_) { blogFrame.src = TISTORY_PUBLIC_URL; }
+  });
   setHint('티스토리 화면 안에서 공개 글을 선택하세요 · Esc 홈으로');
 }
-if(where==='home')home();
+
+/* 앞선 초기화에서 홈 화면을 먼저 그렸으므로 바뀐 CD 이름을 다시 반영합니다. */
+if (where === 'home') home();
 </script>
+
 </body>
 </html>
