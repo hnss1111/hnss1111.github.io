@@ -535,30 +535,21 @@ body.night-mode{
 }
 </style>
 <style>
-/* 티스토리 원격 화면: 게임기 안에 블로그를 표시합니다. */
-.scene.g-cut{padding:clamp(10px,2vw,18px);overflow:hidden}
-.tistory-page{display:flex;flex:1;flex-direction:column;width:100%;min-width:0;min-height:0;padding:0;overflow:hidden;background:var(--panel);color:var(--ink)}
-.tistory-browserbar{display:flex;align-items:center;gap:9px;flex:none;padding:9px 10px;background:var(--shade);border-bottom:3px solid var(--bd)}
-.tistory-dots{display:flex;gap:5px;flex:none}
-.tistory-dots i{width:8px;height:8px;background:var(--bd);opacity:.55}
-.tistory-dots i:first-child{background:var(--c);opacity:1}
-.tistory-address{flex:1;min-width:0;padding:5px 9px;background:var(--panel);font-size:11px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tistory-browser-actions{display:flex;gap:5px;flex:none}
-.tistory-browser-actions button,.tistory-browser-actions a{display:grid;place-items:center;width:29px;height:29px;background:var(--panel);color:var(--ink);text-decoration:none;font-size:15px;line-height:1;cursor:pointer}
-.tistory-browser-actions button:hover,.tistory-browser-actions a:hover{background:var(--c);color:#202838}
-.tistory-viewport{position:relative;display:flex;flex:1;min-height:0;overflow:hidden;background:#fff}
-.tistory-iframe{display:block;flex:1;width:100%;height:100%;min-width:0;min-height:300px;border:0;background:#fff}
-.tistory-note{flex:none;padding:5px 8px;background:var(--panel);border-top:1px solid var(--shade);font-size:10px;line-height:1.6;color:var(--dim)}
-.screen.night .tistory-address{background:#202B3B;color:#F5F3ED}
-.screen.night .tistory-browser-actions button,.screen.night .tistory-browser-actions a{background:#202B3B;color:#F5F3ED}
-.screen.night .tistory-browser-actions button:hover,.screen.night .tistory-browser-actions a:hover{background:var(--c);color:#202838}
+/* 티스토리 바로가기 화면의 디스코드 영역 */
+.tistory-info.win.info{padding:0;min-height:0;align-items:stretch;justify-content:flex-start}
+.discord-more{display:flex;flex-direction:column;gap:10px}
+.discord-copy-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.discord-id{display:flex;align-items:center;gap:12px;flex:1 1 180px;min-width:0;min-height:40px;padding:9px 12px;border:1px solid var(--shade);background:var(--panel);color:var(--ink)}
+.discord-id span{flex:none;font-family:var(--px);font-size:10px;color:var(--dim)}
+.discord-id code{min-width:0;font-family:var(--px);font-size:14px;overflow-wrap:anywhere}
+.discord-copy{min-height:40px;padding:9px 12px;white-space:nowrap;touch-action:manipulation}
+.discord-note{margin:0;color:var(--dim);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+.discord-note + .discord-note{margin-top:-6px}
 @media(max-width:600px){
-  .scene.g-cut{padding:8px}
-  .tistory-browserbar{padding:7px;gap:6px}
-  .tistory-address{font-size:10px;padding:5px 6px}
-  .tistory-browser-actions{gap:3px}
-  .tistory-browser-actions button,.tistory-browser-actions a{width:27px;height:27px}
-  .tistory-iframe{min-height:300px}
+  .discord-copy-row{align-items:stretch}
+  .discord-id{flex-basis:100%;min-height:42px}
+  .discord-copy{width:100%;min-height:42px}
+  .discord-note{font-size:12px}
 }
 </style>
 
@@ -607,11 +598,8 @@ body.night-mode{
 .blog-article-body blockquote{margin:1.2em 0;padding:0;border:0;background:transparent;color:var(--st-sub);font-size:.96em;line-height:1.9}
 .blog-nav{gap:8px;border-top:1px solid var(--st-line)}
 
-/* 티스토리 iframe: 필름 레일과 내부 창이 겹치지 않게 기존 여백을 유지합니다. */
+/* 티스토리 화면: 필름 레일과 기존 여백을 유지합니다. */
 .scene.g-cut{padding:clamp(10px,2vw,18px) 46px!important;overflow:hidden;min-width:0}
-.tistory-page{width:100%;max-width:100%;min-width:0;flex:1 1 auto;margin:0}
-.tistory-viewport{min-width:0}
-.tistory-iframe{display:block;width:100%;max-width:100%;min-width:0;border:0}
 .pw-more{border-top:1px solid var(--shade)}
 .pw-more h4{margin-bottom:7px}
 .pw-note{margin:0;color:var(--dim);font-size:13px;line-height:1.8;overflow-wrap:anywhere}
@@ -635,6 +623,24 @@ body.night-mode{
   .blog-article-body{font-size:14px}
 }
 @media(max-width:400px){.scene.g-cut{padding:8px 28px!important}.blog-topic{font-size:11px}.blog-article{padding:16px 13px}}
+/* 티스토리 바로가기 화면은 작은 화면에서도 전체 내용을 스크롤할 수 있습니다. */
+.scene.g-cut{overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+</style>
+
+<style id="external-url-pages">
+/* 외부 URL 내부 메뉴: 기존 테마를 사용한 단순 목록 */
+.url-workspace{display:flex;flex-direction:column;gap:10px;min-width:0}
+.url-menu{display:flex;flex-direction:column;gap:0;padding:6px 12px}
+.url-menu-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0;min-height:46px;padding:10px 4px;background:transparent;color:var(--ink);font-family:var(--px);font-size:13px;line-height:1.5;text-align:left;border-bottom:1px solid var(--shade);touch-action:manipulation}
+.url-menu-item:last-child{border-bottom:0}
+.url-menu-item span:last-child{color:var(--c)}
+.url-menu-item span:first-child{min-width:0;overflow-wrap:anywhere}
+.url-menu-item:hover{background:color-mix(in srgb,var(--c) 10%,transparent)}
+.url-back{align-self:flex-end;min-height:34px;padding:7px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px;line-height:1.4;touch-action:manipulation}
+.url-detail{width:100%;min-width:0}
+.url-note-list{display:flex;flex-direction:column;gap:6px}
+.url-note-list .pw-note{margin:0}
+.url-act-row{width:100%}
 </style>
 
 </head>
@@ -742,7 +748,7 @@ let night=false; /* 밝은 화면이 기본 */
 const G=[
   {id:'plat',name:'사용 플랫폼',c:'#8cc4f0',hint:'',icon:'win'},
   {id:'story',name:'잡담',c:'#f3d27a',hint:'가볍게 캐릭터 및 플랫폼 이야기 (tmi 많음)',icon:'bubble'},
-  {id:'cut',name:'티스토리',c:'#f0a3b6',hint:'캐릭터 비하인드 및 이미지 확인',icon:'bubble'},
+  {id:'cut',name:'외부 URL',c:'#f0a3b6',hint:'캐릭터 비하인드 및 이미지 확인',icon:'bubble'},
 ];
 
 /* ===== 동작 코드 ===== */
@@ -1027,7 +1033,7 @@ async function transition(g,label,fn,curveAfter){
   }
   busy=false;
 }
-function start(id){const g=G.find(x=>x.id===id);transition(g,'LOADING',()=>enter(id),false)}
+function start(id){if(id==='cut')externalUrlPage='menu';const g=G.find(x=>x.id===id);transition(g,'LOADING',()=>enter(id),false)}
 function exit(){if(where==='home')return;const g=G.find(x=>x.id===where);transition(g,'SAVING',()=>{clearInterval(tm);home()},true)}
 async function enter(id){
   if(id==='plat'||id==='cut') await loadCatalogData();
@@ -1442,7 +1448,17 @@ function press(k){
   }
 }
 const KEYS={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d',Enter:'a',' ':'a',Escape:'b',Backspace:'b'};
-addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea,select,[contenteditable="true"]')){if(e.key==='Escape'&&stEditing){e.preventDefault();stEditing=false;stEditTarget=null;drawStory()}return}const k=KEYS[e.key];if(!k)return;if(e.target.closest&&e.target.closest('button,a')&&(e.key==='Enter'||e.key===' '))return;e.preventDefault();press(k)});
+addEventListener('keydown',e=>{
+  if(e.target.closest&&e.target.closest('input,textarea,select,[contenteditable="true"]')){if(e.key==='Escape'&&stEditing){e.preventDefault();stEditing=false;stEditTarget=null;drawStory()}return}
+  if(where==='cut'){
+    if(e.key==='Escape'||e.key==='Backspace'){e.preventDefault();exit();return}
+    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Enter',' '].includes(e.key)){
+      if((e.key==='Enter'||e.key===' ')&&e.target.closest&&e.target.closest('button,a'))return;
+      e.preventDefault();return;
+    }
+  }
+  const k=KEYS[e.key];if(!k)return;if(e.target.closest&&e.target.closest('button,a')&&(e.key==='Enter'||e.key===' '))return;e.preventDefault();press(k)
+});
 
 /* 테마 */
 $('#tLight').innerHTML=icon('sun','currentColor');$('#tDark').innerHTML=icon('moon','currentColor');
@@ -1456,53 +1472,85 @@ $('#lb').addEventListener('click',()=>$('#lb').classList.remove('on'));
 theme(false);
 </script>
 <script>
-/* 티스토리: 공개글은 게임기 화면 안에서 그대로 탐색하고, 보호글 안내는 티스토리 스킨에서만 표시합니다. */
+/* 외부 URL: 단순한 내부 메뉴와 각 링크 화면 */
 const TISTORY_PUBLIC_URL = 'https://think10191.tistory.com/';
+const DISCORD_PUBLIC_ID = 'daasd123';
+let externalUrlPage = 'menu';
+
 function cut(){
   const g = G[2];
-  scene.innerHTML = `<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
-    <section class="tistory-page win" aria-label="티스토리 화면">
-      <div class="tistory-browserbar">
-        <span class="tistory-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="tistory-address" title="${TISTORY_PUBLIC_URL}">think10191.tistory.com</span>
-        <div class="tistory-browser-actions" aria-label="브라우저 도구">
-          <button id="tistoryBack" type="button" aria-label="이전 페이지" title="이전 페이지">←</button>
-          <button id="tistoryReload" type="button" aria-label="처음 화면 다시 불러오기" title="처음 화면 다시 불러오기">↻</button>
-          <a href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer" aria-label="새 탭에서 열기" title="새 탭에서 열기">↗</a>
-        </div>
-      </div>
-      <div class="tistory-viewport">
-        <iframe class="tistory-iframe" id="tistoryFrame"
-          title="think10191 티스토리 블로그"
-          src="${TISTORY_PUBLIC_URL}"
-          loading="eager"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allow="storage-access https://think10191.tistory.com; clipboard-read; clipboard-write"></iframe>
-      </div>
-      <div class="tistory-note">보호글 인증이나 쿠키 문제가 생기면 ↗ 버튼으로 티스토리를 새 탭에서 열어 주세요.</div>
-    </section>`;
-
-  const blogFrame = $('#tistoryFrame');
-  const sendParentTheme = () => {
-    try {
-      if(blogFrame && blogFrame.contentWindow){
-        blogFrame.contentWindow.postMessage({type:'world-console-theme',mode:night?'dark':'light'}, 'https://think10191.tistory.com');
-      }
-    } catch (_) {}
-  };
-  blogFrame.addEventListener('load', sendParentTheme);
-  sendParentTheme();
-  $('#tistoryReload').addEventListener('click', () => { blogFrame.src = TISTORY_PUBLIC_URL; });
-  $('#tistoryBack').addEventListener('click', () => {
-    try { blogFrame.contentWindow.history.back(); }
-    catch (_) { blogFrame.src = TISTORY_PUBLIC_URL; }
-  });
-  setHint('티스토리 화면 안에서 공개 글을 선택하세요 · Esc 홈으로');
+  scene.innerHTML = `<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div><div class="url-workspace" id="urlWorkspace"></div>`;
+  drawExternalUrlPage(externalUrlPage || 'menu');
 }
 
-/* 티스토리 화면 함수를 연결한 뒤 홈 메뉴를 다시 그립니다. */
-if (where === 'home') home();
-</script>
+function drawExternalUrlPage(page){
+  externalUrlPage = page;
+  const g = G[2];
+  const area = $('#urlWorkspace');
+  if(!area)return;
+
+  if(page === 'menu'){
+    area.innerHTML = `<div class="win menu url-menu" style="--c:${g.c}">
+      <button type="button" class="url-menu-item" data-url-page="tistory"><span>캐릭터 비하인드 및 이미지 (티스토리)</span><span aria-hidden="true">↗</span></button>
+      <button type="button" class="url-menu-item" data-url-page="discord"><span>개인연락 (디스코드)</span><span aria-hidden="true">›</span></button>
+    </div>`;
+    area.querySelectorAll('[data-url-page]').forEach(button=>button.addEventListener('click',()=>drawExternalUrlPage(button.dataset.urlPage)));
+    setHint('캐릭터 비하인드 및 이미지 · 개인연락 · Esc 홈으로');
+    return;
+  }
+
+  const back = '<button type="button" class="url-back" id="urlListBack">← 외부 URL 목록</button>';
+  if(page === 'tistory'){
+    area.innerHTML = `${back}
+      <section class="win info tistory-info url-detail" aria-label="티스토리">
+        <div class="pw" style="--c:${g.c}">
+          <div class="pw-bar"><span class="pw-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="pw-addr" title="${TISTORY_PUBLIC_URL}">${TISTORY_PUBLIC_URL}<b aria-hidden="true"></b></span></div>
+          <div class="pw-main"><span class="pw-mono" aria-hidden="true">T</span><div class="pw-txt"><div class="pw-name">티스토리</div><div class="pw-dom">think10191.tistory.com</div></div></div>
+          <div class="pw-act"><a class="go" href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer"><span>티스토리 바로가기</span><span aria-hidden="true">↗</span></a></div>
+          <div class="pw-more"><p class="pw-note">캐릭터 비하인드와 이미지를 올려요.</p></div>
+        </div>
+      </section>`;
+    setHint('티스토리 바로가기 · 외부 URL 목록 · Esc 홈으로');
+  }else if(page === 'discord'){
+    area.innerHTML = `${back}
+      <section class="win info tistory-info url-detail" aria-label="디스코드">
+        <div class="pw" style="--c:${g.c}">
+          <div class="pw-bar"><span class="pw-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="pw-addr">Discord ID<b aria-hidden="true"></b></span></div>
+          <div class="pw-main"><span class="pw-mono" aria-hidden="true">D</span><div class="pw-txt"><div class="pw-name">디스코드</div><div class="pw-dom">${DISCORD_PUBLIC_ID}</div></div></div>
+          <div class="pw-act url-act-row"><div class="discord-copy-row"><div class="discord-id"><span>ID</span><code>${DISCORD_PUBLIC_ID}</code></div><button class="pf discord-copy" id="discordCopy" type="button">ID 복사</button></div></div>
+          <div class="pw-more"><p class="pw-note">중요한 이야기는 디스코드로 보내 주세요.</p></div>
+        </div>
+      </section>`;
+    $('#discordCopy').addEventListener('click', copyDiscordId);
+    setHint('ID 복사 · 외부 URL 목록 · Esc 홈으로');
+  }
+  $('#urlListBack').addEventListener('click',()=>drawExternalUrlPage('menu'));
+}
+
+async function copyDiscordId(){
+  const value=DISCORD_PUBLIC_ID;
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(value);
+      toast('복사했어요');
+      return;
+    }
+  }catch(_){}
+  const field=document.createElement('textarea');
+  field.value=value;
+  field.setAttribute('readonly','');
+  field.style.position='fixed';
+  field.style.left='-9999px';
+  document.body.appendChild(field);
+  field.select();
+  let copied=false;
+  try{copied=document.execCommand('copy')}catch(_){}
+  field.remove();
+  toast(copied?'복사했어요':'복사에 실패했어요. ID를 직접 복사해 주세요.');
+}
+
+/* 외부 URL 화면 함수를 연결한 뒤 홈 메뉴를 다시 그립니다. */
+if (where === 'home') home();</script>
 
 </body>
 </html>
