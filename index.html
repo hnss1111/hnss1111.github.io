@@ -535,22 +535,8 @@ body.night-mode{
 }
 </style>
 <style>
-/* 티스토리 바로가기 화면의 디스코드 영역 */
+/* 티스토리 바로가기 화면 */
 .tistory-info.win.info{padding:0;min-height:0;align-items:stretch;justify-content:flex-start}
-.discord-more{display:flex;flex-direction:column;gap:10px}
-.discord-copy-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.discord-id{display:flex;align-items:center;gap:12px;flex:1 1 180px;min-width:0;min-height:40px;padding:9px 12px;border:1px solid var(--shade);background:var(--panel);color:var(--ink)}
-.discord-id span{flex:none;font-family:var(--px);font-size:10px;color:var(--dim)}
-.discord-id code{min-width:0;font-family:var(--px);font-size:14px;overflow-wrap:anywhere}
-.discord-copy{min-height:40px;padding:9px 12px;white-space:nowrap;touch-action:manipulation}
-.discord-note{margin:0;color:var(--dim);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
-.discord-note + .discord-note{margin-top:-6px}
-@media(max-width:600px){
-  .discord-copy-row{align-items:stretch}
-  .discord-id{flex-basis:100%;min-height:42px}
-  .discord-copy{width:100%;min-height:42px}
-  .discord-note{font-size:12px}
-}
 </style>
 
 <style id="requested-only-adjustments">
@@ -627,20 +613,19 @@ body.night-mode{
 .scene.g-cut{overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 </style>
 
-<style id="external-url-pages">
-/* 외부 URL 내부 메뉴: 기존 테마를 사용한 단순 목록 */
-.url-workspace{display:flex;flex-direction:column;gap:10px;min-width:0}
+<style id="shortcut-list">
+/* 바로가기 목록: 내부 상세 화면 없이 링크와 비밀번호를 한곳에 표시합니다. */
+.url-workspace{display:flex;flex-direction:column;min-width:0}
 .url-menu{display:flex;flex-direction:column;gap:0;padding:6px 12px}
-.url-menu-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0;min-height:46px;padding:10px 4px;background:transparent;color:var(--ink);font-family:var(--px);font-size:13px;line-height:1.5;text-align:left;border-bottom:1px solid var(--shade);touch-action:manipulation}
+.url-menu-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0;min-height:58px;padding:11px 4px;background:transparent;color:var(--ink);font-family:var(--px);font-size:13px;line-height:1.5;text-align:left;text-decoration:none;border-bottom:1px solid var(--shade);touch-action:manipulation}
 .url-menu-item:last-child{border-bottom:0}
-.url-menu-item span:last-child{color:var(--c)}
-.url-menu-item span:first-child{min-width:0;overflow-wrap:anywhere}
+.url-menu-item > span:last-child{flex:none;color:var(--c)}
+.url-menu-item > span:first-child{min-width:0;overflow-wrap:anywhere}
+.url-menu-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.url-menu-title{font-size:13px;line-height:1.5}
+.url-menu-password{font-family:var(--bd2);font-size:12px;line-height:1.5;color:var(--dim)}
 .url-menu-item:hover{background:color-mix(in srgb,var(--c) 10%,transparent)}
-.url-back{align-self:flex-end;min-height:34px;padding:7px 10px;background:var(--shade);color:var(--ink);font-family:var(--px);font-size:11px;line-height:1.4;touch-action:manipulation}
-.url-detail{width:100%;min-width:0}
-.url-note-list{display:flex;flex-direction:column;gap:6px}
-.url-note-list .pw-note{margin:0}
-.url-act-row{width:100%}
+@media(max-width:600px){.url-menu-item{min-height:56px}.url-menu-title{font-size:12px}.url-menu-password{font-size:11px}}
 </style>
 
 </head>
@@ -748,7 +733,7 @@ let night=false; /* 밝은 화면이 기본 */
 const G=[
   {id:'plat',name:'사용 플랫폼',c:'#8cc4f0',hint:'',icon:'win'},
   {id:'story',name:'잡담',c:'#f3d27a',hint:'가볍게 캐릭터 및 플랫폼 이야기 (tmi 많음)',icon:'bubble'},
-  {id:'cut',name:'외부 URL',c:'#f0a3b6',hint:'캐릭터 비하인드 및 이미지 확인',icon:'bubble'},
+  {id:'cut',name:'바로가기',c:'#f0a3b6',hint:'캐릭터 비하인드 및 이미지 · 티스토리',icon:'bubble'},
 ];
 
 /* ===== 동작 코드 ===== */
@@ -1472,84 +1457,27 @@ $('#lb').addEventListener('click',()=>$('#lb').classList.remove('on'));
 theme(false);
 </script>
 <script>
-/* 외부 URL: 단순한 내부 메뉴와 각 링크 화면 */
+/* 바로가기: 목록에서 티스토리로 바로 이동합니다. */
 const TISTORY_PUBLIC_URL = 'https://think10191.tistory.com/';
-const DISCORD_PUBLIC_ID = 'daasd123';
-let externalUrlPage = 'menu';
 
 function cut(){
   const g = G[2];
-  scene.innerHTML = `<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div><div class="url-workspace" id="urlWorkspace"></div>`;
-  drawExternalUrlPage(externalUrlPage || 'menu');
-}
-
-function drawExternalUrlPage(page){
-  externalUrlPage = page;
-  const g = G[2];
-  const area = $('#urlWorkspace');
-  if(!area)return;
-
-  if(page === 'menu'){
-    area.innerHTML = `<div class="win menu url-menu" style="--c:${g.c}">
-      <button type="button" class="url-menu-item" data-url-page="tistory"><span>캐릭터 비하인드 및 이미지 (티스토리)</span><span aria-hidden="true">↗</span></button>
-      <button type="button" class="url-menu-item" data-url-page="discord"><span>개인연락 (디스코드)</span><span aria-hidden="true">›</span></button>
+  scene.innerHTML = `<div class="gh">${icon('bubble',g.c)}<span>${g.name}</span></div>
+    <div class="url-workspace" id="urlWorkspace">
+      <div class="win menu url-menu" style="--c:${g.c}">
+        <a class="url-menu-item" href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer" aria-label="티스토리 열기, 비밀글 비밀번호 1">
+          <span class="url-menu-copy">
+            <span class="url-menu-title">캐릭터 비하인드 및 이미지 (티스토리)</span>
+            <span class="url-menu-password">비밀글 비밀번호: 1</span>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
     </div>`;
-    area.querySelectorAll('[data-url-page]').forEach(button=>button.addEventListener('click',()=>drawExternalUrlPage(button.dataset.urlPage)));
-    setHint('캐릭터 비하인드 및 이미지 · 개인연락 · Esc 홈으로');
-    return;
-  }
-
-  const back = '<button type="button" class="url-back" id="urlListBack">← 외부 URL 목록</button>';
-  if(page === 'tistory'){
-    area.innerHTML = `${back}
-      <section class="win info tistory-info url-detail" aria-label="티스토리">
-        <div class="pw" style="--c:${g.c}">
-          <div class="pw-bar"><span class="pw-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="pw-addr" title="${TISTORY_PUBLIC_URL}">${TISTORY_PUBLIC_URL}<b aria-hidden="true"></b></span></div>
-          <div class="pw-main"><span class="pw-mono" aria-hidden="true">T</span><div class="pw-txt"><div class="pw-name">티스토리</div><div class="pw-dom">think10191.tistory.com</div></div></div>
-          <div class="pw-act"><a class="go" href="${TISTORY_PUBLIC_URL}" target="_blank" rel="noopener noreferrer"><span>티스토리 바로가기</span><span aria-hidden="true">↗</span></a></div>
-          <div class="pw-more"><p class="pw-note">캐릭터 비하인드와 이미지를 올려요. 비밀글 비밀번호는 １ 고정입니다.</p></div>
-        </div>
-      </section>`;
-    setHint('티스토리 바로가기 · 외부 URL 목록 · Esc 홈으로');
-  }else if(page === 'discord'){
-    area.innerHTML = `${back}
-      <section class="win info tistory-info url-detail" aria-label="디스코드">
-        <div class="pw" style="--c:${g.c}">
-          <div class="pw-bar"><span class="pw-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="pw-addr">Discord ID<b aria-hidden="true"></b></span></div>
-          <div class="pw-main"><span class="pw-mono" aria-hidden="true">D</span><div class="pw-txt"><div class="pw-name">디스코드</div><div class="pw-dom">${DISCORD_PUBLIC_ID}</div></div></div>
-          <div class="pw-act url-act-row"><div class="discord-copy-row"><div class="discord-id"><span>ID</span><code>${DISCORD_PUBLIC_ID}</code></div><button class="pf discord-copy" id="discordCopy" type="button">ID 복사</button></div></div>
-          <div class="pw-more"><p class="pw-note">중요한 이야기는 디스코드로 보내 주세요.</p></div>
-        </div>
-      </section>`;
-    $('#discordCopy').addEventListener('click', copyDiscordId);
-    setHint('ID 복사 · 외부 URL 목록 · Esc 홈으로');
-  }
-  $('#urlListBack').addEventListener('click',()=>drawExternalUrlPage('menu'));
+  setHint('티스토리 바로가기 · 비밀글 비밀번호: 1 · Esc 홈으로');
 }
 
-async function copyDiscordId(){
-  const value=DISCORD_PUBLIC_ID;
-  try{
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      await navigator.clipboard.writeText(value);
-      toast('복사했어요');
-      return;
-    }
-  }catch(_){}
-  const field=document.createElement('textarea');
-  field.value=value;
-  field.setAttribute('readonly','');
-  field.style.position='fixed';
-  field.style.left='-9999px';
-  document.body.appendChild(field);
-  field.select();
-  let copied=false;
-  try{copied=document.execCommand('copy')}catch(_){}
-  field.remove();
-  toast(copied?'복사했어요':'복사에 실패했어요. ID를 직접 복사해 주세요.');
-}
-
-/* 외부 URL 화면 함수를 연결한 뒤 홈 메뉴를 다시 그립니다. */
+/* 바로가기 화면을 연결한 뒤 홈 메뉴를 다시 그립니다. */
 if (where === 'home') home();</script>
 
 </body>
